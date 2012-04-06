@@ -1,5 +1,5 @@
 module Alula
   class Themes
-    VERSION = "0.0.2"
+    VERSION = File.read(File.join(File.dirname(__FILE__), %w{.. .. .. VERSION})).strip
   end
 end

@@ -6,7 +6,7 @@ Gem::Specification.new do |gem|
   gem.email         = ["mikko@owlforestry.com"]
   gem.description   = %q{Beatiful themes for Alula}
   gem.summary       = %q{Ready to use themes for Alula blogs.}
-  gem.homepage      = ""
+  gem.homepage      = "http://owlforestry.github.com/alula-themes"
 
   gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   gem.files         = `git ls-files`.split("\n")
@@ -15,5 +15,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = Alula::Themes::VERSION
   
-  gem.add_dependency 'alula'
+  gem.add_dependency 'alula', '~> 0.1.0'
+  
+  gem.add_development_dependency 'version', '~> 1.0.0'
 end
