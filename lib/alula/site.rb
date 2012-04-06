@@ -3,6 +3,7 @@ require 'jekyll'
 require 'sprockets'
 require 'RMagick'
 require 'active_support/inflector/methods'
+require 'progressbar'
 
 require 'alula/theme'
 require 'alula/plugin'
@@ -169,23 +170,22 @@ module Alula
       originals_path = File.join("attachments", "_originals")
       thumbnails_path = File.join("attachments", "_thumbnails")
       
-      Dir[File.join(originals_path, "**", "*")]
+      assets = Dir[File.join(originals_path, "**", "*")]
         .select {|f| File.file?(f) }
         .collect {|f| File.join(f.split("/")[2..-1])}
-        .each do |original|
-          print "#{original}: "
-          
-          unless File.exists?(File.join(thumbnails_path, original))
-            image = Magick::Image.read(File.join(originals_path, original)).first
-            image.crop_resized!(width, height, Magick::NorthGravity)
-            FileUtils.mkdir_p File.dirname(File.join(thumbnails_path, original))
-            image.write(File.join(thumbnails_path, original))
-            
-            puts "generated."
-          else
-            puts "exists."
-          end
+      pb = ProgressBar.new "Assets", assets.count
+      
+      assets.each do |original|
+        unless File.exists?(File.join(thumbnails_path, original))
+          image = Magick::Image.read(File.join(originals_path, original)).first
+          image.crop_resized!(width, height, Magick::NorthGravity)
+          FileUtils.mkdir_p File.dirname(File.join(thumbnails_path, original))
+          image.write(File.join(thumbnails_path, original))
+        end
+        pb.inc
       end
+      
+      pb.finish
     end
     
     def compile
