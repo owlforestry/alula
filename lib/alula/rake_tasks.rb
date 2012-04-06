@@ -25,6 +25,12 @@ module Alula
         site = Alula::Site.new
         site.preview
       end
+      
+      desc "Generate blog (deployment)"
+      task :publish do
+        site = Alula::Site.new("asset_compress" => true)
+        site.generate
+      end
     end
   end
 end

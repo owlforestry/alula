@@ -1,5 +1,6 @@
 require 'sass'
 require 'uglifier'
+require 'front-compiler'
 
 module Alula
   module Compressors
@@ -19,7 +20,15 @@ module Alula
     
     class JSCompressor
       def compress(content)
-        Uglifier.new.compress(content)
+        @@compressor ||= Uglifier.new
+        @@compressor.compress(content)
+      end
+    end
+    
+    module HTMLCompressor
+      def output_with_compression
+        @@compressor ||= FrontCompiler.new
+        @@compressor.compact_html(@output)
       end
     end
   end

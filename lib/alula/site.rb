@@ -19,9 +19,9 @@ module Alula
     
     attr_reader :config, :jekyll
     
-    def initialize
+    def initialize(override = {})
       # Load configuration
-      @config = YAML.load_file('config.yml')
+      @config = YAML.load_file('config.yml').deep_merge(override)
       
       # Register local theme path
       Alula::Theme.register("themes")
@@ -57,6 +57,12 @@ module Alula
       if @config['asset_compress']
         @sprockets.css_compressor = Alula::Compressors::CSSCompressor.new
         @sprockets.js_compressor = Alula::Compressors::JSCompressor.new
+        
+        [Jekyll::Post, Jekyll::Page].each do |klass|
+          klass.send(:include, Alula::Compressors::HTMLCompressor)
+          klass.send(:alias_method, :output_without_compression, :output)
+          klass.send(:alias_method, :output, :output_with_compression)
+        end
       end
 
       # Add theme to asset paths

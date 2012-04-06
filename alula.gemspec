@@ -23,5 +23,9 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'sass'
   gem.add_dependency 'coffee-script'
   gem.add_dependency 'uglifier'
+  gem.add_dependency 'front-compiler'
   gem.add_dependency 'activesupport'
+
+  gem.add_dependency 'pry'
+
 end
