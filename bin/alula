@@ -3,7 +3,7 @@
 $:.unshift File.join(File.dirname(__FILE__), *%w[.. lib])
 
 # Are we in Alula blog
-if File.exists?("Rakefile") and File.read("Rakefile") =~ /alula/
+if File.exists?("Gemfile") and File.read("Gemfile") =~ /alula/
   require 'bundler/setup'
   Bundler.require(:default)
 end  
