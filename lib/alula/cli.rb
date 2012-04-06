@@ -47,8 +47,14 @@ module Alula
     end
     
     desc "attach POST ASSET", "Attached given asset, photo or video to given post"
-    def attach(post, *asset)
-      puts "Adding to post #{post} assets #{asset.inspect}"
+    def attach(post, *assets)
+      site = Alula::Site.new
+      site.asset_attach(post, assets)
+    end
+    
+    desc "hello"
+    def hello
+      say "Hello world."
     end
   end
 end

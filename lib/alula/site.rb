@@ -4,6 +4,7 @@ require 'sprockets'
 require 'RMagick'
 require 'active_support/inflector/methods'
 require 'progressbar'
+require 'stringex'
 
 require 'alula/theme'
 require 'alula/plugin'
@@ -135,7 +136,70 @@ module Alula
         t.join()
     end
     
+    def asset_attach(post, assets)
+      # Find the post
+      post = find_post(post)
+      post =~ /(?<date>(\d{4}-\d{2}-\d{2}))/
+      date = Time.parse(date)
+      
+      width, height = @config["images"].split("x").collect {|i| i.to_i }
+      asset_path = File.join(%w{%Y %m %d}.collect{|f| date.strftime(f) })
+      file_path = File.join("attachments", "_originals", asset_path)
+      FileUtils.mkdir_p(file_path)
+      
+      processed = []
+      
+      post_io = File.open(post, "a")
+      
+      # Generate assets
+      image_types = [".jpg", ".png"]
+      assets.each do |asset|
+        asset_ext = File.extname(asset).downcase
+        asset_base = File.basename(asset).downcase
+        asset_plain = File.basename(asset, asset_ext)
+        
+        if image_types.include?(asset_ext)
+          img = Magick::Image.read(asset).first
+          img_normal = img.resize_to_fit(width, height)
+          img_normal.write(File.join(file_path, asset_base))
+          img_normal = nil
+          
+          img_retina = img.resize_to_fit(width * 2, height * 2)
+          retina_fname = File.join(file_path, "#{asset_plain}_2x#{asset_ext}")
+          img_retina.write(retina_fname)
+          img_retina = nil
+          
+          processed << File.join(asset_path, asset_base)
+          
+          if @config["plugins"].keys.include?("lightbox")
+            post_io.puts "{% lightbox #{File.join(asset_path, asset_base)} %}"
+          else
+            post_io.puts "{% image #{File.join("_originals", asset_path, asset_base)} %}"
+          end
+          
+          puts "Asset generated: #{asset_base} (normal, retina)"
+        end
+      end
+      
+      post_io.close
+    end
+    
     private
+    def find_post(post)
+      if File.exists?(post)
+        return post
+      elsif File.exists?(File.join("posts", post))
+        return File.join("posts", post)
+      else
+        # Try to find by title
+        title = post.to_url
+        posts = Dir[File.join("posts", "*")].select { |p| p =~ /title/ }
+        if posts.count == 1
+          return posts.first
+        end
+      end
+    end
+    
     def prepare
       puts "==> Prepare"
       # Clean our temporary folder
