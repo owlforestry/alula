@@ -3,7 +3,7 @@ require File.expand_path('../lib/alula/themes/version', __FILE__)
 
 Gem::Specification.new do |gem|
   gem.authors       = ["Mikko Kokkonen"]
-  gem.email         = ["mikko@mikian.com"]
+  gem.email         = ["mikko@owlforestry.com"]
   gem.description   = %q{Beatiful themes for Alula}
   gem.summary       = %q{Ready to use themes for Alula blogs.}
   gem.homepage      = ""
