@@ -25,7 +25,8 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'uglifier'
   gem.add_dependency 'front-compiler'
   gem.add_dependency 'activesupport'
+  gem.add_dependency 'ruby-progressbar'
 
-  gem.add_dependency 'pry'
-
+  gem.add_development_dependency 'version'
+  gem.add_development_dependency 'pry'
 end
