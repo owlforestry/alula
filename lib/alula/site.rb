@@ -14,8 +14,6 @@ require 'alula/compressors'
 # These are used always in every blog, i.e. mandatory plugins
 require 'alula/plugins/assets'
 
-require 'pry'
-
 module Alula
   class Site
     

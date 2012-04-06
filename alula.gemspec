@@ -3,10 +3,11 @@ require File.expand_path('../lib/alula/version', __FILE__)
 
 Gem::Specification.new do |gem|
   gem.authors       = ["Mikko Kokkonen"]
-  gem.email         = ["mikko@mikian.com"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
-  gem.homepage      = ""
+  gem.email         = ["mikko@owlforestry.com"]
+  gem.description   = %q{Alula is a simple tool for creating fast, static blogs easily.}
+  gem.summary       = %q{Alula is a collection of useful tools that makes generating Jekyll blog as
+     easy as typing couple commands. Alula takes care of optimizing, handling all assets for you.}
+  gem.homepage      = "http://owlforestry.github.com/alula"
 
   gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   gem.files         = `git ls-files`.split("\n")
@@ -23,6 +24,4 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'coffee-script'
   gem.add_dependency 'uglifier'
   gem.add_dependency 'activesupport'
-
-  gem.add_dependency 'pry'
 end

@@ -1,8 +1,12 @@
 require 'thor'
+require 'alula/site'
 
 module Alula
   class CLI < Thor
     include Thor::Actions
+    
+    source_root File.expand_path(File.join(File.dirname(__FILE__), *%w[.. .. template]))
+    
     
     desc "init [PATH]", "Creates a new aLula blog in given path or current directory"
     def init(path = ".")
@@ -32,6 +36,9 @@ Bundler.require(:default)
 require 'alula/tasks'
 EOF
       end
+      
+      # Create config
+      template "config.yml.erb", File.join(path, "config.yml")
       
       # Initialize system
       inside File.join(path) do
