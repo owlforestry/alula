@@ -2,6 +2,11 @@
 
 $:.unshift File.join(File.dirname(__FILE__), *%w[.. lib])
 
-require 'alula/cli'
+# Are we in Alula blog
+if File.exists?("Rakefile") and File.read("Rakefile") =~ /alula/
+  require 'bundler/setup'
+  Bundler.require(:default)
+end  
 
+require 'alula/cli'
 Alula::CLI.start
