@@ -40,7 +40,14 @@ module Alula
       default "scripts"
       
       def content(asset)
-        "<script type=\"text/javascript\" src=\"#{asset}\"></script>"
+        if File.size(File.join("public", asset)) < 10
+          content = File.read(File.join("public", asset))
+          unless content == ";"
+            "<script type=\"text/javascript\">#{content}</script>"
+          end
+        else
+          "<script type=\"text/javascript\" src=\"#{asset}\"></script>"
+        end
       end
     end
     

@@ -202,19 +202,15 @@ module Alula
       
       # Package javascript
       File.open(File.join("_tmp", "assets", "scripts.js"), "w") do |tf|
-        tf.puts "/*"
-        tf.puts " *=require #{@config["theme"]}"
+        tf.puts "//=require #{@config["theme"]}"
         # Plugins
-        @config["plugins"].each { |plugin, opts| tf.puts " *=require #{plugin}" }
-        tf.puts " */"
+        @config["plugins"].each { |plugin, opts| tf.puts "//=require #{plugin}" }
       end
 
       File.open(File.join("_tmp", "assets", "scripts_body.js"), "w") do |tf|
-        tf.puts "/*"
-        tf.puts " *=require #{@config["theme"]}_body"
+        tf.puts "//=require #{@config["theme"]}_body"
         # Plugins
-        @config["plugins"].each { |plugin, opts| tf.puts " *=require #{plugin}_body" }
-        tf.puts " */"
+        @config["plugins"].each { |plugin, opts| tf.puts "//=require #{plugin}_body" }
       end
       
       
@@ -237,6 +233,11 @@ module Alula
       
       # Inject our manifest to jekyll
       @jekyll.config["manifest"] = @manifest
+      
+      # Cleanup
+      %w{styles.css scripts.js scripts_body.js}.each do |f|
+        FileUtils.rm(File.join("_tmp", "assets", f))
+      end
     end
     
     def process
