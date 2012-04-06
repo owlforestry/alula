@@ -31,6 +31,12 @@ module Alula
         site = Alula::Site.new("asset_compress" => true)
         site.generate
       end
+      
+      desc "Starts preview server in deployment mode"
+      task :preview_publish do
+        site = Alula::Site.new("asset_compress" => true)
+        site.preview
+      end
     end
   end
 end
