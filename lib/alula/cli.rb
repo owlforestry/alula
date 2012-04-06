@@ -15,30 +15,10 @@ module Alula
         empty_directory File.join(path, dir)
       end
       
-      # Create Gemfile
-      create_file File.join(path, "Gemfile") do
-        <<EOF
-source :rubygems
-
-gem "alula"
-gem "alula-plugins"
-gem "alula-themes"
-EOF
+      # Insert templates
+      %w{Gemfile config.yml}.each do |tpl|
+        template "#{tpl}.erb" File.join(path, tpl)
       end
-      
-      # Create Rakefile
-      create_file File.join(path, "Rakefile")  do
-        <<EOF
-require 'rubygems'
-require "bundler/setup"
-Bundler.require(:default)
-
-require 'alula/tasks'
-EOF
-      end
-      
-      # Create config
-      template "config.yml.erb", File.join(path, "config.yml")
       
       # Initialize system
       inside File.join(path) do
@@ -46,6 +26,29 @@ EOF
       end
     end
     
+    desc "generate", "Generates blog"
+    method_option :development, :type => :boolean, :default => true,
+      :desc => "Generate site using development settings. Keeps all assets and HTML uncompressed."
+    method_option :production, :type => :boolean, :default => false,
+      :desc => "Generate site suing production settings. Compresses all assets and HTML."
+    def generate
+      site = Alula::Site.new("asset_compress" => (!options["development"] or options["production"]))
+      site.generate
+    end
+
+    desc "preview", "Preview blog"
+    method_option :development, :type => :boolean, :default => true,
+      :desc => "Preview site using development settings. Keeps all assets and HTML uncompressed."
+    method_option :production, :type => :boolean, :default => false,
+      :desc => "Preview site suing production settings. Compresses all assets and HTML."
+    def preview
+      site = Alula::Site.new("asset_compress" => (!options["development"] or options["production"]))
+      site.preview
+    end
     
+    desc "attach POST ASSET", "Attached given asset, photo or video to given post"
+    def attach(post, asset)
+      puts "Hii haa"
+    end
   end
 end
