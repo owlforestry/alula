@@ -16,17 +16,17 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = Alula::VERSION
   
-  gem.add_dependency 'jekyll'
-  gem.add_dependency 'sprockets'
-  gem.add_dependency 'thor'
-  gem.add_dependency 'rmagick'
-  gem.add_dependency 'sass'
-  gem.add_dependency 'coffee-script'
-  gem.add_dependency 'uglifier'
-  gem.add_dependency 'front-compiler'
-  gem.add_dependency 'activesupport'
-  gem.add_dependency 'ruby-progressbar'
+  gem.add_dependency 'jekyll', '~> 0.11.2'
+  gem.add_dependency 'sprockets', '~> 2.4.0'
+  gem.add_dependency 'thor', '~> 0.14.6'
+  gem.add_dependency 'rmagick', '~> 2.13.1'
+  gem.add_dependency 'sass', '~> 3.1.15'
+  gem.add_dependency 'coffee-script', '~> 2.2.0'
+  gem.add_dependency 'uglifier', '~> 1.2.4'
+  gem.add_dependency 'front-compiler', '~> 1.1.0'
+  gem.add_dependency 'activesupport', '~> 3.2.3'
+  gem.add_dependency 'ruby-progressbar', '~> 0.0.10'
 
-  gem.add_development_dependency 'version'
-  gem.add_development_dependency 'pry'
+  gem.add_development_dependency 'version', '~> 1.0.0'
+  gem.add_development_dependency 'pry', '~> 0.9.8.4'
 end
