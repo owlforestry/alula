@@ -4,8 +4,8 @@ require File.expand_path('../lib/alula/themes/version', __FILE__)
 Gem::Specification.new do |gem|
   gem.authors       = ["Mikko Kokkonen"]
   gem.email         = ["mikko@mikian.com"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
+  gem.description   = %q{Beatiful themes for Alula}
+  gem.summary       = %q{Ready to use themes for Alula blogs.}
   gem.homepage      = ""
 
   gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
@@ -14,4 +14,6 @@ Gem::Specification.new do |gem|
   gem.name          = "alula-themes"
   gem.require_paths = ["lib"]
   gem.version       = Alula::Themes::VERSION
+  
+  gem.add_dependency 'alula'
 end
