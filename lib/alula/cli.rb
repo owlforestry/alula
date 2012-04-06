@@ -17,7 +17,7 @@ module Alula
       
       # Insert templates
       %w{Gemfile config.yml}.each do |tpl|
-        template "#{tpl}.erb" File.join(path, tpl)
+        template "#{tpl}.erb", File.join(path, tpl)
       end
       
       # Initialize system
@@ -47,8 +47,8 @@ module Alula
     end
     
     desc "attach POST ASSET", "Attached given asset, photo or video to given post"
-    def attach(post, asset)
-      puts "Hii haa"
+    def attach(post, *asset)
+      puts "Adding to post #{post} assets #{asset.inspect}"
     end
   end
 end
