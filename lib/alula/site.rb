@@ -1,13 +1,13 @@
 require 'yaml'
 require 'jekyll'
 require 'sprockets'
-require 'RMagick'
 require 'active_support/inflector/methods'
 require 'progressbar'
 require 'stringex'
 
 require 'alula/theme'
-require 'alula/plugin'
+require 'alula/plugins'
+require 'alula/assethelper'
 
 # Compressors
 require 'alula/compressors'
@@ -15,6 +15,7 @@ require 'alula/compressors'
 # Jekyll extensions, plugins, tags
 # These are used always in every blog, i.e. mandatory plugins
 require 'alula/plugins/assets'
+require 'alula/plugins/pagination'
 
 module Alula
   class Site
@@ -71,7 +72,7 @@ module Alula
       @sprockets.append_path File.join("_tmp", "assets")
       
       # Attachments
-      @sprockets.append_path File.join("attachments")
+      @sprockets.append_path File.join("attachments", "_generated")
       
       # Vendor assets
       vendor_path = File.expand_path(File.join(File.dirname(__FILE__), *%w{.. .. vendor}))
@@ -79,13 +80,15 @@ module Alula
       @sprockets.append_path File.join(vendor_path, "javascripts")
       
       # Initialize blog plugins
-      @config["plugins"].each do |plugin, opts|
-        require "alula/plugins/#{plugin}"
+      if @config["plugins"] != nil
+        @config["plugins"].each do |plugin, opts|
+          require "alula/plugins/#{plugin}"
         
-        plugin_class = Alula::Plugins.const_get(ActiveSupport::Inflector.camelize(plugin, true))
-        path = plugin_class.install(opts)
-        @sprockets.append_path File.join(path, "stylesheets")
-        @sprockets.append_path File.join(path, "javascripts")
+          plugin_class = Alula::Plugins.const_get(ActiveSupport::Inflector.camelize(plugin, true))
+          path = plugin_class.install(opts)
+          @sprockets.append_path File.join(path, "stylesheets")
+          @sprockets.append_path File.join(path, "javascripts")
+        end
       end
     end
     
@@ -137,55 +140,32 @@ module Alula
       post = find_post(a_post) or raise "Cannot find post #{a_post}"
       
       /(?<date>(\d{4}-\d{2}-\d{2}))/ =~ post
-      # require 'pry';binding.pry
       date = Time.parse(date)
-      
-      width, height = @config["images"]["size"].split("x").collect {|i| i.to_i }
       asset_path = File.join(%w{%Y %m %d}.collect{|f| date.strftime(f) })
-      file_path = File.join("attachments", "_originals", asset_path)
-      FileUtils.mkdir_p(file_path)
       
-      processed = []
+      helper = Alula::AssetHelper.new(asset_path, @config)
       
       post_io = File.open(post, "a")
-      
-      # Generate assets
-      image_types = [".jpg", ".png"]
       assets.each do |asset|
-        asset_ext = File.extname(asset).downcase
-        asset_base = File.basename(asset).downcase
-        asset_plain = File.basename(asset, asset_ext).to_url
-        
-        if image_types.include?(asset_ext)
-          img = Magick::Image.read(asset).first
-          orig_w, orig_h = img.columns, img.rows
-          
-          img_normal = img.resize_to_fit(width, height)
-          img_normal.write(File.join(file_path, "#{asset_plain}#{asset_ext}"))
-          img_normal = nil
-          
-          if (@config["images"]["retina"] and (orig_w > width * 2) or (orig_h > height * 2))
-            img_retina = img.resize_to_fit(width * 2, height * 2)
-            retina_fname = File.join(file_path, "#{asset_plain}_2x#{asset_ext}")
-            img_retina.write(retina_fname)
-            img_retina = nil
-          end
-          
-          processed << File.join(asset_path, asset_base)
-          
-          if @config["plugins"].keys.include?("lightbox")
-            post_io.puts "{% lightbox #{File.join(asset_path, "#{asset_plain}#{asset_ext}")} %}"
+        type, generated = helper.process(asset, :type => :attachment)
+        tn_type, tn_generated = helper.process(asset, :type => :thumbnail)
+        if generated and tn_generated
+          # Asset processed
+          puts "(#{asset}) done."
+          if handler = Alula::Plugins.attachment_handler(type)
+            post_io.puts handler.call(generated[0])
           else
-            post_io.puts "{% image #{File.join("_originals", asset_path, "#{asset_plain}#{asset_ext}")} %}"
+            post_io.puts "{% image _images/#{generated[0]} %}"
           end
+        else
+          puts "(#{asset}) cannot process."
         end
       end
-      
-      post_io.close
     end
     
     def clean
       cleanup
+      FileUtils.rm_rf(Dir[File.join("attachments", "_images", "*")])
       FileUtils.rm_rf(Dir[File.join("attachments", "_thumbnails", "*")])
     end
     
@@ -228,7 +208,13 @@ module Alula
       FileUtils.cp_r Dir[File.join("posts", "*")], File.join("_tmp", "_posts")
       
       # Copy pages
-      FileUtils.cp_r Dir[File.join("pages", "**", "*")], File.join("_tmp")
+      Dir[File.join("pages", "**", "*")].each do |page|
+        next unless File.file?(page)
+        page = File.join(page.split("/")[1..-1])
+        
+        FileUtils.mkdir_p File.join("_tmp", File.dirname(page))
+        FileUtils.cp File.join("pages", page), File.join("_tmp", page)
+      end
       
       FileUtils.mkdir_p File.join("_tmp", "assets")
     end
@@ -239,23 +225,31 @@ module Alula
       width, height = @config["images"]["thumbnails"].split("x").collect {|i| i.to_i }
       
       # Get all attachements
-      originals_path = File.join("attachments", "_originals")
-      thumbnails_path = File.join("attachments", "_thumbnails")
+      images_path = File.join("attachments", "_generated", "images")
+      thumbnails_path = File.join("attachments", "_generated", "thumbnails")
       
-      assets = Dir[File.join(originals_path, "**", "*")]
+      assets = Dir[File.join(images_path, "**", "*")]
         .select {|f| File.file?(f) }
-        .collect {|f| File.join(f.split("/")[2..-1])}
+        .collect {|f| File.join(f.split("/")[3..-1])}
       pb = ProgressBar.new "Assets", assets.count
+      # helper = Alula::AssetHelper.new(asset_path, @config)
       
-      assets.each do |original|
-        unless File.exists?(File.join(thumbnails_path, original))
-          image = Magick::Image.read(File.join(originals_path, original)).first
-          image.crop_resized!(width, height, Magick::NorthGravity)
-          FileUtils.mkdir_p File.dirname(File.join(thumbnails_path, original))
-          image.write(File.join(thumbnails_path, original))
+      assets.each do |asset|
+        unless File.exists?(File.join(thumbnails_path, asset))
+          helper = Alula::AssetHelper.new(File.dirname(asset), @config)
+          tn_type, tn_generated = helper.process(File.join("attachments", "originals", asset), :type => :thumbnail)
+          pb.inc
         end
-        pb.inc
       end
+      # assets.each do |original|
+      #   unless File.exists?(File.join(thumbnails_path, original))
+      #     image = Magick::Image.read(File.join(originals_path, original)).first
+      #     image.crop_resized!(width, height, Magick::NorthGravity)
+      #     FileUtils.mkdir_p File.dirname(File.join(thumbnails_path, original))
+      #     image.write(File.join(thumbnails_path, original))
+      #   end
+      #   pb.inc
+      # end
       
       pb.finish
     end
@@ -268,7 +262,9 @@ module Alula
         tf.puts "/*"
         tf.puts " *=require #{@config["theme"]}"
         # Plugins
-        @config["plugins"].each { |plugin, opts| tf.puts " *=require #{plugin}" }
+        if @config["plugins"]
+          @config["plugins"].each { |plugin, opts| tf.puts " *=require #{plugin}" }
+        end
         tf.puts " */"
       end
       
@@ -276,13 +272,17 @@ module Alula
       File.open(File.join("_tmp", "assets", "scripts.js"), "w") do |tf|
         tf.puts "//=require #{@config["theme"]}"
         # Plugins
-        @config["plugins"].each { |plugin, opts| tf.puts "//=require #{plugin}" }
+        if @config["plugins"]
+          @config["plugins"].each { |plugin, opts| tf.puts "//=require #{plugin}" }
+        end
       end
 
       File.open(File.join("_tmp", "assets", "scripts_body.js"), "w") do |tf|
         tf.puts "//=require #{@config["theme"]}_body"
         # Plugins
-        @config["plugins"].each { |plugin, opts| tf.puts "//=require #{plugin}_body" }
+        if @config["plugins"]
+          @config["plugins"].each { |plugin, opts| tf.puts "//=require #{plugin}_body" }
+        end
       end
       
       
