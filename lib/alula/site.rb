@@ -5,6 +5,7 @@ require 'active_support/inflector/methods'
 require 'progressbar'
 require 'stringex'
 
+require 'alula/config'
 require 'alula/theme'
 require 'alula/plugins'
 require 'alula/assethelper'
@@ -24,7 +25,8 @@ module Alula
     
     def initialize(override = {})
       # Load configuration
-      @config = YAML.load_file('config.yml').deep_merge(override)
+      Alula::Config.init(override)
+      @config = Alula::Config.fetch
       
       # Register local theme path
       Alula::Theme.register("themes")
