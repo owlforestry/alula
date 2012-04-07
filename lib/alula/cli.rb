@@ -1,5 +1,6 @@
 require 'thor'
 require 'alula/site'
+require 'yaml'
 
 module Alula
   class CLI < Thor
@@ -10,10 +11,10 @@ module Alula
     
     desc "init [PATH]", "Creates a new aLula blog in given path or current directory"
     def init(path = ".")
-      # Create directory structure
-      %w{attachments attachments/originals attachments/_generated/images attachments/_generated/_thumbnails posts pages}.each do |dir|
-        empty_directory File.join(path, dir)
-      end
+      @path = path
+      
+      # Init directories
+      init_directories
       
       # Insert templates
       %w{Gemfile config.yml}.each do |tpl|
@@ -24,6 +25,14 @@ module Alula
       inside File.join(path) do
         run "bundle install"
       end
+    end
+    
+    desc "upgrade", "Upgrades your Alula blog to newest version"
+    def upgrade
+      # Init directories
+      init_directories
+      
+      
     end
     
     desc "generate", "Generates blog"
@@ -56,6 +65,47 @@ module Alula
     def clean
       site = Alula::Site.new
       site.clean
+    end
+    
+    private
+    def init_directories
+      # Create directory structure
+      %w{attachments attachments/originals posts pages}.each do |dir|
+        empty_directory File.join(@path, dir)
+      end
+    end
+    
+    def default_config
+      default     = {
+        "author"  => "Your Name",
+        "title"   => "My Blog",
+        "tagline" => "Yet Another Blog",
+        "theme"   => "minimal",
+        
+        "images"       => {
+          "size"       => "800x600",
+          "thumbnails" => "300x300",
+          "retina"     => true,
+        },
+        
+        "root"           => "/",
+        "permalink"      => "/:year/:month/:title",
+        "paginate"       => 10,
+        "pagination_dir" => "/page",
+        "excerpt_link"   => "Read on &rarr;",
+        "plugins"        => {
+          "lightbox"     => {},
+        }
+      }
+      
+      if File.exists?(File.join(@path, "config.yml"))
+        if blog_config = YAML.load_file(File.join(@path, "config.yml"))
+          # Place for mirgating settings
+          default = default.deep_merge(blog_config)
+        end
+      end
+      
+      default
     end
   end
 end

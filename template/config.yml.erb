@@ -1,38 +1,38 @@
 # Alula Blog
 
 # Author of this blog
-author: YOUR NAME
+author: <%= default_config["author"] %>
 
 # Blog main title
-title: BLOG TITLE
+title: <%= default_config["title"] %>
 
 # Subtitle, tagline
-tagline: BLOG TAGLINE
+tagline: <%= default_config["tagline"] %>
 
 # Chosed theme
-theme: minimal
+theme: <%= default_config["theme"] %>
 
 # Options for image settings
 images:
-  size: 800x600			# Resize photos to this size
-  thumbnails: 300x300	# # Thumbnail size (width x height)
-  retina: true			# Generate photos for retina displays
+  size: <%= default_config["images"]["size"] %>			# Resize photos to this size
+  thumbnails: <%= default_config["images"]["thumbnails"] %>	# # Thumbnail size (width x height)
+  retina: <%= default_config["images"]["retina"] %>			# Generate photos for retina displays
 
 # Root URL, if you host blog in directory, fix this according
-root: /
+root: <%= default_config["root"] %>
 
 # Permalinks style
-permalink: /:year/:month/:title
+permalink: "<%= default_config["permalink"] %>"
 
 # Posts per page on the blog index
-paginate: 10
+paginate: <%= default_config["paginate"] %>
 
 # Directory base for pagination URLs eg. /blog/page/2/
-pagination_dir:
+pagination_dir: <%= default_config["pagination_dir"] %>
 
 # "Continue reading" link text at the bottom of excerpted articles
-excerpt_link: "Read on &rarr;"
+excerpt_link: "<%= default_config["excerpt_link"] %>"
 
 # Plugins
 plugins:
-  lightbox:
+<%= default_config["plugins"].to_yaml.split("\n")[1..-1].collect{|l| "  #{l}"}.join("\n") %>
