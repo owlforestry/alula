@@ -51,10 +51,5 @@ module Alula
       site = Alula::Site.new
       site.asset_attach(post, assets)
     end
-    
-    desc "hello"
-    def hello
-      say "Hello world."
-    end
   end
 end
