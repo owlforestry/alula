@@ -14,21 +14,27 @@ module Alula
       options = @options.deep_merge(options)
       
       # Resolve our asset type
-      ext = File.extname(asset)[1..-1].downcase
+      ext = File.extname(asset)[1..-1] || ""
       
-      if IMAGES.include?(ext)
+      if IMAGES.include?(ext.downcase)
         [:image, process_image(asset, options)]
-      elsif MOVIES.include?(ext)
+      elsif MOVIES.include?(ext.downcase)
         [:movie, process_movie(asset, options)]
       else
-        raise "Unknown asset type #{ext} for #{asset}"
+        puts "Unknown asset type #{ext} for #{asset}"
+        false
       end
     end
     
     private
     def process_image(asset, options)
       ext = File.extname(asset)[1..-1].downcase
-      name = File.basename(asset, ext).to_url
+      name = case options[:keepcase]
+      when true
+        File.basename(asset, ".#{ext}")
+      else
+        File.basename(asset, ".#{ext}").to_url
+      end
       generated = []
       
       # Resolve size for new photo

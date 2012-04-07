@@ -237,12 +237,12 @@ module Alula
       attachments.each do |attachment|
         unless File.exists?(File.join(images_path, attachment))
           helper = Alula::AssetHelper.new(File.dirname(attachment), @config)
-          type, generated = helper.process(File.join("attachments", "originals", attachment), :type => :attachment)
+          type, generated = helper.process(File.join("attachments", "originals", attachment), :type => :attachment, :keepcase => true)
         end
         
         unless File.exists?(File.join(thumbnails_path, attachment))
           helper = Alula::AssetHelper.new(File.dirname(attachment), @config)
-          tn_type, tn_generated = helper.process(File.join("attachments", "originals", attachment), :type => :thumbnail)
+          tn_type, tn_generated = helper.process(File.join("attachments", "originals", attachment), :type => :thumbnail, :keepcase => true)
         end
         
         pb.inc
