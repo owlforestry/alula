@@ -180,6 +180,11 @@ module Alula
       post_io.close
     end
     
+    def clean
+      cleanup
+      FileUtils.rm_rf(Dir[File.join("attachments", "_thumbnails", "*")])
+    end
+    
     private
     def find_post(post)
       if File.exists?(post)

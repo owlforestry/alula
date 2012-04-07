@@ -51,5 +51,11 @@ module Alula
       site = Alula::Site.new
       site.asset_attach(post, assets)
     end
+    
+    desc "clean", "Clean up all generated content"
+    def clean
+      site = Alula::Site.new
+      site.clean
+    end
   end
 end
