@@ -30,7 +30,7 @@ module Alula
     method_option :development, :type => :boolean, :default => true,
       :desc => "Generate site using development settings. Keeps all assets and HTML uncompressed."
     method_option :production, :type => :boolean, :default => false,
-      :desc => "Generate site suing production settings. Compresses all assets and HTML."
+      :desc => "Generate site using production settings. Compresses all assets and HTML."
     def generate
       site = Alula::Site.new("asset_compress" => (!options["development"] or options["production"]))
       site.generate
