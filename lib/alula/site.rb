@@ -29,11 +29,7 @@ module Alula
       Alula::Theme.register("themes")
       
       # Initialize Jekyll
-      options         = Jekyll::DEFAULTS.deep_merge({
-        'source'      => '_tmp',
-        'destination' => 'public',
-        'markdown'    => 'kramdown',
-        
+      options         = Alula::DEFAULTS.deep_merge({
         # Site options
         'title'          => @config["title"],
         'tagline'        => @config["tagline"],
@@ -320,4 +316,12 @@ module Alula
       FileUtils.rm_rf "_tmp"
     end
   end
+  
+  DEFAULTS = Jekyll::DEFAULTS.deep_merge({
+    'source'      => '_tmp',
+    'destination' => 'public',
+    'markdown'    => 'kramdown',
+    
+    'pagination_dir' => '/page/',
+  })
 end
