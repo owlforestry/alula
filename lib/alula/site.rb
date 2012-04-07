@@ -222,35 +222,32 @@ module Alula
     def assetgen
       puts "==> Generating assets"
       
-      width, height = @config["images"]["thumbnails"].split("x").collect {|i| i.to_i }
+      # width, height = @config["images"]["thumbnails"].split("x").collect {|i| i.to_i }
       
       # Get all attachements
+      attachments_path = File.join("attachments", "originals")
       images_path = File.join("attachments", "_generated", "images")
       thumbnails_path = File.join("attachments", "_generated", "thumbnails")
       
-      assets = Dir[File.join(images_path, "**", "*")]
+      attachments = Dir[File.join(attachments_path, "**", "*")]
         .select {|f| File.file?(f) }
-        .collect {|f| File.join(f.split("/")[3..-1])}
-      pb = ProgressBar.new "Assets", assets.count
-      # helper = Alula::AssetHelper.new(asset_path, @config)
+        .collect {|f| File.join(f.split("/")[2..-1])}
+      pb = ProgressBar.new "Assets", attachments.count
       
-      assets.each do |asset|
-        unless File.exists?(File.join(thumbnails_path, asset))
-          helper = Alula::AssetHelper.new(File.dirname(asset), @config)
-          tn_type, tn_generated = helper.process(File.join("attachments", "originals", asset), :type => :thumbnail)
-          pb.inc
+      attachments.each do |attachment|
+        unless File.exists?(File.join(images_path, attachment))
+          helper = Alula::AssetHelper.new(File.dirname(attachment), @config)
+          type, generated = helper.process(File.join("attachments", "originals", attachment), :type => :attachment)
         end
+        
+        unless File.exists?(File.join(thumbnails_path, attachment))
+          helper = Alula::AssetHelper.new(File.dirname(attachment), @config)
+          tn_type, tn_generated = helper.process(File.join("attachments", "originals", attachment), :type => :thumbnail)
+        end
+        
+        pb.inc
       end
-      # assets.each do |original|
-      #   unless File.exists?(File.join(thumbnails_path, original))
-      #     image = Magick::Image.read(File.join(originals_path, original)).first
-      #     image.crop_resized!(width, height, Magick::NorthGravity)
-      #     FileUtils.mkdir_p File.dirname(File.join(thumbnails_path, original))
-      #     image.write(File.join(thumbnails_path, original))
-      #   end
-      #   pb.inc
-      # end
-      
+
       pb.finish
     end
     

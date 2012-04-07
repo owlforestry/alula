@@ -49,7 +49,7 @@ module Alula
       FileUtils.mkdir_p(file_path)
       
       # Copy asset to originals
-      if options[:type] == :attachment
+      if options[:type] == :attachment and !File.exists?(File.join("attachments", "originals", @asset_path, "#{name}.#{ext}"))
         FileUtils.mkdir_p File.join("attachments", "originals", @asset_path)
         FileUtils.cp asset, File.join("attachments", "originals", @asset_path, "#{name}.#{ext}")
       end
