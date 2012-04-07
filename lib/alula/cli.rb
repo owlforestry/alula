@@ -11,7 +11,7 @@ module Alula
     desc "init [PATH]", "Creates a new aLula blog in given path or current directory"
     def init(path = ".")
       # Create directory structure
-      %w{attachments attachments/_originals attachments/_thumbnails posts}.each do |dir|
+      %w{attachments attachments/_originals attachments/_thumbnails posts pages}.each do |dir|
         empty_directory File.join(path, dir)
       end
       

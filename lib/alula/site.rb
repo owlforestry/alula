@@ -218,6 +218,9 @@ module Alula
       FileUtils.mkdir_p File.join("_tmp", "_posts")
       FileUtils.cp_r Dir[File.join("posts", "*")], File.join("_tmp", "_posts")
       
+      # Copy pages
+      FileUtils.cp_r Dir[File.join("pages", "**", "*")], File.join("_tmp")
+      
       FileUtils.mkdir_p File.join("_tmp", "assets")
     end
     
