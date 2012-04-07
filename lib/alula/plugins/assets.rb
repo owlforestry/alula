@@ -1,6 +1,6 @@
 module Alula
   module Plugins
-    class GenericAsset < Liquid::Tag
+    class CommonAsset < Liquid::Tag
       def self.type(type)
         define_method(:type) { type }
       end
@@ -24,7 +24,7 @@ module Alula
       end
     end
     
-    class StylesheetAsset < GenericAsset
+    class StylesheetAsset < CommonAsset
       type :css
       default :styles
       
@@ -33,7 +33,7 @@ module Alula
       end
     end
 
-    class JavascriptAsset < GenericAsset
+    class JavascriptAsset < CommonAsset
       type :js
       default "scripts"
       
@@ -49,7 +49,7 @@ module Alula
       end
     end
     
-    class ImageAsset < GenericAsset
+    class ImageAsset < CommonAsset
       def initialize(tag_name, markup, tokens)
         /(?<src>(?:https?:\/\/|\/|\S+\/)\S+)(?<title>\s+.+)/ =~ markup
         /(?:"|')(?<title>[^"']+)?(?:"|')\s+(?:"|')(?<alt>[^"']+)?(?:"|')/ =~ title
@@ -74,7 +74,7 @@ module Alula
       end
     end
     
-    class VideoAsset < GenericAsset
+    class VideoAsset < CommonAsset
       def initialize(tag_name, markup, tokens)
         # /(?<src>(?:https?:\/\/|\/|\S+\/)\S+)(?<title>\s+.+)/ =~ markup
         # /(?:"|')(?<title>[^"']+)?(?:"|')\s+(?:"|')(?<alt>[^"']+)?(?:"|')/ =~ title
@@ -100,10 +100,20 @@ module Alula
         "<!-- VIDEO: @markup -->"
       end
     end
+
+    class GenericAsset < Liquid::Tag
+      def initialize(tag_name, markup, tokens)
+        super
+      end
+      
+      def render(context)
+        require 'pry';binding.pry
+      end
+    end
   end
 end
 
-
+Liquid::Template.register_tag('asset_url', Alula::Plugins::GenericAsset)
 Liquid::Template.register_tag('stylesheet_link', Alula::Plugins::StylesheetAsset)
 Liquid::Template.register_tag('javascript_link', Alula::Plugins::JavascriptAsset)
 Liquid::Template.register_tag('image', Alula::Plugins::ImageAsset)

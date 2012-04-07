@@ -54,6 +54,25 @@ module Alula
       
       # Initialize Sprockets
       @sprockets = Sprockets::Environment.new
+      
+      # Append our helpers
+      @sprockets.context_class.class_eval do
+        def asset_url(asset)
+          # require 'pry';binding.pry
+          unless manifest.assets[asset]
+            manifest.compile(asset)
+          end
+          File.join(jekyll.config["asset_path"], manifest.assets[asset])
+        end
+        
+        def manifest; @@manifest; end
+        def self.manifest=(manifest); @@manifest = manifest; end
+
+        def jekyll; @@jekyll; end
+        def self.jekyll=(manifest); @@jekyll = manifest; end
+
+      end
+      
       # Set our compressor
       if @config['asset_compress']
         @sprockets.css_compressor = Alula::Compressors::CSSCompressor.new
@@ -69,6 +88,7 @@ module Alula
       # Add theme to asset paths
       @sprockets.append_path File.join(@themepath, @config['theme'], "stylesheets")
       @sprockets.append_path File.join(@themepath, @config['theme'], "javascripts")
+      @sprockets.append_path File.join(@themepath, @config['theme'], "assets")
 
       # Generated assets
       @sprockets.append_path File.join("_tmp", "assets")
@@ -286,6 +306,8 @@ module Alula
       
       
       @manifest = Sprockets::Manifest.new(@sprockets, File.join("public", "assets"))
+      @sprockets.context_class.manifest = @manifest
+      @sprockets.context_class.jekyll = @jekyll      
 
       # Compile assets
       @manifest.compile
