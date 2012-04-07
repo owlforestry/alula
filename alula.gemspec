@@ -29,5 +29,4 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'ruby-progressbar', '~> 0.0.10'
 
   gem.add_development_dependency 'version', '~> 1.0.0'
-  gem.add_development_dependency 'pry', '~> 0.9.8.4'
 end
