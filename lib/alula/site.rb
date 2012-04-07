@@ -132,13 +132,15 @@ module Alula
         t.join()
     end
     
-    def asset_attach(post, assets)
+    def asset_attach(a_post, assets)
       # Find the post
-      post = find_post(post)
-      post =~ /(?<date>(\d{4}-\d{2}-\d{2}))/
+      post = find_post(a_post) or raise "Cannot find post #{a_post}"
+      
+      /(?<date>(\d{4}-\d{2}-\d{2}))/ =~ post
+      # require 'pry';binding.pry
       date = Time.parse(date)
       
-      width, height = @config["images"].split("x").collect {|i| i.to_i }
+      width, height = @config["images"]["size"].split("x").collect {|i| i.to_i }
       asset_path = File.join(%w{%Y %m %d}.collect{|f| date.strftime(f) })
       file_path = File.join("attachments", "_originals", asset_path)
       FileUtils.mkdir_p(file_path)
@@ -152,28 +154,30 @@ module Alula
       assets.each do |asset|
         asset_ext = File.extname(asset).downcase
         asset_base = File.basename(asset).downcase
-        asset_plain = File.basename(asset, asset_ext)
+        asset_plain = File.basename(asset, asset_ext).to_url
         
         if image_types.include?(asset_ext)
           img = Magick::Image.read(asset).first
+          orig_w, orig_h = img.columns, img.rows
+          
           img_normal = img.resize_to_fit(width, height)
-          img_normal.write(File.join(file_path, asset_base))
+          img_normal.write(File.join(file_path, "#{asset_plain}#{asset_ext}"))
           img_normal = nil
           
-          img_retina = img.resize_to_fit(width * 2, height * 2)
-          retina_fname = File.join(file_path, "#{asset_plain}_2x#{asset_ext}")
-          img_retina.write(retina_fname)
-          img_retina = nil
+          if (@config["images"]["retina"] and (orig_w > width * 2) or (orig_h > height * 2))
+            img_retina = img.resize_to_fit(width * 2, height * 2)
+            retina_fname = File.join(file_path, "#{asset_plain}_2x#{asset_ext}")
+            img_retina.write(retina_fname)
+            img_retina = nil
+          end
           
           processed << File.join(asset_path, asset_base)
           
           if @config["plugins"].keys.include?("lightbox")
-            post_io.puts "{% lightbox #{File.join(asset_path, asset_base)} %}"
+            post_io.puts "{% lightbox #{File.join(asset_path, "#{asset_plain}#{asset_ext}")} %}"
           else
-            post_io.puts "{% image #{File.join("_originals", asset_path, asset_base)} %}"
+            post_io.puts "{% image #{File.join("_originals", asset_path, "#{asset_plain}#{asset_ext}")} %}"
           end
-          
-          puts "Asset generated: #{asset_base} (normal, retina)"
         end
       end
       
@@ -194,7 +198,7 @@ module Alula
       else
         # Try to find by title
         title = post.to_url
-        posts = Dir[File.join("posts", "*")].select { |p| p =~ /title/ }
+        posts = Dir[File.join("posts", "*")].select { |p| p =~ /#{title}/ }
         if posts.count == 1
           return posts.first
         end
@@ -232,7 +236,7 @@ module Alula
     def assetgen
       puts "==> Generating assets"
       
-      width, height = @config["thumbnails"].split("x").collect {|i| i.to_i }
+      width, height = @config["images"]["thumbnails"].split("x").collect {|i| i.to_i }
       
       # Get all attachements
       originals_path = File.join("attachments", "_originals")
