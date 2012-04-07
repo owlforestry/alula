@@ -2,7 +2,7 @@ require 'RMagick'
 
 module Alula
   class AssetHelper
-    IMAGES = %w{jpg png gif}
+    IMAGES = %w{jpeg jpg png gif}
     MOVIES = %w{mp4}
     
     def initialize(asset_path, options)
