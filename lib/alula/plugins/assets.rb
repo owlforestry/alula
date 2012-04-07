@@ -73,6 +73,33 @@ module Alula
         "<img src=\"#{asset}\" alt=\"#{@alt}\" title=\"#{@title}\" width=\"#{width}\" height=\"#{height}\">"
       end
     end
+    
+    class VideoAsset < GenericAsset
+      def initialize(tag_name, markup, tokens)
+        # /(?<src>(?:https?:\/\/|\/|\S+\/)\S+)(?<title>\s+.+)/ =~ markup
+        # /(?:"|')(?<title>[^"']+)?(?:"|')\s+(?:"|')(?<alt>[^"']+)?(?:"|')/ =~ title
+        # 
+        # @name = src
+        # @title = title
+        # @alt = alt
+        @markup = markup
+      end
+
+      def render(context)
+        # asset_path = context.registers[:site].config["asset_path"]
+        # manifest = context.registers[:site].config["manifest"]
+        # 
+        # asset = File.join(asset_path, manifest.assets[@name])
+        # 
+        # # Fetch image size
+        # img = Magick::Image.read(File.join("public", asset)).first
+        # width = img.columns
+        # height = img.rows
+        # 
+        # "<img src=\"#{asset}\" alt=\"#{@alt}\" title=\"#{@title}\" width=\"#{width}\" height=\"#{height}\">"
+        "<!-- VIDEO: @markup -->"
+      end
+    end
   end
 end
 
@@ -80,3 +107,4 @@ end
 Liquid::Template.register_tag('stylesheet_link', Alula::Plugins::StylesheetAsset)
 Liquid::Template.register_tag('javascript_link', Alula::Plugins::JavascriptAsset)
 Liquid::Template.register_tag('image', Alula::Plugins::ImageAsset)
+Liquid::Template.register_tag('video', Alula::Plugins::VideoAsset)
