@@ -1,5 +1,3 @@
-require 'RMagick'
-
 module Alula
   module Plugins
     class GenericAsset < Liquid::Tag
