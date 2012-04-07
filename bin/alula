@@ -4,9 +4,14 @@ $:.unshift File.join(File.dirname(__FILE__), *%w[.. lib])
 
 # Are we in Alula blog
 if File.exists?("Gemfile") and File.read("Gemfile") =~ /alula/
-  require 'bundler/setup'
-  Bundler.require(:default)
-end  
+  # Restart tool from bundle if facing load error (usually older alula already loaded)
+  require 'bundler'
+  begin
+    Bundler.require(:default)
+  rescue LoadError
+    exec "bundle", "exec", "alula", *ARGV
+  end
+end
 
 require 'alula/cli'
 Alula::CLI.start
