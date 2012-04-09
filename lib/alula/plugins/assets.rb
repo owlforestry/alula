@@ -2,13 +2,13 @@ require 'mini_exiftool'
 
 module Alula
   module Plugins
-    class ScriptsForHead < Liquid::Tag
+    class ContentForHead < Liquid::Tag
       def initialize(tag_name, markup, tokens)
         super
       end
       
       def render(context)
-        Alula::Plugins.scripts_for_head
+        Alula::Plugins.content_for_head
       end
     end
     
@@ -136,4 +136,4 @@ Liquid::Template.register_tag('image', Alula::Plugins::ImageAsset)
 Liquid::Template.register_tag('video', Alula::Plugins::VideoAsset)
 
 # Hook for head section scripts
-Liquid::Template.register_tag('scripts_for_head', Alula::Plugins::ScriptsForHead)
+Liquid::Template.register_tag('content_for_head', Alula::Plugins::ContentForHead)

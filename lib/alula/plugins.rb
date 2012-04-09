@@ -12,13 +12,17 @@ module Alula
       @@handlers[:attachment][type]
     end
     
-    def self.register_scripts_for_head(script)
-      @@scripts_for_head ||= ""
-      @@scripts_for_head << script
+    def self.register_content_for_head(content)
+      @@content_for_head ||= ""
+      if content.kind_of?(Array)
+        @@content_for_head << content.join("\n")
+      else
+        @@content_for_head << content
+      end
     end
     
-    def self.scripts_for_head
-      @@scripts_for_head ||= ""
+    def self.content_for_head
+      @@content_for_head ||= ""
     end
   end
 end
