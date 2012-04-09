@@ -3,6 +3,7 @@ require 'alula/helpers/assethelper'
 module Alula
   module Helpers
     class MovieHelper < AssetHelper
+      extensions :mov, :mp4, :avi, :ogg, :webm
       mimetype /^video/
       
       def process

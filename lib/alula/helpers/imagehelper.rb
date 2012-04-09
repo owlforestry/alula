@@ -3,6 +3,7 @@ require 'alula/helpers/assethelper'
 module Alula
   module Helpers
     class ImageHelper < AssetHelper
+      extensions :jpg, :jpeg, :png, :gif
       mimetype /^image/
       
       def process

@@ -34,7 +34,18 @@ module Alula
         end
       end
       
+      def self.extensions(*exts)
+        (class << self; self; end).send(:define_method, "exts") do
+          exts.collect {|e| ".#{e.to_s}" }
+        end
+      end
+      
       def self.identify(file)
+        ext = File.extname(file).downcase
+        if self.exts.include?(ext)
+          return true
+        end
+        
         exif = MiniExiftool.new file
         exif.mimetype.match(mime_re)
       end
