@@ -106,7 +106,7 @@ module Alula
         
         @poster = File.join(asset_path, manifest.assets["thumbnails/#{@name}.png"])
         exif = MiniExiftool.new File.join("public", @srcs.first)
-        tag = "<video #{@style ? "style=\"#{@style}\" " : ""}#{@class ? "class=\"#{@class}\" " : ""}width=\"#{exif.imagewidth}\" height=\"#{exif.imageheight}\" poster=\"#{@poster}\" preload=\"none\">\n"
+        tag = "<video #{@controls ? "controls " : ""}#{@style ? "style=\"#{@style}\" " : ""}#{@class ? "class=\"#{@class}\" " : ""}width=\"#{exif.imagewidth}\" height=\"#{exif.imageheight}\" poster=\"#{@poster}\" preload=\"none\">\n"
         @srcs.each do |src|
           exif = MiniExiftool.new File.join("public", src)
           hd = (exif.imageheight >= 720 or exif.imagewidth >= 720)
