@@ -171,13 +171,20 @@ module Alula
       assets.each do |asset|
         type, generated = helper.process(asset, :type => :attachment)
         tn_type, tn_generated = helper.process(asset, :type => :thumbnail)
-        if generated and tn_generated
+        if generated
           # Asset processed
           puts "(#{asset}) done."
           if handler = Alula::Plugins.attachment_handler(type)
             post_io.puts handler.call(generated[0])
           else
-            post_io.puts "{% image _images/#{generated[0]} %}"
+            case type
+            when :image
+              post_io.puts "{% image _images/#{generated[0]} %}"
+            when :movie
+              post_io.puts "{% video _images/#{generated} %}"
+            else
+              post_io.puts "{% comment %}Unknown asset type #{type}{% endcomment %}"
+            end
           end
         else
           puts "(#{asset}) cannot process."
@@ -259,7 +266,7 @@ module Alula
       attachments.each do |attachment|
         unless File.exists?(File.join(images_path, attachment))
           helper = Alula::AssetHelper.new(File.dirname(attachment), @config)
-          type, generated = helper.process(File.join("attachments", "originals", attachment), :type => :attachment, :keepcase => true)
+          type, generated = helper.process(File.join("attachments", "originals", attachment), :type => :original, :keepcase => true)
         end
         
         unless File.exists?(File.join(thumbnails_path, attachment))
@@ -356,5 +363,9 @@ module Alula
     'markdown'    => 'kramdown',
     
     'pagination_dir' => '/page/',
+    'videos'         => {
+      'size'         => '1280x720',
+      'thumbnails'   => '300x300'.
+    }
   })
 end

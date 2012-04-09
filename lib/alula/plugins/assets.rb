@@ -76,20 +76,30 @@ module Alula
     
     class VideoAsset < CommonAsset
       def initialize(tag_name, markup, tokens)
-        # /(?<src>(?:https?:\/\/|\/|\S+\/)\S+)(?<title>\s+.+)/ =~ markup
-        # /(?:"|')(?<title>[^"']+)?(?:"|')\s+(?:"|')(?<alt>[^"']+)?(?:"|')/ =~ title
-        # 
-        # @name = src
-        # @title = title
-        # @alt = alt
-        @markup = markup
+        /(?:"|')?(?<src>(?:https?:\/\/|\/|\S+\/)[^"]+)(?:"|')?\s+(?:"|')?(?<title>[^"']+)?(?:"|')?\s+/ =~ markup
+        require 'pry';binding.pry
+        @name = src
+        @title = title
       end
 
       def render(context)
-        # asset_path = context.registers[:site].config["asset_path"]
-        # manifest = context.registers[:site].config["manifest"]
-        # 
-        # asset = File.join(asset_path, manifest.assets[@name])
+        asset_path = context.registers[:site].config["asset_path"]
+        manifest = context.registers[:site].config["manifest"]
+        
+        # Try to find all possible variant of video
+        video = File.basename(@name, File.extname(@name))
+        variants = {}
+        [""].each do |variant|
+          variant_name = File.join(File.dirname(@name), "#{video}#{variant.empty? ? "" : "-#{variant}"}")
+          variants[variant] = File.join(asset_path, manifest.assets[variantname])
+        end
+        
+        tag = []
+        tag << "<video>"
+        tag << "<source src=\"#{variants[""]}\">"
+        tag << "</video>"
+        
+        tag.join("\n")
         # 
         # # Fetch image size
         # img = Magick::Image.read(File.join("public", asset)).first
@@ -97,7 +107,7 @@ module Alula
         # height = img.rows
         # 
         # "<img src=\"#{asset}\" alt=\"#{@alt}\" title=\"#{@title}\" width=\"#{width}\" height=\"#{height}\">"
-        "<!-- VIDEO: @markup -->"
+        # "<!-- VIDEO: @markup -->"
       end
     end
 

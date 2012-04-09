@@ -27,6 +27,10 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'activesupport', '~> 3.2'
   gem.add_dependency 'stringex', '~> 1.3'
   gem.add_dependency 'ruby-progressbar', '~> 0.0.10'
+  gem.add_dependency 'aws-sdk'
+  gem.add_dependency 'zencoder'
+  gem.add_dependency 'mini_exiftool', '~> 1.3'
 
   gem.add_development_dependency 'version', '~> 1.0'
+  gem.add_development_dependency 'debugger'
 end
