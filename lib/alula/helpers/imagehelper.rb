@@ -8,14 +8,14 @@ module Alula
       def process
         # Copy original
         if !File.exists?(File.join(@original_path, "#{@name}.#{@ext}"))
-          puts "--> Copying original"
+          # puts "--> Copying original (#{@asset})"
           FileUtils.cp @asset, File.join(@original_path, "#{@name}.#{@ext}")
         end
         
         # Detect if we need to generate full-size image
         full_size = File.join(@image_path, "#{@name}.#{@ext}")
         unless File.exists?(full_size)
-          puts "--> Generating full-size image"
+          # puts "--> Generating full-size image (#{@asset})"
           width, height = @options["images"]["size"].split("x").collect {|i| i.to_i }
           resize_image(width, height, :output => full_size, :type => :fullsize)
         end
@@ -24,7 +24,7 @@ module Alula
         unless File.exists?(output2x)
           width, height = @options["images"]["size"].split("x").collect {|i| i.to_i }
           if @options['images']['retina'] and (@image_width > width * 2) or (@image_height > height * 2)
-            puts "--> Generating full-size image (2x)"
+            # puts "--> Generating full-size image (2x) (#{@asset})"
             resize_image(width * 2, height * 2, :output => output2x, :type => :fullsize)
           end          
         end
@@ -32,7 +32,7 @@ module Alula
         # Thumbnail
         tn_size = File.join(@thumbnail_path, "#{@name}.#{@ext}")
         unless File.exists?(tn_size)
-          puts "--> Generating thumbnail image"
+          # puts "--> Generating thumbnail image (#{@asset})"
           width, height = @options["images"]["thumbnails"].split("x").collect {|i| i.to_i }
           resize_image(width, height, :output => tn_size, :type => :thumbnail)
         end
@@ -41,7 +41,7 @@ module Alula
         unless File.exists?(tn2x)
           width, height = @options["images"]["thumbnails"].split("x").collect {|i| i.to_i }
           if @options['images']['retina'] and (@image_width > width * 2) or (@image_height > height * 2)
-            puts "--> Generating thumbnail image (2x)"
+            # puts "--> Generating thumbnail image (2x) (#{@asset})"
             resize_image(width * 2, height * 2, :output => tn2x, :type => :thumbnail)
           end          
         end
