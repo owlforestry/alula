@@ -8,7 +8,7 @@ require 'stringex'
 require 'alula/config'
 require 'alula/theme'
 require 'alula/plugins'
-require 'alula/assethelper'
+require 'alula/assetmanager'
 
 # Compressors
 require 'alula/compressors'
@@ -165,23 +165,22 @@ module Alula
       date = Time.parse(date)
       asset_path = File.join(%w{%Y %m %d}.collect{|f| date.strftime(f) })
       
-      helper = Alula::AssetHelper.new(asset_path, @config)
+      helper = Alula::AssetManager.new(asset_path, @config)
       
       post_io = File.open(post, "a")
       assets.each do |asset|
-        type, generated = helper.process(asset, :type => :attachment)
-        tn_type, tn_generated = helper.process(asset, :type => :thumbnail)
-        if generated
+        type, asset_name = helper.process(asset)
+        if asset_name
           # Asset processed
-          puts "(#{asset}) done."
+          puts "(#{asset_name}) done."
           if handler = Alula::Plugins.attachment_handler(type)
-            post_io.puts handler.call(generated[0])
+            post_io.puts handler.call(asset_name)
           else
             case type
             when :image
-              post_io.puts "{% image _images/#{generated[0]} %}"
+              post_io.puts "{% image _images/#{asset_name} %}"
             when :movie
-              post_io.puts "{% video _images/#{generated} %}"
+              post_io.puts "{% video _images/#{asset_name} %}"
             else
               post_io.puts "{% comment %}Unknown asset type #{type}{% endcomment %}"
             end
@@ -263,16 +262,9 @@ module Alula
         .collect {|f| File.join(f.split("/")[2..-1])}
       pb = ProgressBar.new "Assets", attachments.count
       
-      attachments.each do |attachment|
-        unless File.exists?(File.join(images_path, attachment))
-          helper = Alula::AssetHelper.new(File.dirname(attachment), @config)
-          type, generated = helper.process(File.join("attachments", "originals", attachment), :type => :original, :keepcase => true)
-        end
-        
-        unless File.exists?(File.join(thumbnails_path, attachment))
-          helper = Alula::AssetHelper.new(File.dirname(attachment), @config)
-          tn_type, tn_generated = helper.process(File.join("attachments", "originals", attachment), :type => :thumbnail, :keepcase => true)
-        end
+      attachments.each do |asset|
+        helper = Alula::AssetManager.new(File.dirname(asset), @config)
+        type, asset_name = helper.process(File.join(attachments_path, asset))
         
         pb.inc
       end
@@ -361,11 +353,5 @@ module Alula
     'source'      => '_tmp',
     'destination' => 'public',
     'markdown'    => 'kramdown',
-    
-    'pagination_dir' => '/page/',
-    'videos'         => {
-      'size'         => '1280x720',
-      'thumbnails'   => '300x300'.
-    }
   })
 end
