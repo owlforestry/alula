@@ -90,6 +90,7 @@ module Alula
       def initialize(tag_name, markup, tokens)
         /(?<src>(?:https?:\/\/|\/|\S+\/)[^"]+)(?:"|')?/ =~ markup
         @name = src.strip
+        @controls = true
       end
 
       def render(context)
