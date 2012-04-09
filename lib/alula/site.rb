@@ -306,22 +306,16 @@ module Alula
       
       @manifest = Sprockets::Manifest.new(@sprockets, File.join("public", "assets"))
       @sprockets.context_class.manifest = @manifest
-      @sprockets.context_class.jekyll = @jekyll      
+      @sprockets.context_class.jekyll = @jekyll
+      
+      # Moneky-patch manifest to keep track of used assets
+      Sprockets::Manifest.send(:include, Alula::ManifestAddons)
+      Sprockets::Manifest.send(:alias_method, :assets_without_tracking, :assets)
+      Sprockets::Manifest.send(:alias_method, :assets, :assets_with_tracking)
+      
 
       # Compile assets
       @manifest.compile
-      # @manifest.compile([
-      #   # Stylesheet
-      #   "styles.css",
-      #   
-      #   # Javascript
-      #   "javascripts.js",
-      #   
-      #   # Attachments
-      #   Dir[File.join("attachments", "**", "*")]
-      #     .select {|f| File.file?(f) }
-      #     .collect {|f| File.join(f.split("/")[1..-1])},
-      # ])
       
       # Inject our manifest to jekyll
       @jekyll.config["manifest"] = @manifest
@@ -346,6 +340,11 @@ module Alula
       puts "==> Cleaning up"
       
       FileUtils.rm_rf "_tmp"
+      
+      unused_assets = @manifest.files.keys - @manifest.assets.used
+      unused_assets.each do |asset|
+        FileUtils.rm File.join("public", "assets", asset)
+      end
     end
   end
   
@@ -354,4 +353,34 @@ module Alula
     'destination' => 'public',
     'markdown'    => 'kramdown',
   })
+  
+  module ManifestAddons
+    def assets_with_tracking
+      @data['_assets'] ||= AssetTracker.new assets_without_tracking
+    end
+    
+    def used_assets
+      @data['_assets'].used
+    end
+    
+    class AssetTracker
+      def initialize(hash)
+        @hash = hash
+        @used = []
+      end
+      
+      def used
+        @used.uniq
+      end
+      
+      def [](key)
+        @used << @hash[key]
+        @hash[key]
+      end
+      
+      def []=(key, value)
+        @hash[key] = value
+      end
+    end
+  end
 end
