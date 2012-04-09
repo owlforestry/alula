@@ -305,17 +305,20 @@ module Alula
       
       
       @manifest = Sprockets::Manifest.new(@sprockets, File.join("public", "assets"))
-      @sprockets.context_class.manifest = @manifest
-      @sprockets.context_class.jekyll = @jekyll
-      
-      # Moneky-patch manifest to keep track of used assets
+      # Monkey-patch manifest to keep track of used assets
       Sprockets::Manifest.send(:include, Alula::ManifestAddons)
       Sprockets::Manifest.send(:alias_method, :assets_without_tracking, :assets)
       Sprockets::Manifest.send(:alias_method, :assets, :assets_with_tracking)
-      
 
+      @sprockets.context_class.manifest = @manifest
+      @sprockets.context_class.jekyll = @jekyll
+      
       # Compile assets
+      pbar = ProgressBar.new "", @sprockets.each_logical_path.count
+      @manifest.tracker = pbar
       @manifest.compile
+      pbar.finish
+      @manifest.clear_tracking
       
       # Inject our manifest to jekyll
       @jekyll.config["manifest"] = @manifest
@@ -356,17 +359,27 @@ module Alula
   
   module ManifestAddons
     def assets_with_tracking
-      @data['_assets'] ||= AssetTracker.new assets_without_tracking
+      @data['_assets'] ||= AssetTracker.new assets_without_tracking, @tracker
     end
     
     def used_assets
       @data['_assets'].used
     end
     
+    def tracker=(tracker)
+      @tracker = tracker
+    end
+    
+    def clear_tracking
+      # @data['_assets'] = nil
+      @tracker = nil
+    end
+    
     class AssetTracker
-      def initialize(hash)
+      def initialize(hash, tracker)
         @hash = hash
         @used = []
+        @tracker = tracker
       end
       
       def used
@@ -380,6 +393,7 @@ module Alula
       
       def []=(key, value)
         @hash[key] = value
+        @tracker.inc if @tracker
       end
     end
   end
