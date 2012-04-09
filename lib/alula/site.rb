@@ -264,7 +264,7 @@ module Alula
       
       attachments.each do |asset|
         helper = Alula::AssetManager.new(File.dirname(asset), @config)
-        type, asset_name = helper.process(File.join(attachments_path, asset))
+        type, asset_name = helper.process(File.join(attachments_path, asset), :keepcase => true)
         
         pb.inc
       end
