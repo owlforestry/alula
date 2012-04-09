@@ -19,5 +19,14 @@ module Alula
       @@handlers[:attachment] ||= {}
       @@handlers[:attachment][type]
     end
+    
+    def self.register_scripts_for_head(script)
+      @@scripts_for_head ||= ""
+      @@scripts_for_head << script
+    end
+    
+    def self.scripts_for_head
+      @@scripts_for_head ||= ""
+    end
   end
 end

@@ -1,5 +1,17 @@
+require 'mini_exiftool'
+
 module Alula
   module Plugins
+    class ScriptsForHead < Liquid::Tag
+      def initialize(tag_name, markup, tokens)
+        super
+      end
+      
+      def render(context)
+        Alula::Plugins.scripts_for_head
+      end
+    end
+    
     class CommonAsset < Liquid::Tag
       def self.type(type)
         define_method(:type) { type }
@@ -66,9 +78,9 @@ module Alula
         asset = File.join(asset_path, manifest.assets[@name])
         
         # Fetch image size
-        img = Magick::Image.read(File.join("public", asset)).first
-        width = img.columns
-        height = img.rows
+        exif = MiniExiftool.new File.join("public", asset)
+        width = exif.imagewidth
+        height = exif.imageheight
         
         "<img src=\"#{asset}\" alt=\"#{@alt}\" title=\"#{@title}\" width=\"#{width}\" height=\"#{height}\">"
       end
@@ -76,10 +88,8 @@ module Alula
     
     class VideoAsset < CommonAsset
       def initialize(tag_name, markup, tokens)
-        /(?:"|')?(?<src>(?:https?:\/\/|\/|\S+\/)[^"]+)(?:"|')?\s+(?:"|')?(?<title>[^"']+)?(?:"|')?\s+/ =~ markup
-        require 'pry';binding.pry
-        @name = src
-        @title = title
+        /(?<src>(?:https?:\/\/|\/|\S+\/)[^"]+)(?:"|')?/ =~ markup
+        @name = src.strip
       end
 
       def render(context)
@@ -87,27 +97,22 @@ module Alula
         manifest = context.registers[:site].config["manifest"]
         
         # Try to find all possible variant of video
-        video = File.basename(@name, File.extname(@name))
-        variants = {}
-        [""].each do |variant|
-          variant_name = File.join(File.dirname(@name), "#{video}#{variant.empty? ? "" : "-#{variant}"}")
-          variants[variant] = File.join(asset_path, manifest.assets[variantname])
+        @srcs = []
+        ["-hd.mp4", ".mp4", "-mobile-hd.mp4", "-mobile.mp4", ".webm", ".ogg"].each do |variant|
+          asset_name = "images/#{@name}#{variant}"
+          asset = File.join(asset_path, manifest.assets[asset_name])
+          @srcs << asset if asset
         end
         
-        tag = []
-        tag << "<video>"
-        tag << "<source src=\"#{variants[""]}\">"
-        tag << "</video>"
-        
-        tag.join("\n")
-        # 
-        # # Fetch image size
-        # img = Magick::Image.read(File.join("public", asset)).first
-        # width = img.columns
-        # height = img.rows
-        # 
-        # "<img src=\"#{asset}\" alt=\"#{@alt}\" title=\"#{@title}\" width=\"#{width}\" height=\"#{height}\">"
-        # "<!-- VIDEO: @markup -->"
+        @poster = File.join(asset_path, manifest.assets["thumbnails/#{@name}.png"])
+        exif = MiniExiftool.new File.join("public", @srcs.first)
+        tag = "<video #{@style ? "style=\"#{@style}\" " : ""}#{@class ? "class=\"#{@class}\" " : ""}width=\"#{exif.imagewidth}\" height=\"#{exif.imageheight}\" poster=\"#{@poster}\" preload=\"none\">\n"
+        @srcs.each do |src|
+          exif = MiniExiftool.new File.join("public", src)
+          hd = (exif.imageheight >= 720 or exif.imagewidth >= 720)
+          tag << "  <source src=\"#{src}\" #{hd ? "data-quality=\"hd\"" : ""} />\n"
+        end
+        tag << "</video>\n"
       end
     end
 
@@ -128,3 +133,6 @@ Liquid::Template.register_tag('stylesheet_link', Alula::Plugins::StylesheetAsset
 Liquid::Template.register_tag('javascript_link', Alula::Plugins::JavascriptAsset)
 Liquid::Template.register_tag('image', Alula::Plugins::ImageAsset)
 Liquid::Template.register_tag('video', Alula::Plugins::VideoAsset)
+
+# Hook for head section scripts
+Liquid::Template.register_tag('scripts_for_head', Alula::Plugins::ScriptsForHead)

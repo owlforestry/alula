@@ -58,7 +58,6 @@ module Alula
       # Append our helpers
       @sprockets.context_class.class_eval do
         def asset_url(asset)
-          # require 'pry';binding.pry
           unless manifest.assets[asset]
             manifest.compile(asset)
           end
@@ -110,6 +109,7 @@ module Alula
           path = plugin_class.install(opts)
           @sprockets.append_path File.join(path, "stylesheets")
           @sprockets.append_path File.join(path, "javascripts")
+          @sprockets.append_path File.join(path, "assets")
         end
       end
     end
@@ -180,7 +180,7 @@ module Alula
             when :image
               post_io.puts "{% image _images/#{asset_name} %}"
             when :movie
-              post_io.puts "{% video _images/#{asset_name} %}"
+              post_io.puts "{% video #{asset_name} %}"
             else
               post_io.puts "{% comment %}Unknown asset type #{type}{% endcomment %}"
             end
