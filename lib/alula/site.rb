@@ -314,7 +314,7 @@ module Alula
       @sprockets.context_class.jekyll = @jekyll
       
       # Compile assets
-      pbar = ProgressBar.new "", @sprockets.each_logical_path.count
+      pbar = ProgressBar.new "Compiling assets", @sprockets.each_logical_path.count
       @manifest.tracker = pbar
       @manifest.compile
       pbar.finish
