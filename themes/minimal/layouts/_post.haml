@@ -1,0 +1,7 @@
+= page.content
+
+%p.meta
+	- if page.previous
+		=link_to "&laquo; #{page.previous.title}", page.previous.url, :class => "left", :title => "Previous Post: #{page.previous.title}"
+	- if page.next
+		=link_to "&laquo; #{page.next.title}", page.next.url, :class => "left", :title => "Previous Post: #{page.next.title}"
