@@ -1,4 +1,8 @@
-/*@import url(https://fonts.googleapis.com/css?family=Lato:300italic,700italic,300,700);*/
+/*
+ *-require lato
+ *=require_self
+ *-require pygment_trac
+ */
 
 body {
   padding:50px;
@@ -91,7 +95,7 @@ th {
   color:#444;
 }
 
-img {
+img, video {
   max-width:100%;
 }
 
