@@ -166,8 +166,8 @@ module Alula
         pbar.inc
       end
       # Copy static content
-      statics.each do |static|
-        FileUtils.cp File.join(config.content_path, static), File.join(config.public_path, static)
+      statics.each do |static, path|
+        FileUtils.cp path, File.join(config.public_path, static)
         pbar.inc
       end
 
@@ -228,19 +228,39 @@ module Alula
     end
     
     def read_content
-      content = []
       # Posts
       Dir.chdir(config.posts_path) { Dir["**/*"] }.each do |post|
         @posts << Post.new(self, config.posts_path, post)
       end
       
-      # Site content
+      # Theme content with site content
+      theme_dir = Alula::Engine::Theme.find(config.theme)
+      blog_content = {}
+      Dir.chdir(File.join(theme_dir, "content")) { Dir["**/*"] }.each do |content|
+        next if File.directory?(File.join(theme_dir, "content", content))
+        dir = File.dirname(content)
+        base = File.basename(content, File.extname(content))
+        content_name = (dir == "." ? base : File.join(dir, base))
+
+        blog_content[content_name] = [content, File.join(theme_dir, "content")]
+      end
       Dir.chdir(config.content_path) { Dir["**/*"] }.each do |content|
+        next if File.directory?(File.join(config.content_path, content))
+        
+        dir = File.dirname(content)
+        base = File.basename(content, File.extname(content))
+        content_name = (dir == "." ? base : File.join(dir, base))
+
+        blog_content[content_name] = [content, config.content_path]
+      end
+
+      blog_content.each do |content_name, arr|
+        content, path = *arr
         # Do we have page?
-        if File.read(File.join(config.content_path, content), 3) == "---"
-          @pages << Page.new(self, config.content_path, content)
+        if File.read(File.join(path, content), 3) == "---"
+          @pages << Page.new(self, path, content)
         else
-          @statics << content
+          @statics << [content, File.join(path, content)]
         end
       end
     end
