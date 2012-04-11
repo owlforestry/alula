@@ -56,8 +56,16 @@ module Alula
       :desc => "Preview site using development settings. Keeps all assets and HTML uncompressed."
     method_option :production, :type => :boolean, :default => false,
       :desc => "Preview site suing production settings. Compresses all assets and HTML."
+    method_option :verbose, :type => :boolean, :default => false,
+      :desc => "Be verbose during site generation."
+    method_option :generate, :type => :boolean, :default => true,
+      :desc => "Generates website before launching web server"
     def preview
-      site = Alula::Site.new("asset_compress" => (!options["development"] or options["production"]))
+      site = Alula::Site.new({
+        :production => (!options["development"] or options["production"]),
+        :verbose => options["verbose"],
+        :generate => options["generate"]
+        })
       site.preview
     end
     

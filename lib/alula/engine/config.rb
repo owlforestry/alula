@@ -69,7 +69,9 @@ module Alula
         'attachments_path' => 'attachments',  # Where to store post attachments
         
         # Generation options
-        'verbose' => true,
+        'verbose'  => true, # Be verbose by default, no progress bars
+        'generate' => true, # Always generate blog
+        'port'     => 3000, # Use port 3000 for web server in preview mode
       }
     end
   end

@@ -17,18 +17,16 @@ module Alula
     end
     
     def preview
-      generate
+      @engine.generate if config.generate
       
       require 'webrick'
-        # include WEBrick
-
         FileUtils.mkdir_p("public")
 
         mime_types = WEBrick::HTTPUtils::DefaultMimeTypes
         mime_types.store 'js', 'application/javascript'
 
         s = WEBrick::HTTPServer.new(
-          :Port            => 3000,
+          :Port            => config.port,
           :MimeTypes       => mime_types
         )
         s.mount('/', WEBrick::HTTPServlet::FileHandler, "public")
