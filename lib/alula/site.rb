@@ -1,136 +1,19 @@
-require 'yaml'
-require 'jekyll'
-require 'sprockets'
-require 'active_support/inflector/methods'
-require 'progressbar'
-require 'stringex'
-
-require 'alula/config'
-require 'alula/theme'
-require 'alula/plugins'
-require 'alula/assetmanager'
-
-# Compressors
-require 'alula/compressors'
-
-# Jekyll extensions, plugins, tags
-# These are used always in every blog, i.e. mandatory plugins
-require 'alula/plugins/assets'
-require 'alula/plugins/pagination'
+require 'alula/engine'
 
 module Alula
   class Site
-    
-    attr_reader :config, :jekyll
+    attr_reader :config
     
     def initialize(override = {})
-      # Load configuration
-      Alula::Config.init(override)
-      @config = Alula::Config.fetch
+      @engine = Alula::Engine.new
+      @config = @engine.config
       
-      # Register local theme path
-      Alula::Theme.register("themes")
-      
-      # Initialize Jekyll
-      options         = Alula::DEFAULTS.deep_merge({
-        # Site options
-        'title'          => @config["title"],
-        'tagline'        => @config["tagline"],
-        'author'         => @config["author"],
-        'root'           => @config["root"],
-        'asset_path'     => File.join(@config["root"], "assets"),
-        'permalink'      => @config["permalink"],
-        'paginate'       => @config["paginate"],
-        'pagination_dir' => @config["pagination_dir"],
-        'excerpt_link'   => @config["excerpt_link"],
-      })
-      
-      @jekyll = Jekyll::Site.new(options)
-      
-      @themepath = Alula::Theme.find_theme(@config['theme'])
-      unless @themepath
-        raise "Cannot find theme #{@config['theme']}"
-      end
-      
-      # Initialize Sprockets
-      @sprockets = Sprockets::Environment.new
-      
-      # Append our helpers
-      @sprockets.context_class.class_eval do
-        def asset_url(asset)
-          unless manifest.assets[asset]
-            manifest.compile(asset)
-          end
-          File.join(jekyll.config["asset_path"], manifest.assets[asset])
-        end
-        
-        def manifest; @@manifest; end
-        def self.manifest=(manifest); @@manifest = manifest; end
-
-        def jekyll; @@jekyll; end
-        def self.jekyll=(manifest); @@jekyll = manifest; end
-
-      end
-      
-      # Set our compressor
-      if @config['asset_compress']
-        @sprockets.css_compressor = Alula::Compressors::CSSCompressor.new
-        @sprockets.js_compressor = Alula::Compressors::JSCompressor.new
-        
-        [Jekyll::Post, Jekyll::Page].each do |klass|
-          klass.send(:include, Alula::Compressors::HTMLCompressor)
-          klass.send(:alias_method, :output_without_compression, :output)
-          klass.send(:alias_method, :output, :output_with_compression)
-        end
-      end
-
-      # Add theme to asset paths
-      @sprockets.append_path File.join(@themepath, @config['theme'], "stylesheets")
-      @sprockets.append_path File.join(@themepath, @config['theme'], "javascripts")
-      @sprockets.append_path File.join(@themepath, @config['theme'], "assets")
-
-      # Generated assets
-      @sprockets.append_path File.join("_tmp", "assets")
-      
-      # Attachments
-      @sprockets.append_path File.join("attachments", "_generated")
-      
-      # Vendor assets
-      vendor_path = File.expand_path(File.join(File.dirname(__FILE__), *%w{.. .. vendor}))
-      @sprockets.append_path File.join(vendor_path, "stylesheets")
-      @sprockets.append_path File.join(vendor_path, "javascripts")
-      
-      # Initialize blog plugins
-      if @config["plugins"] != nil
-        @config["plugins"].each do |plugin, opts|
-          require "alula/plugins/#{plugin}"
-        
-          plugin_class = Alula::Plugins.const_get(ActiveSupport::Inflector.camelize(plugin, true))
-          path = plugin_class.install(opts)
-          @sprockets.append_path File.join(path, "stylesheets")
-          @sprockets.append_path File.join(path, "javascripts")
-          @sprockets.append_path File.join(path, "assets")
-        end
-      end
+      # Disable verbose
+      @config.verbose = false unless override[:verbose]
     end
     
     def generate
-      puts "==> Generating blog"
-      
-      # Prepare Jekyll environment
-      prepare
-      
-      # Generate missing assets
-      assetgen
-      
-      # Generate asset manifest
-      compile
-      
-      # Execute jekyll
-      process
-      
-      # Cleanup
-      cleanup
+      @engine.generate
     end
     
     def preview
@@ -303,7 +186,6 @@ module Alula
         end
       end
       
-      
       @manifest = Sprockets::Manifest.new(@sprockets, File.join("public", "assets"))
       # Monkey-patch manifest to keep track of used assets
       Sprockets::Manifest.send(:include, Alula::ManifestAddons)
@@ -350,12 +232,6 @@ module Alula
       end
     end
   end
-  
-  DEFAULTS = Jekyll::DEFAULTS.deep_merge({
-    'source'      => '_tmp',
-    'destination' => 'public',
-    'markdown'    => 'kramdown',
-  })
   
   module ManifestAddons
     def assets_with_tracking

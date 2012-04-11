@@ -8,6 +8,12 @@ module Alula
     
     source_root File.expand_path(File.join(File.dirname(__FILE__), *%w[.. .. template]))
     
+    desc "version", "Displays current version information"
+    def version
+      puts "alula #{Alula::VERSION}"
+      puts "alula-plugins #{Alula::Plugins::VERSION}" if Alula::Plugins::VERSION
+      puts "alula-themes #{Alula::Themes::VERSION}" if Alula::Themes::VERSION
+    end
     
     desc "init [PATH]", "Creates a new aLula blog in given path or current directory"
     def init(path = ".")
@@ -31,8 +37,6 @@ module Alula
     def upgrade
       # Init directories
       init_directories
-      
-      
     end
     
     desc "generate", "Generates blog"
@@ -40,8 +44,10 @@ module Alula
       :desc => "Generate site using development settings. Keeps all assets and HTML uncompressed."
     method_option :production, :type => :boolean, :default => false,
       :desc => "Generate site using production settings. Compresses all assets and HTML."
+    method_option :verbose, :type => :boolean, :default => false,
+      :desc => "Be verbose during site generation."
     def generate
-      site = Alula::Site.new("asset_compress" => (!options["development"] or options["production"]))
+      site = Alula::Site.new(:production => (!options["development"] or options["production"]), :verbose => options["verbose"])
       site.generate
     end
 
