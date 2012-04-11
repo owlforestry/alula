@@ -13,7 +13,7 @@ module Alula
       
       def asset_url(name)
         asset = if self.environment[name]
-          File.join(self.config.assets_path, self.environment[name].digest_path)
+          File.join("/", self.config.assets_path, self.environment[name].digest_path)
         elsif /^(?<prefix>(images|thumbnails))\/(?<name>.+)/ =~ name
           # Try to find attachment
           if self.attachments[name]
