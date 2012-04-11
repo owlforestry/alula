@@ -43,6 +43,11 @@ module Alula
         'theme'     => 'minimal',
         'permalink' => '/:year/:month/:title/',
         
+        # Plugins/Filters
+        'filters'    => {
+          'smilies' => {},
+        },
+        
         # Site options
         'images' => {
           'converter'  => 'magick',   # Use ImageMagick

@@ -59,7 +59,15 @@ module Alula
       
       def render(context)
         begin
-          self.content = Liquid::Template.parse(self.content).render(context.to_liquid)
+          content = Liquid::Template.parse(self.content).render(context.to_liquid)
+          
+          # Filter through filters
+          engine.filters.each do |filter|
+            next unless filter.filters?(self.type)
+            content = filter.process(content)
+          end
+          
+          self.content = content
         rescue => e
           puts "Liquid Exception: #{e.message} in #{self.name}"
         end

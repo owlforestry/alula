@@ -8,12 +8,13 @@ require 'alula/engine/manifest'
 require 'alula/engine/content'
 require 'alula/engine/helpers'
 require 'alula/engine/plugins'
+require 'alula/engine/filter'
 require 'alula/engine/attachmentprocessor'
 require 'alula/engine/progressbar'
 
 module Alula
   class Engine
-    attr_reader :config, :posts, :pages, :statics, :attachment_mapping
+    attr_reader :config, :posts, :pages, :statics, :attachment_mapping, :filters
     
     def initialize(override = {})
       # Load our configuration
@@ -26,6 +27,7 @@ module Alula
       @statics = []
       
       @attachment_mapping = {}
+      @filters = []
       
       # Load site plugins
       load_plugins
@@ -224,14 +226,24 @@ module Alula
     end
     
     def load_plugins
-      return unless config.plugins
-      
-      config.plugins.each do |plugin, opts|
-        require "alula/engine/plugins/#{plugin}"
+      if config.plugins
+        config.plugins.each do |plugin, opts|
+          require "alula/engine/plugins/#{plugin}"
         
-        klass = Alula::Engine::Plugins.const_get(ActiveSupport::Inflector.camelize(plugin, true))
-        path = klass.install(opts)
-        config.plugins[plugin] = {:path => path, :options => opts, :class => klass }
+          klass = Alula::Engine::Plugins.const_get(ActiveSupport::Inflector.camelize(plugin, true))
+          path = klass.install(opts)
+          config.plugins[plugin] = {:path => path, :options => opts, :class => klass }
+        end
+      end
+      
+      # Load filters
+      if config.filters
+        config.filters.each do |filter, opts|
+          require "alula/engine/filters/#{filter}"
+        
+          klass = Alula::Engine::Filter.const_get(ActiveSupport::Inflector.camelize(filter, true))
+          @filters << klass.new(opts)
+        end
       end
     end
     
