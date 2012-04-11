@@ -42,6 +42,21 @@ module Alula
         end
       end
       
+      def <=>(other)
+        cmp = self.date <=> other.date
+        if 0 == cmp
+          cmp = self.slug <=> other.slug
+        end
+        cmp
+      end
+      
+      # Returns the view template for content
+      def view
+        @view ||= begin
+          engine.find_view(@data["view"] || self.type.to_s)
+        end
+      end
+      
       def render(context)
         begin
           self.content = Liquid::Template.parse(self.content).render(context.to_liquid)
@@ -95,9 +110,24 @@ module Alula
         end
       end
       
-      # def context
-      #   @context ||= Context.new @data
-      # end
+      # Navigation
+      def next
+        pos = self.engine.posts.index(self)
+        if pos and pos < self.engine.posts.length - 1
+          self.engine.posts[pos + 1]
+        else
+          nil
+        end
+      end
+      
+      def previous
+        pos = self.engine.posts.index(self)
+        if pos and pos > 0
+          self.engine.posts[pos - 1]
+        else
+          nil
+        end
+      end
       
       private
       def read_content
@@ -114,6 +144,7 @@ module Alula
           self.date = Time.parse(self.data["date"].to_s) if self.data.key?('date')
           self.slug = self.data['slug'] if self.data.key?('slug')
           self.categories = self.data['categories'] if self.data.key?('categories')
+          self.title = self.data['title'] if self.data.key?('title')
         end
       end
       

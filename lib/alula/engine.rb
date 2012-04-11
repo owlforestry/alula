@@ -157,7 +157,11 @@ module Alula
         context.page = page
 
         page.output = layout.render context do
+          # Render page content
           page.render(context)
+          
+          # Parse page view
+          page.view.render context
         end
         
         # HTML Compressor
@@ -172,6 +176,10 @@ module Alula
       end
 
       pbar.finish
+    end
+    
+    def find_view(view)
+      @layouts["_#{view}"] or raise "Cannot find view #{view} for theme #{config.theme}"
     end
     
     private
@@ -232,6 +240,7 @@ module Alula
       Dir.chdir(config.posts_path) { Dir["**/*"] }.each do |post|
         @posts << Post.new(self, config.posts_path, post)
       end
+      @posts.sort!
       
       # Theme content with site content
       theme_dir = Alula::Engine::Theme.find(config.theme)

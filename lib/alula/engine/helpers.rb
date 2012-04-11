@@ -16,6 +16,16 @@ module Alula
         
         content
       end
+      
+      #=link_to "&laquo; #{page.previous.title}", page.previous.url, :class => "left", :title => "Previous Post: #{page.previous.title}"
+      def link_to(content, url, attributes = {})
+        tag = "<a"
+        tag += " href=\"#{url}\""
+        attributes.each do |name, value|
+          tag += " #{name}=\"#{value}\""
+        end
+        tag += ">#{content}</a>"
+      end
     end
   end
 end
