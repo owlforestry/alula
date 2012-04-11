@@ -50,13 +50,16 @@ module Alula
           'thumbnails' => '300x300',  # Thumbnail size
           'retina'     => true,       # Generate retina versions
         },
-        'videos' => {
-          'size_hd'    => '1280x720',
-          'size_sd'    => '640x360',
-          'thumbnails' => '300x300',
-          'converter'  => 'zencoder',
-          'zencoder'   => {
-            'bucket'   => 'alula.zencoder',
+        'videos'         => {
+          'size_hd'      => '1280x720',
+          'size_sd'      => '640x360',
+          'thumbnails'   => '300x300',
+          'converter'    => 'zencoder',
+          'zencoder'     => {
+            'bucket'     => 'alula.zencoder',
+            'token'      => '',
+            'key_id'     => '',
+            'access_key' => '',
           }
         },
         
