@@ -16,28 +16,6 @@ module Alula
       @engine.generate
     end
     
-    def preview
-      @engine.generate if config.generate
-      
-      require 'webrick'
-        FileUtils.mkdir_p("public")
-
-        mime_types = WEBrick::HTTPUtils::DefaultMimeTypes
-        mime_types.store 'js', 'application/javascript'
-
-        s = WEBrick::HTTPServer.new(
-          :Port            => config.port,
-          :MimeTypes       => mime_types
-        )
-        s.mount('/', WEBrick::HTTPServlet::FileHandler, "public")
-        t = Thread.new {
-          s.start
-        }
-
-        trap("INT") { s.shutdown }
-        t.join()
-    end
-    
     # def asset_attach(a_post, assets)
     #   # Find the post
     #   post = find_post(a_post) or raise "Cannot find post #{a_post}"

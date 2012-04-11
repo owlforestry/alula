@@ -58,15 +58,34 @@ module Alula
       :desc => "Preview site suing production settings. Compresses all assets and HTML."
     method_option :verbose, :type => :boolean, :default => false,
       :desc => "Be verbose during site generation."
-    method_option :generate, :type => :boolean, :default => true,
-      :desc => "Generates website before launching web server"
+    method_option "skip-generate", :type => :boolean, :default => :false,
+      :desc => "Skip site generation before web server launch."
     def preview
       site = Alula::Site.new({
         :production => (!options["development"] or options["production"]),
         :verbose => options["verbose"],
-        :generate => options["generate"]
         })
-      site.preview
+      site.generate unless options['skip-generate'] == :true
+      
+      # Start webserver
+      begin
+        require 'webrick'
+        
+        mime_types = WEBrick::HTTPUtils::DefaultMimeTypes
+        mime_types.store 'js', 'application/javascript'
+
+        s = WEBrick::HTTPServer.new(
+          :Port            => site.config.port,
+          :MimeTypes       => mime_types
+        )
+        s.mount('/', WEBrick::HTTPServlet::FileHandler, "public")
+        t = Thread.new {
+          s.start
+        }
+
+        trap("INT") { s.shutdown }
+        t.join()
+      end
     end
     
     desc "attach POST ASSET", "Attached given asset, photo or video to given post"
