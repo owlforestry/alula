@@ -4,7 +4,7 @@ module Alula
   class Engine
     class Processors
       class Video < Processors
-        extensions :mov, :mp4, :avi, :ogg, :webm
+        extensions :mov, :mp4, :avi, :ogg, :webm, :mpg
         mimetype /^video/
         
         def self.get_converter(attachment_file, options, engine)
