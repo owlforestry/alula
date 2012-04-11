@@ -4,7 +4,8 @@ module Alula
       def url
         return @url if @url
         
-        @url = File.basename(@name, File.extname(@name)) + ".html"
+        path = File.dirname(@name)
+        @url = File.join(path, File.basename(@name, File.extname(@name)) + ".html")
       end
     end
   end
