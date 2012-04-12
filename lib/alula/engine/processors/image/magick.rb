@@ -35,7 +35,7 @@ module Alula
             
             # Check if our target image is bigger than source
             # Skip totally if requested
-            if (width > @image.columns or height > @image.rows) and opts[:skip_nores]
+            if (width > @image.columns and height > @image.rows) and opts[:skip_nores]
               return
             end
             
