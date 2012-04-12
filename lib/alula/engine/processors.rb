@@ -14,20 +14,21 @@ module Alula
         @config = @engine.config
         
         # Generate asset filename
-        @asset_hash = begin
-          md5 = Digest::MD5.hexdigest(File.join(options[:asset_path], self.file_name))
-          asset_hash = md5[0..4]
-          until !engine.attachment_mapping.key(asset_hash) or engine.attachment_mapping.key(asset_hash) == self.file_name
-            asset_hash = md5[0..(asset_hash.length + 1)]
-          end
-          asset_hash.to_s
-        end
+        @asset_hash = gen_assethash(File.join(options[:asset_path], self.file_name))
         
         set_mapping
       end
       
-      def set_mapping
-        engine.attachment_mapping[File.join(options[:asset_path], self.file_name)] = File.join(options[:asset_path], self.asset_name)
+      def set_mapping(possix = nil)
+        engine.attachment_mapping[File.join(options[:asset_path], self.file_name(possix))] = File.join(options[:asset_path], self.asset_name(possix))
+      end
+      
+      def file_name(possix = nil)
+        unless possix
+          @file_name
+        else
+          File.join("#{File.basename(@file_name, ".#{@file_ext}")}#{possix}.#{@file_ext}")
+        end
       end
       
       def asset_name(possix = nil, ext = nil)
@@ -68,6 +69,15 @@ module Alula
         exif.mimetype.match(_mimetype)
       end
       
+      def gen_assethash(name)
+        md5 = Digest::MD5.hexdigest(name)
+        asset_hash = md5[0..4]
+        until !engine.attachment_mapping.key(asset_hash) or engine.attachment_mapping.key(asset_hash) == self.file_name
+          asset_hash = md5[0..(asset_hash.length + 1)]
+        end
+        asset_hash.to_s
+        
+      end
     end
   end
 end

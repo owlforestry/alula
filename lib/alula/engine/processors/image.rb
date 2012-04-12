@@ -27,6 +27,7 @@ module Alula
           
           # Generate retina versions
           if config.images['retina']
+            set_mapping("_2x")
             width, height = config.images["size"].split("x").collect {|i| i.to_i * 2}
             resize_image(width, height, :output => File.join(options[:image_path], asset_name("_2x")), :type => :fullsize, :skip_nores => true)
 
