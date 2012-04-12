@@ -39,6 +39,12 @@ module Alula
       def finish
         self.close(true)
       end
+      
+      private
+      # Monkey-patch to force percentage always being three characters long
+      def h_percent
+        sprintf "%3d", percent
+      end
     end
   end
 end
