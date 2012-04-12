@@ -54,6 +54,7 @@ module Alula
           'size'       => '800x600',  # Resize images to this size
           'thumbnails' => '300x300',  # Thumbnail size
           'retina'     => true,       # Generate retina versions
+          'lazyload'   => true,       # Lazy load images (also replaces retina photos)
         },
         'videos'         => {
           'size_hd'      => '1280x720',

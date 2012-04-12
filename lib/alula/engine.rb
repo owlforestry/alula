@@ -127,6 +127,7 @@ module Alula
       # Package javascripts
       File.open(File.join(config.public_path, config.assets_path, "scripts.js"), "w") do |io|
         io.puts "//=require #{config.theme}" if Dir[File.join(theme_assets, "javascripts", "#{config.theme}.js*")].count == 1
+        io.puts "//=require lazyload" if config.images["lazyload"]
         # Plugins
         config.plugins.each do |plugin, opts|
           io.puts "//=require #{plugin}" if Dir[File.join(opts[:path], "assets", "javascripts", "#{plugin}.js*")].count == 1
@@ -221,8 +222,7 @@ module Alula
       
       # Vendored assets (jQuery etc)
       vendor_path = File.expand_path(File.join(File.dirname(__FILE__), *%w{.. .. vendor}))
-      @sprockets.append_path File.join(vendor_path, "stylesheets")
-      @sprockets.append_path File.join(vendor_path, "javascripts")
+      %w{stylesheets javascripts images}.inject(nil) { |c, p| @sprockets.append_path File.join(vendor_path, p) }
     end
     
     def load_plugins
