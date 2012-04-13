@@ -47,6 +47,8 @@ module Alula
         'filters'    => {
           'smilies' => {},
         },
+
+        'emphasis' => true,
         
         # Site options
         'images' => {

@@ -128,6 +128,7 @@ module Alula
       File.open(File.join(config.public_path, config.assets_path, "scripts.js"), "w") do |io|
         io.puts "//=require #{config.theme}" if Dir[File.join(theme_assets, "javascripts", "#{config.theme}.js*")].count == 1
         io.puts "//=require lazyload" if config.images["lazyload"]
+        io.puts "//=require emphasis" if config.emphasis
         # Plugins
         config.plugins.each do |plugin, opts|
           io.puts "//=require #{plugin}" if Dir[File.join(opts[:path], "assets", "javascripts", "#{plugin}.js*")].count == 1
