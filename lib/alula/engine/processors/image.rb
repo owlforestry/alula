@@ -25,8 +25,8 @@ module Alula
           width, height = config.images["thumbnails"].split("x").collect {|i| i.to_i }
           resize_image(width, height, :output => File.join(options[:thumbnail_path], asset_name), :type => :thumbnail)
           
-          # Generate retina versions
-          if config.images['retina']
+          # Generate hi-res versions
+          if config.images['hires']
             set_mapping("_2x")
             width, height = config.images["size"].split("x").collect {|i| i.to_i * 2}
             resize_image(width, height, :output => File.join(options[:image_path], asset_name("_2x")), :type => :fullsize, :skip_nores => true)

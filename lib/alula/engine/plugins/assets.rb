@@ -54,8 +54,8 @@ module Alula
       class Image < Tag
         register :image
         
-        attr_accessor :prefix, :name
-        
+        attr_accessor :prefix
+        attr_reader :name, :prefix
         
         def self.install(options)
           @@options = options
@@ -65,56 +65,62 @@ module Alula
           /(?<src>(?:https?:\/\/|\/|\S+\/)\S+)(?<title>\s+.+)?/ =~ markup
           /(?:"|')(?<title>[^"']+)?(?:"|')\s+(?:"|')(?<alt>[^"']+)?(?:"|')/ =~ title
           
-          self.name = src
+          @src = src
           @title = title || ""
-          @alt = alt || ""
+          @alternative = alt || ""
         end
         
         def content(context)
-          imagetag(self.name)
+          imagetag(@src)
         end
         
-        private
         def imagetag(name, prefix = nil)
+          @name = name
+          @prefix = prefix
+          
           tag = "<img"
-          tag += " alt=\"#{@alt}\"" if @alt
-          tag += " title=\"#{@title}\"" if @title
+          tag += " alt=\"#{self.alternative}\"" if self.alternative
+          tag += " title=\"#{self.title}\"" if self.title
           if context.config.images["lazyload"]
             tag += " src=\"#{context.asset_url("grey.gif")}\""
-            tag += " data-original=\"#{source(name, prefix)}\""
-            tag += " data-retina=\"#{retina(name, prefix)}\"" if context.config.images["retina"] and retina(name, prefix)
-            tag += " width=\"#{width(name, prefix)}\" height=\"#{height(name, prefix)}\""
+            tag += " data-original=\"#{self.source(name, prefix)}\""
+            tag += " data-hires=\"#{self.hires(name, prefix)}\"" if context.config.images["hires"] and self.hires(name, prefix)
+            tag += " width=\"#{self.width}\" height=\"#{self.height}\""
           end
           tag += " />"
         end
         
-        def source(name, prefix)
+        def source(name = nil, prefix = nil)
           if name[/^http/]
             name
           else
-            if prefix
-              context.asset_url(File.join(prefix, name))
-            else
-              context.asset_url(name)
-            end
+            context.asset_url(prefix ? File.join(prefix, name) : name)
           end
         end
         
-        def retina(name, prefix)
+        def hires(name, prefix)
           ext = File.extname(name)
           source(name.gsub(/#{ext}$/, "_2x#{ext}"), prefix)
         end
         
-        def width(name, prefix)
-          exif(name, prefix).imagewidth
+        def width
+          exif.imagewidth
         end
         
-        def height(name, prefix)
-          exif(name, prefix).imageheight
+        def height
+          exif.imageheight
         end
         
-        def exif(name, prefix)
-          @exif ||= MiniExiftool.new File.join("public", source(name, prefix))
+        def alternative
+          @alternative ||= self.title
+        end
+        
+        def title
+          @title ||= exif.title
+        end
+        
+        def exif
+          @exif ||= MiniExiftool.new File.join("public", source(self.name, self.prefix))
         end
       end
     end

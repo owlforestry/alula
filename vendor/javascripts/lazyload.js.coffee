@@ -2,14 +2,14 @@
 #=require jquery.lazyload
 
 jQuery ->
-	# Retina support
+	# Hi-res support
 	if $.getDevicePixelRatio() <= 1
 		jQuery("img[data-original]").lazyload
 			data_attribute: "original"
 	else
 		# Replace 2x images
-		jQuery("img[data-retina]").lazyload
-			data_attribute: "retina"
+		jQuery("img[data-hires]").lazyload
+			data_attribute: "hires"
 		# Replace remaining
-		jQuery("img[data-original]:not('[data-retina]')").lazyload
+		jQuery("img[data-original]:not('[data-hires]')").lazyload
 			data_attribute: "original"

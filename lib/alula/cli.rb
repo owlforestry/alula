@@ -118,7 +118,7 @@ module Alula
         "images"       => {
           "size"       => "800x600",
           "thumbnails" => "300x300",
-          "retina"     => true,
+          "hires"      => true,
         },
         
         "root"           => "/",

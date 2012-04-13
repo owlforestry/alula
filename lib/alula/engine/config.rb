@@ -53,8 +53,9 @@ module Alula
           'converter'  => 'magick',   # Use ImageMagick
           'size'       => '800x600',  # Resize images to this size
           'thumbnails' => '300x300',  # Thumbnail size
-          'retina'     => true,       # Generate retina versions
-          'lazyload'   => true,       # Lazy load images (also replaces retina photos)
+          'hires'     => true,        # Generate hi-res versions
+          'lazyload'   => true,       # Lazy load images (also replaces hi-res photos)
+          'keep_tags'  => ["CopyrightNotice", "Title", "DateTimeOriginal"]  # Exif tags to keep
         },
         'videos'         => {
           'size_hd'      => '1280x720',
