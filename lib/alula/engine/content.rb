@@ -16,15 +16,15 @@ module Alula
       attr_accessor :data, :content, :output, :ext
       attr_accessor :date, :slug, :published, :categories, :title
 
-      def initialize(engine, base, name)
+      def initialize(engine, base, name, data = {})
         @engine = engine
         @config = @engine.config
         @base = base
         @name = name
         
         # Set post author by default to site author
-        @data = { "author" => @engine.config.author }
-        @data["layout"] = self.type ? self.type.to_s : "default"
+        self.data = { "author" => @engine.config.author, "layout" => "default" }.deep_merge(data)
+        # self.data["layout"] = self.type ? self.type.to_s : "default"
 
         # Read file content
         read_content
@@ -121,15 +121,6 @@ module Alula
       # Navigation
       def next
         pos = self.engine.posts.index(self)
-        if pos and pos < self.engine.posts.length - 1
-          self.engine.posts[pos + 1]
-        else
-          nil
-        end
-      end
-      
-      def previous
-        pos = self.engine.posts.index(self)
         if pos and pos > 0
           self.engine.posts[pos - 1]
         else
@@ -137,11 +128,30 @@ module Alula
         end
       end
       
+      def previous
+        pos = self.engine.posts.index(self)
+        if pos and pos < self.engine.posts.length - 1
+          self.engine.posts[pos + 1]
+        else
+          nil
+        end
+      end
+      
+      def method_missing(meth, *args, &block)
+        if @data.key?(meth.to_s)
+          @data[meth.to_s]
+        elsif @data.key?(meth.to_sym)
+          @data[meth.to_sym]
+        else
+          super
+        end
+      end
+      
       private
       def read_content
         content = File.read(File.join(self.base, self.name))
-        if /^(?<manifest>(?:---\s*\n.*?\n?)^(---\s*$\n?))(?<source>.*)/m =~ content
-          self.content = parse_content(source)
+        if /^(?<manifest>(?:---\s*\n.*?\n?)^(---\s*$\n?))(?<content>.*)/m =~ content
+          self.content = parse_content(content)
 
           begin
             self.data.deep_merge!(YAML.load(manifest))

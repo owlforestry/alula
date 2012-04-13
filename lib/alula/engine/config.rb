@@ -40,8 +40,11 @@ module Alula
         'author'  => 'Blogger',
         
         # Visual/theme
-        'theme'     => 'minimal',
-        'permalink' => '/:year/:month/:title/',
+        'theme'         => 'minimal',
+        'permalink'     => '/:year/:month/:title/',
+        'paginate'      => 10,                      # How many posts per page
+        'paginate_path' => '/page:page/',           # Pathname for other pages (excl index page)
+        'paginate_page' => 'index',                 # Page name to paginate
         
         # Plugins/Filters
         'filters'    => {

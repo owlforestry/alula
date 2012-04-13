@@ -148,24 +148,46 @@ module Alula
       # Preload all our theme layouts
       load_layouts(config.theme)
       
-      context = Context.new({"config" => config, "site" => config, "environment" => @sprockets, "attachments" => @attachment_mapping})
+      context = Context.new({
+        "config"      => config,
+        "site"        => config,
+        "engine"      => self,
+        "environment" => @sprockets,
+        "attachments" => @attachment_mapping
+      })
       context.send(:extend, Helpers)
       
       total = pages.count + posts.count + statics.count
       pbar = ProgressBar.new "Rendering", total
       
       # Render posts
-      (pages + posts).each do |page|
+      (posts + pages).each do |page|
         # Output with layout
         layout = find_layout(page.data["layout"])
-        context.page = page
-
-        page.output = layout.render context do
-          # Render page content
-          page.render(context)
+        
+        # Feed page information to posts
+        if page.data[:posts]
+          page.data[:posts].select do |p|
+            p.data[:page_num] = page.data[:page_num]
+            p.data[:pages] = page.data[:total_pages]
+            
+            true
+          end
+        else
+          page.data[:pages] = nil
+        end
+        
+        # Start ensure-block to keep context variables nice and clean
+        begin
+          context.page = page
           
-          # Parse page view
-          page.view.render context
+          page.output = layout.render context do
+            page.render(context)
+            
+            page.view.render context
+          end
+        ensure
+          context.page = nil
         end
         
         # HTML Compressor
@@ -184,6 +206,10 @@ module Alula
     
     def find_view(view)
       @layouts["_#{view}"] or raise "Cannot find view #{view} for theme #{config.theme}"
+    end
+    
+    def find_layout(layout)
+      @layouts[layout] or raise "Cannot find layout #{layout} for theme #{config.theme}"
     end
     
     private
@@ -253,18 +279,18 @@ module Alula
       Dir.chdir(config.posts_path) { Dir["**/*"] }.each do |post|
         @posts << Post.new(self, config.posts_path, post)
       end
-      @posts.sort!
+      @posts.sort!.reverse!
       
       # Theme content with site content
       theme_dir = Alula::Engine::Theme.find(config.theme)
-      blog_content = {}
+      @blog_content = {}
       Dir.chdir(File.join(theme_dir, "content")) { Dir["**/*"] }.each do |content|
         next if File.directory?(File.join(theme_dir, "content", content))
         dir = File.dirname(content)
         base = File.basename(content, File.extname(content))
         content_name = (dir == "." ? base : File.join(dir, base))
 
-        blog_content[content_name] = [content, File.join(theme_dir, "content")]
+        @blog_content[content_name] = [content, File.join(theme_dir, "content")]
       end
       Dir.chdir(config.content_path) { Dir["**/*"] }.each do |content|
         next if File.directory?(File.join(config.content_path, content))
@@ -273,11 +299,13 @@ module Alula
         base = File.basename(content, File.extname(content))
         content_name = (dir == "." ? base : File.join(dir, base))
 
-        blog_content[content_name] = [content, config.content_path]
+        @blog_content[content_name] = [content, config.content_path]
       end
 
-      blog_content.each do |content_name, arr|
+      @blog_content.each do |content_name, arr|
         content, path = *arr
+        next if content_name == config.paginate_page
+        
         # Do we have page?
         if File.read(File.join(path, content), 3) == "---"
           @pages << Page.new(self, path, content)
@@ -285,6 +313,9 @@ module Alula
           @statics << [content, File.join(path, content)]
         end
       end
+      
+      # Paginate index
+      paginate("index")
     end
     
     def load_layouts(theme)
@@ -296,9 +327,30 @@ module Alula
       end
     end
     
-    def find_layout(layout)
-      layout = [layout, "default"].select { |l| @layouts.key?(l) }.first
-      @layouts[layout]
+    def paginate(page)
+      content, path = *@blog_content[page]
+      
+      (0..num_pages).each do |page|
+        name = if page == 0
+          content
+        else
+          {
+            "page"  => page.to_s,
+          }.inject(config.paginate_path) { |result, token|
+            result.gsub(/:#{Regexp.escape token.first}/, token.last)
+          }.gsub(/\/\//, '/')
+        end
+        @pages << Page.new(self, path, content, {
+          :page_num => page,
+          :total_pages => num_pages,
+          :name => name,
+          :posts => @posts.slice(config.paginate * page, config.paginate)
+        })
+      end
+    end
+    
+    def num_pages
+      (@posts.count / config.paginate).ceil
     end
   end
 end

@@ -26,6 +26,17 @@ module Alula
         end
         tag += ">#{content}</a>"
       end
+      
+      def include(layout, obj)
+        old_page = self.page
+        begin
+          layout = engine.find_layout("_#{layout.to_s}")
+          self.page = obj
+          layout.render self
+        ensure
+          self.page = old_page
+        end
+      end
     end
   end
 end
