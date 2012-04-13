@@ -38,9 +38,23 @@ module Alula
             if (width > @image.columns and height > @image.rows) and opts[:skip_nores]
               return
             end
+
+            # Load EXIF data
+            @exif ||= MiniExiftool.new file
             
             resized = @image.resize_to_fit(width, height)
+            # Make it progressive
+            resized.interlace = ::Magick::PlaneInterlace
+            # Strip unwanted properties
+            tags = Hash[*(config.images["keep_tags"].collect{|t| [t, @exif[t]]}).flatten]
+            resized.strip!
+            
             resized.write(opts[:output])
+            
+            # Save our exif data back
+            exif = MiniExiftool.new opts[:output]
+            tags.each {|key, value| exif[key] = value }
+            exif.save
           end
         end
       end
