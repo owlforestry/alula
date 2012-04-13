@@ -3,8 +3,9 @@ module Alula
     class Filter
       class Smilies < Filter
         MAP = {
-          "smile" => [":-)", ":)", "^^"],
+          "smile" => [":-)", ":)", "^^", "^_^"],
           "sad"   => [":-(", ":("],
+          "laugh" => [":-D", ":D"],
         }
         
         def initialize(opts)
