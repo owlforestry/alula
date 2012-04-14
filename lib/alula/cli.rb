@@ -65,7 +65,7 @@ module Alula
         :production => (!options["development"] or options["production"]),
         :verbose => options["verbose"],
         })
-      site.generate unless options['skip-generate'] == :true
+      site.generate unless options['skip-generate']
       
       # Start webserver
       begin
