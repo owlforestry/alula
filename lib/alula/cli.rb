@@ -58,7 +58,7 @@ module Alula
       :desc => "Preview site suing production settings. Compresses all assets and HTML."
     method_option :verbose, :type => :boolean, :default => false,
       :desc => "Be verbose during site generation."
-    method_option "skip-generate", :type => :boolean, :default => :false,
+    method_option "skip-generate", :type => :boolean, :default => false,
       :desc => "Skip site generation before web server launch."
     def preview
       site = Alula::Site.new({
