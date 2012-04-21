@@ -27,12 +27,14 @@ module Alula
         tag += ">#{content}</a>"
       end
       
-      def include(layout, obj)
+      def include(obj)
         old_page = self.page
         begin
-          layout = engine.find_layout("_#{layout.to_s}")
+          # layout = engine.find_layout("_#{layout.to_s}")
           self.page = obj
-          layout.render self
+          self.page.render_content(self)
+          # binding.pry
+          # layout.render(self)
         ensure
           self.page = old_page
         end

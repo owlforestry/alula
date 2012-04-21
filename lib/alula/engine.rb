@@ -161,37 +161,28 @@ module Alula
       pbar = ProgressBar.new "Rendering", total
       
       # Render posts
+      # (posts + pages).each do |page|
       (posts + pages).each do |page|
         # Output with layout
-        layout = find_layout(page.data["layout"])
-        
-        # Feed page information to posts
-        if page.data[:posts]
-          page.data[:posts].select do |p|
-            p.data[:page_num] = page.data[:page_num]
-            p.data[:pages] = page.data[:total_pages]
-            
-            true
-          end
-        else
-          page.data[:pages] = nil
-        end
+        # layout = find_layout(page.data["layout"])
         
         # Start ensure-block to keep context variables nice and clean
         begin
+          if page.posts
+            page.posts.select {|post| post.parent = page; true }
+          end
+          binding.pry if page.url[/^\/index.html/]
+          
           context.page = page
           
-          page.output = layout.render context do
-            page.render(context)
-            
-            page.view.render context
-          end
+          # Render and write document in one pass
+          page.write(context)
         ensure
           context.page = nil
         end
         
         # HTML Compressor
-        page.write
+        # page.write
         
         pbar.inc
       end

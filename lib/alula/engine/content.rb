@@ -13,7 +13,7 @@ module Alula
       require 'alula/engine/page'
       
       attr_reader :engine, :config, :base, :name
-      attr_accessor :data, :content, :output, :ext
+      attr_accessor :data, :content, :body, :source, :output, :ext
       attr_accessor :date, :slug, :published, :categories, :title
 
       def initialize(engine, base, name, data = {})
@@ -23,11 +23,10 @@ module Alula
         @name = name
         
         # Set post author by default to site author
-        self.data = { "author" => @engine.config.author, "layout" => "default" }.deep_merge(data)
-        # self.data["layout"] = self.type ? self.type.to_s : "default"
+        self.data = { "author" => @engine.config.author, "layout" => "default", "parent" => nil, "posts" => nil }.deep_merge(data)
 
-        # Read file content
-        read_content
+        # Read file source
+        read_source
         
         # Parse filename and filling missing information
         if self.type == :post
@@ -50,27 +49,35 @@ module Alula
         cmp
       end
       
-      # Returns the view template for content
+      # Returns the view template for source
       def view
         @view ||= begin
           engine.find_view(@data["view"] || self.type.to_s)
         end
       end
       
-      def render(context)
-        begin
-          content = Liquid::Template.parse(self.content).render(context.to_liquid)
+      def render_body(context)
+        @body ||= begin
+          body = Liquid::Template.parse(self.source).render(context.to_liquid)
           
           # Filter through filters
           engine.filters.each do |filter|
             next unless filter.filters?(self.type)
-            content = filter.process(content)
+            body = filter.process(body)
           end
           
-          self.content = content
+          body
         rescue => e
           puts "Liquid Exception: #{e.message} in #{self.name}"
         end
+      end
+      
+      def render_content(context)
+        # Make sure we have body rendered
+        @content = render_body(context)
+        
+        # Always render content (layout/view can change)
+        @content = self.view.render(context)
       end
       
       def id
@@ -103,10 +110,16 @@ module Alula
         path
       end
       
-      def write
+      def write(context)
+        # Find complete layout
+        layout = self.engine.find_layout(self.data["layout"])
+        
+        # Render content
+        render_content(context)
+        
         path = destination
         FileUtils.mkdir_p(File.dirname(path))
-        File.open(path, "w") { |io| io.write output }
+        File.open(path, "w") { |io| io.write layout.render(context) }
       end
       
       def type
@@ -138,20 +151,20 @@ module Alula
       end
       
       def method_missing(meth, *args, &block)
-        if @data.key?(meth.to_s)
+        if meth.to_s[-1] == "=" and @data.key?(meth.to_s[0..-2])
+          @data.send(:[]=, meth.to_s[0..-2], *args)
+        elsif @data.key?(meth.to_s)
           @data[meth.to_s]
-        elsif @data.key?(meth.to_sym)
-          @data[meth.to_sym]
         else
           super
         end
       end
       
       private
-      def read_content
-        content = File.read(File.join(self.base, self.name))
-        if /^(?<manifest>(?:---\s*\n.*?\n?)^(---\s*$\n?))(?<content>.*)/m =~ content
-          self.content = parse_content(content)
+      def read_source
+        source = File.read(File.join(self.base, self.name))
+        if /^(?<manifest>(?:---\s*\n.*?\n?)^(---\s*$\n?))(?<source>.*)/m =~ source
+          self.source = Kramdown::Document.new(source, {}).to_html
 
           begin
             self.data.deep_merge!(YAML.load(manifest))
@@ -164,10 +177,6 @@ module Alula
           self.categories = self.data['categories'] if self.data.key?('categories')
           self.title = self.data['title'] if self.data.key?('title')
         end
-      end
-      
-      def parse_content(content)
-        Kramdown::Document.new(content, {}).to_html
       end
     end
   end
