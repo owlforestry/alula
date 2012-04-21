@@ -171,7 +171,6 @@ module Alula
           if page.posts
             page.posts.select {|post| post.parent = page; true }
           end
-          binding.pry if page.url[/^\/index.html/]
           
           context.page = page
           
