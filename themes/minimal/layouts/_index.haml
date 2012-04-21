@@ -1,5 +1,5 @@
 - page.posts.each do |post|
-	= include :post, post
+	= include post
 
 - if page.next
 	%a{href: page.next.url}= "Older posts"

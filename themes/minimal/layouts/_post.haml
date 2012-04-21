@@ -1,4 +1,4 @@
-- if page.pages
+- if page.parent
 	%a{title: page.title, href: page.url}
 		%h1= page.title
 - else
@@ -6,7 +6,7 @@
 
 = page.content
 
-- unless page.pages
+- unless page.parent
 	%p.meta
 		- if page.previous
 			%a{class: "left", title: "Previous Post: #{page.previous.title}", href: page.previous.url} &laquo; #{page.previous.title}
