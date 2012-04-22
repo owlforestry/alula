@@ -266,7 +266,8 @@ module Alula
     
     def read_content
       # Posts
-      Dir.chdir(config.posts_path) { Dir["**/*"] }.each do |post|
+      Dir.chdir(config.posts_path) { Dir["*"] }.each do |post|
+        next if File.directory?(File.join(config.posts_path, post))
         @posts << Post.new(self, config.posts_path, post)
       end
       @posts.sort!.reverse!
