@@ -12,7 +12,7 @@ module Alula
         
         def initialize(tag_name, markup, tokens)
           super
-
+          
           if respond_to?("prepare")
             prepare(markup, tokens)
           end

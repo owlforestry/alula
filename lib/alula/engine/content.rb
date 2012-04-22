@@ -4,6 +4,7 @@ require 'liquid'
 require 'kramdown'
 require 'alula/engine/context'
 require 'stringex'
+require 'front-compiler'
 
 module Alula
   class Engine
@@ -123,7 +124,15 @@ module Alula
         
         path = destination
         FileUtils.mkdir_p(File.dirname(path))
-        File.open(path, "w") { |io| io.write layout.render(context) }
+        File.open(path, "w") do |io|
+          output = layout.render(context)
+          
+          if config["production"]
+            @@compressor ||= FrontCompiler.new
+            output = @@compressor.compact_html(output)
+          end
+          io.write output
+        end
       end
       
       def type

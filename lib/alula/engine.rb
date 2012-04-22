@@ -9,6 +9,7 @@ require 'alula/engine/content'
 require 'alula/engine/helpers'
 require 'alula/engine/plugins'
 require 'alula/engine/filter'
+require 'alula/engine/compressors'
 require 'alula/engine/attachmentprocessor'
 require 'alula/engine/progressbar'
 
@@ -210,6 +211,12 @@ module Alula
         include Helpers
         
         def config; Alula::Engine::Config.shared; end
+      end
+      
+      # Add compressor support
+      if config["production"]
+        @sprockets.css_compressor = Alula::Engine::Compressors::CSSCompressor.new
+        @sprockets.js_compressor = Alula::Engine::Compressors::JSCompressor.new
       end
       
       # Add self-generated assets
