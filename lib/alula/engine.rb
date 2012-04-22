@@ -321,7 +321,13 @@ module Alula
       
       Dir[File.join(theme_dir, "layouts", "*")].each do |layout|
         /(?<basename>(?:.*?))(?<engines>(?:\..+))/ =~ File.basename(layout)
-        @layouts[basename] = Tilt.new layout
+        options = case File.extname(layout)[1..-1]
+        when "haml"
+          { :format => :html5, :ugly => config["production"] }
+        else
+          {}
+        end
+        @layouts[basename] = Tilt.new layout, nil, options
       end
     end
     
