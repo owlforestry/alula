@@ -5,7 +5,7 @@ module Alula
     attr_reader :config
     
     def initialize(override = {})
-      @engine = Alula::Engine.new
+      @engine = Alula::Engine.new(override)
       @config = @engine.config
       
       # Disable verbose
