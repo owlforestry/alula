@@ -58,7 +58,11 @@ module Alula
       
       def render_body(context)
         @body ||= begin
+          # Parse liquid template first
           body = Liquid::Template.parse(self.source).render(context.to_liquid)
+          
+          # Parse markdown
+          body = parse_markdown(body)
           
           # Filter through filters
           engine.filters.each do |filter|
@@ -164,7 +168,7 @@ module Alula
       def read_source
         source = File.read(File.join(self.base, self.name))
         if /^(?<manifest>(?:---\s*\n.*?\n?)^(---\s*$\n?))(?<source>.*)/m =~ source
-          self.source = Kramdown::Document.new(source, {}).to_html
+          self.source = source
 
           begin
             self.data.deep_merge!(YAML.load(manifest))
@@ -177,6 +181,16 @@ module Alula
           self.categories = self.data['categories'] if self.data.key?('categories')
           self.title = self.data['title'] if self.data.key?('title')
         end
+      end
+      
+      def parse_markdown(source)
+        Kramdown::Document.new(source, {
+          :auto_ids       => true,
+          :footnote_nr    => 1,
+          :entity_output  => 'as_char',
+          :html_to_native => true,
+          :toc_levels     => '1..6',
+        }).to_html
       end
     end
   end
