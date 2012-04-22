@@ -47,7 +47,10 @@ module Alula
     method_option :verbose, :type => :boolean, :default => false,
       :desc => "Be verbose during site generation."
     def generate
-      site = Alula::Site.new(:production => (!options["development"] or options["production"]), :verbose => options["verbose"])
+      site = Alula::Site.new({
+        "production" => (!options["development"] or options["production"]),
+        "verbose" => options["verbose"]
+      })
       site.generate
     end
 
@@ -62,8 +65,8 @@ module Alula
       :desc => "Skip site generation before web server launch."
     def preview
       site = Alula::Site.new({
-        :production => (!options["development"] or options["production"]),
-        :verbose => options["verbose"],
+        "production" => (!options["development"] or options["production"]),
+        "verbose" => options["verbose"],
         })
       site.generate unless options['skip-generate']
       
