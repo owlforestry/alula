@@ -55,19 +55,33 @@ module Alula
         register :image
         
         attr_accessor :prefix
-        attr_reader :name, :prefix
+        attr_reader :name, :prefix, :title, :classes
         
         def self.install(options)
           @@options = options
         end
         
         def prepare(markup, tokens)
-          /(?<src>(?:https?:\/\/|\/|\S+\/)\S+)(?<title>\s+.+)?/ =~ markup
-          /(?:"|')(?<title>[^"']+)?(?:"|')\s+(?:"|')(?<alt>[^"']+)?(?:"|')/ =~ title
+          @classes = []
+          @align = "left"
           
+          /(?<src>\S+)( (?<options>.+))?/ =~ markup
           @src = src
-          @title = title || ""
-          @alternative = alt || ""
+
+          if options
+            options.scan(/(\S+):["]?((?:.(?!["]?\s+(?:\S+):|[>"]))+.)["]?/) do |name, value|
+              case name
+              when "title"
+                @title = value
+                @alternative ||= value
+              when "alt"
+                @alternative = value
+                @title ||= value
+              when "align"
+                @align = value
+              end
+            end
+          end
         end
         
         def content(context)
@@ -81,12 +95,15 @@ module Alula
           tag = "<img"
           tag += " alt=\"#{self.alternative}\"" if self.alternative
           tag += " title=\"#{self.title}\"" if self.title
+          tag += " class=\"#{(self.classes + [@align]).join(" ")}\""
           if context.config.images["lazyload"]
             tag += " src=\"#{context.asset_url("grey.gif")}\""
             tag += " data-original=\"#{self.source(name, prefix)}\""
             tag += " data-hires=\"#{self.hires(name, prefix)}\"" if context.config.images["hires"] and self.hires(name, prefix)
-            tag += " width=\"#{self.width}\" height=\"#{self.height}\""
+          else
+            tag += " src=\"#{self.source(name, prefix)}\""            
           end
+          tag += " width=\"#{self.width}\" height=\"#{self.height}\""
           tag += " />"
         end
         
@@ -112,15 +129,15 @@ module Alula
         end
         
         def alternative
-          @alternative ||= self.title
+          @alternative# ||= self.title
         end
         
         def title
-          @title ||= exif.title
+          @title# ||= exif.title
         end
         
         def exif
-          @exif ||= MiniExiftool.new File.join("public", source(self.name, self.prefix))
+          @exif ||= MiniExiftool.new File.join(context.config.public_path, source(self.name, self.prefix))
         end
       end
     end
