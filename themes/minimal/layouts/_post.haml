@@ -11,4 +11,4 @@
 		- if page.previous
 			%a{class: "left", title: "Previous Post: #{page.previous.title}", href: page.previous.url} &laquo; #{page.previous.title}
 		- if page.next
-			%a{class: "right", title: "Next Post: #{page.next.title}", href: page.next.url} &laquo; #{page.next.title}
+			%a{class: "right", title: "Next Post: #{page.next.title}", href: page.next.url} #{page.next.title} &raquo;
