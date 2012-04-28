@@ -11,6 +11,9 @@ module Alula
         end
         
         def prepare(markup, tokens)
+          @align = "left"
+          @classes = []
+          
           /(?<src>(?:https?:\/\/|\/|\S+\/)[^"]+)(?:"|')?/ =~ markup
           @name = src.strip
         end
@@ -20,7 +23,11 @@ module Alula
           exif = MiniExiftool.new File.join("public", sources.first)
           tag = "<video"
           tag += " controls"
-          tag += " width=\"#{exif.imagewidth}\" height=\"#{exif.imageheight}\" poster=\"#{poster}\" preload=\"none\">\n"
+          tag += " class=\"#{(self.classes + [@align]).join(" ")}\""
+          tag += " width=\"#{exif.imagewidth}\""
+          tag += " height=\"#{exif.imageheight}\""
+          tag += " poster=\"#{poster}\""
+          tag += " preload=\"none\">"
           
           sources.each do |src|
             exif = MiniExiftool.new File.join("public", src)
