@@ -1,9 +1,10 @@
 - page.posts.each do |post|
 	.post= include post
 
-- if page.next
-	%a{href: page.next.url}= "Older posts"
+%p.navigation
+	- if page.next
+		%a{class: "left", title: "Older Posts", href: page.next.url} &laquo; Older posts
 
-- if page.previous
-	%a{href: page.previous.url}= "Newer posts"
+	- if page.previous
+		%a{class: "right", title: "Newer Posts", href: page.previous.url} Newer posts &raquo;
 
