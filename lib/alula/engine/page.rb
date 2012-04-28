@@ -31,14 +31,14 @@ module Alula
       
       def next
         pos = self.engine.pages.index(self)
-        if pos and pos < self.engine.pages.length - 1
+        if pos and pos < (self.engine.pages.length - 1)
           self.engine.pages[pos + 1]
         end
       end
       
       def previous
         if self.data[:page_num] > 0
-          if self.data[:page_num] < self.data[:total_pages] - 1
+          if self.data[:page_num] <= self.data[:total_pages]
             pos = self.engine.pages.index(self)
             if pos and pos > 0
               self.engine.pages[pos - 1]
