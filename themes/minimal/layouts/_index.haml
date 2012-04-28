@@ -1,5 +1,6 @@
 - page.posts.each do |post|
-	.post= include post
+	.post
+		.content= include post
 
 %p.navigation
 	- if page.next

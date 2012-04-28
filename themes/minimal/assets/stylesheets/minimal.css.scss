@@ -106,7 +106,11 @@ img, video {
   &.none { float: none; clear: both; }
 }
 
-div.post { clear: both; }
+div.post {
+	.content { clear: both; }
+	border-bottom: 1px solid #efefef;
+	margin-bottom: 25px;
+}
 
 p.navigation {
 	clear: both;
