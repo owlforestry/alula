@@ -14,7 +14,15 @@ module Alula
         end
         
         path = File.dirname(self.name)
-        @url = File.join(path, File.basename(self.name, File.extname(self.name)) + ".html").gsub(/\/\//, '/')
+        extname = case File.extname(self.name)[1..-1]
+        when "html"
+        when "xml"
+          File.extname(self.name)[1..-1]
+        else
+          "html"
+        end
+        # binding.pry if self.name[/feed/]
+        @url = File.join(path, File.basename(self.name, File.extname(self.name)) + ".#{extname}").gsub(/\/\//, '/')
       end
       
       def posts

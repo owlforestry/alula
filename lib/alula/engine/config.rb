@@ -38,6 +38,7 @@ module Alula
         'title'   => 'Your New Blog',
         'tagline' => 'Insert catchy subtitle here.',
         'author'  => 'Blogger',
+        'url'     => 'http://localhost/',
         
         # Visual/theme
         'theme'         => 'minimal',
@@ -45,6 +46,7 @@ module Alula
         'paginate'      => 10,                      # How many posts per page
         'paginate_path' => '/page/:page/',          # Pathname for other pages (excl index page)
         'paginate_page' => 'index',                 # Page name to paginate
+        'feed_posts'    => 10,                      # Number of recents posts in RSS feed
         
         # Plugins/Filters
         'filters'    => {

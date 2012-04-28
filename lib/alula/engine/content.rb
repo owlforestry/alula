@@ -184,7 +184,6 @@ module Alula
           rescue => e
             puts "YAML Exception reading #{name}: #{e.message}"
           end
-          
           self.date = Time.parse(self.data["date"].to_s) if self.data.key?('date')
           self.slug = self.data['slug'] if self.data.key?('slug')
           self.categories = self.data['categories'] if self.data.key?('categories')
