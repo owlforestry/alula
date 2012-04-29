@@ -34,8 +34,8 @@ module Alula
           File.join("/", self.config.assets_path, self.environment[name].digest_path)
         elsif /^(?<prefix>(images|thumbnails))\/(?<name>.+)/ =~ name
           # Try to find attachment
-          if self.attachments[name]
-            asset_url(File.join(prefix, self.attachments[name]))
+          if self.attachments[name.downcase]
+            asset_url(File.join(prefix, self.attachments[name.downcase]))
           end
         end
         asset

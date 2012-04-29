@@ -20,7 +20,7 @@ module Alula
       end
       
       def set_mapping(possix = nil)
-        engine.attachment_mapping[File.join(options[:asset_path], self.file_name(possix))] = File.join(options[:asset_path], self.asset_name(possix))
+        engine.attachment_mapping[File.join(options[:asset_path], self.file_name(possix)).downcase] = File.join(options[:asset_path], self.asset_name(possix))
       end
       
       def file_name(possix = nil)
