@@ -17,6 +17,7 @@ Gem::Specification.new do |gem|
   gem.version       = Alula::VERSION
   
   # gem.add_dependency 'jekyll', '~> 0.11'
+  gem.add_dependency 'thin'
   gem.add_dependency 'tilt'
   gem.add_dependency 'liquid'
   gem.add_dependency 'kramdown'
