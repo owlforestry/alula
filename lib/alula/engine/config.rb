@@ -35,10 +35,11 @@ module Alula
       
       DEFAULT     = {
         # General settings
-        'title'   => 'Your New Blog',
-        'tagline' => 'Insert catchy subtitle here.',
-        'author'  => 'Blogger',
-        'url'     => 'http://localhost/',
+        'title'    => 'Your New Blog',
+        'tagline'  => 'Insert catchy subtitle here.',
+        'author'   => 'Blogger',
+        'url'      => 'http://localhost',
+        'base_url' => '/',
         
         # Visual/theme
         'theme'         => 'minimal',
