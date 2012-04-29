@@ -267,6 +267,11 @@ footer {
   header ul {
     display:none;
   }
+  
+  img, video {
+    &.left { float: none; }
+    &.right { float: none; }
+  }
 }
 
 @media print {
