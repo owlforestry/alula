@@ -84,6 +84,7 @@ module Alula
         'posts_path'       => 'posts',        # Where to get posts
         'content_path'     => 'content',      # Where to get content which name doesn't change
         'static_path'      => 'static',       # Where to get site assets, these will be hashed
+        'custom_path'      => 'custom',       # Theme customization
         'attachments_path' => 'attachments',  # Where to store post attachments
         
         # Generation options

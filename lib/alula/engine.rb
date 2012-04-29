@@ -122,6 +122,10 @@ module Alula
         config.plugins.each do |plugin, opts|
           io.puts " *=require #{plugin}" if Dir[File.join(opts[:path], "assets", "stylesheets", "#{plugin}.css*")].count == 1
         end
+        # Blog customization
+        if Dir[File.join(config.custom_path, "blog_style.css*")].count == 1
+          io.puts " *=require blog_style"
+        end
         io.puts "*/"
       end
       
@@ -243,6 +247,7 @@ module Alula
 
       # Add site assets
       @sprockets.append_path config.static_path
+      @sprockets.append_path config.custom_path
       
       # Vendored assets (jQuery etc)
       vendor_path = File.expand_path(File.join(File.dirname(__FILE__), *%w{.. .. vendor}))
