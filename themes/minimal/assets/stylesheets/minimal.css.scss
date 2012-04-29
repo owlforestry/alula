@@ -269,8 +269,11 @@ footer {
   }
   
   img, video {
-    &.left { float: none; }
-    &.right { float: none; }
+	&.left, &.right {
+      float: none;
+	  clear: both;
+	  display: block;
+    }
   }
 }
 
