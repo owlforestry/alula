@@ -1,38 +1,59 @@
 # Alula Blog
 
-# Author of this blog
-author: <%= default_config["author"] %>
-
 # Blog main title
 title: <%= default_config["title"] %>
 
 # Subtitle, tagline
 tagline: <%= default_config["tagline"] %>
 
-# Chosed theme
-theme: <%= default_config["theme"] %>
+# Author of this blog
+author: <%= default_config["author"] %>
 
-# Options for image settings
-images:
-  size: <%= default_config["images"]["size"] %>			# Resize photos to this size
-  thumbnails: <%= default_config["images"]["thumbnails"] %>	# # Thumbnail size (width x height)
-  retina: <%= default_config["images"]["retina"] %>			# Generate photos for retina displays
+# Theme for blog, see alula-themes gem for more choices
+#theme: <%= default_config["theme"] %>
 
-# Root URL, if you host blog in directory, fix this according
-root: <%= default_config["root"] %>
+# Site URL
+url: <%= default_config["url"] %>
 
-# Permalinks style
-permalink: "<%= default_config["permalink"] %>"
+# Permalink format
+#permalink: <%= default_config["permalink"] %>
 
-# Posts per page on the blog index
-paginate: <%= default_config["paginate"] %>
+# Number of posts per page
+#paginate: <%= default_config["paginate"] %>
 
-# Directory base for pagination URLs eg. /blog/page/2/
-pagination_dir: <%= default_config["pagination_dir"] %>
+# Path for paginated pages
+#paginate_path: <%= default_config["paginate_path"] %>
 
-# "Continue reading" link text at the bottom of excerpted articles
-excerpt_link: "<%= default_config["excerpt_link"] %>"
+# Number of recent posts in RSS Feed
+#feed_posts: <%= default_config["feed_posts"] %>
+
+# Images options
+#images:
+  # Resize attachment images to this size
+  # size: <%= default_config["images"]["size"] %>
+  # Generate thumbnails of this size
+  # thumbnails: <%= default_config["images"]["thumbnails"] %>
+
+# Videos options
+# videos:
+  # Resize HD videos to this size
+  # size_hd: <%= default_config["videos"]["size_hd"] %>
+  # Resize SD videos to this size, or generate SD version from HD video
+  # size_sd: <%= default_config["videos"]["size_sd"] %>
+  # Generate given size thumbnails
+  # thumbnails: <%= default_config["videos"]["thumbnails"] %>
+  # By default Alula uses Zencoder for generating proper videos
+  # zencoder:
+    # Zencoder API token
+    # token: <%= default_config["videos"]["zencoder"]["token"] %>
+    # Amazon S3 key id for creating bucket and accessing it
+    # key_id: <%= default_config["videos"]["zencoder"]["key_id"] %>
+    # Amazon S3 access key for creating and accessing upload bucket
+    # access_key: <%= default_config["videos"]["zencoder"]["access_key"] %>
 
 # Plugins
 plugins:
-<%= default_config["plugins"].to_yaml.split("\n")[1..-1].collect{|l| "  #{l}"}.join("\n") %>
+  # fancybox:
+    # personal: true	# Uncomment this ONLY if this blog is for personal use only
+  # sublimevideo:
+    # token: 			# Insert your sublimevideo token here
