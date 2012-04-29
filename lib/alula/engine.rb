@@ -339,14 +339,14 @@ module Alula
           content
         else
           {
-            "page"  => page.to_s,
+            "page"  => (page + 1).to_s,
           }.inject(config.paginate_path) { |result, token|
             result.gsub(/:#{Regexp.escape token.first}/, token.last)
           }.gsub(/\/\//, '/')
         end
         @pages << Page.new(self, path, content, {
-          :page_num => page,
-          :total_pages => num_pages,
+          :page_num => (page + 1),  # Make prettier, starting pages from 1 instead of 0
+          :total_pages => (num_pages + 1),
           :name => name,
           :posts => @posts.slice(config.paginate * page, config.paginate)
         })
