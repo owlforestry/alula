@@ -34,6 +34,7 @@ module Alula
         else
           raise "Unknown attachment #{attachment}"
         end
+        processor = nil
       end
     end
   end
