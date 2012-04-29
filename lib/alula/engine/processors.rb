@@ -46,6 +46,9 @@ module Alula
         end
       end
       
+      def cleanup
+      end
+      
       def self.mimetype(re)
         (class << self; self; end).send(:define_method, "_mimetype") do
           re
