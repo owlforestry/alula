@@ -34,6 +34,8 @@ module Alula
             width, height = config.images["thumbnails"].split("x").collect {|i| i.to_i * 2 }
             resize_image(width, height, :output => File.join(options[:thumbnail_path], asset_name("_2x")), :type => :thumbnail, :skip_nores => true)
           end
+          
+          cleanup
         end
       end
     end
