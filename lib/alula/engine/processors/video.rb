@@ -60,6 +60,8 @@ module Alula
           end
         
           encode(variants, !File.exists?(File.join(options[:thumbnail_path], asset_name("", ".png"))))
+          
+          cleanup
         end
       end
     end

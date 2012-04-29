@@ -19,6 +19,13 @@ module Alula
             })
           end
           
+          def cleanup
+            @video_info = nil
+            @s3 = nil
+            @bucket = nil
+            @object = nil
+          end
+          
           def encode(variants, thumbnail)
             return if variants.empty? and !thumbnail
         
