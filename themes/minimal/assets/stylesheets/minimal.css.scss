@@ -14,6 +14,7 @@ body {
 h1, h2, h3, h4, h5, h6 {
   color:#222;
   margin:0 0 20px;
+  clear: both;
 }
 
 p, ul, ol, table, pre, dl {
@@ -103,7 +104,7 @@ img, video {
   &.left, &.right { margin-bottom: 5px; margin-top: 5px; }
   &.left { float: left; margin-right: 5px; }
   &.right { float: right; mergin-left: 5px; }
-  &.none { float: none; clear: both; }
+  &.none { float: none; clear: both; display: block; }
 }
 
 div.post {
