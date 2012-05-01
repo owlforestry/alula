@@ -107,9 +107,12 @@ img, video {
 }
 
 div.post {
-	border-bottom: 1px solid #efefef;
 	margin-bottom: 25px;
-	div.spacer { clear: both; }
+	div.spacer {
+		clear: both;
+		border-bottom: 1px solid #efefef;
+		padding-bottom: 15px;
+	}
 }
 
 p.navigation {
