@@ -8,7 +8,6 @@ module Alula
       config = DEFAULT_CONFIG.dup
       
       # Load project specific configuration
-      puts "Got project file #{config_file}"
       if (File.exists?(config_file))
         config.deep_merge!(YAML.load_file(config_file))
       end
@@ -28,6 +27,19 @@ module Alula
       url: "http://localhost:3000",
       cdn: nil,
       asset_host: nil,
+      
+      permalinks: '/:year/:month/:title/',
+      
+      # Directories
+      # Content directories
+      content_path: 'content',
+      pages_path: 'content/pages',
+      posts_path: 'content/posts',
+      attachements_path: 'content/attachements',
+      
+      # Public & Generated paths
+      public_path: 'public',
+      
     }.freeze
   end
 end
