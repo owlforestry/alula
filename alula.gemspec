@@ -16,24 +16,23 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = Alula::VERSION
   
-  # gem.add_dependency 'jekyll', '~> 0.11'
   gem.add_dependency 'thin'
   gem.add_dependency 'tilt'
   gem.add_dependency 'liquid'
   gem.add_dependency 'kramdown'
   gem.add_dependency 'sprockets', '~> 2.4'
   gem.add_dependency 'thor', '~> 0.14'
-  gem.add_dependency 'rmagick', '~> 2.13'
-  gem.add_dependency 'sass', '~> 3.1'
-  gem.add_dependency 'coffee-script', '~> 2.2'
+  # gem.add_dependency 'rmagick', '~> 2.13'
+  # gem.add_dependency 'sass', '~> 3.1'
+  # gem.add_dependency 'coffee-script', '~> 2.2'
   gem.add_dependency 'uglifier', '~> 1.2'
-  gem.add_dependency 'front-compiler', '~> 1.1'
-  gem.add_dependency 'activesupport', '~> 3.2'
-  gem.add_dependency 'stringex', '~> 1.3'
+  # gem.add_dependency 'front-compiler', '~> 1.1'
+  # gem.add_dependency 'activesupport', '~> 3.2'
+  # gem.add_dependency 'stringex', '~> 1.3'
   gem.add_dependency 'powerbar'
-  gem.add_dependency 'aws-sdk'
-  gem.add_dependency 'zencoder'
-  gem.add_dependency 'mini_exiftool', '~> 1.3'
+  # gem.add_dependency 'aws-sdk'
+  # gem.add_dependency 'zencoder'
+  # gem.add_dependency 'mini_exiftool', '~> 1.3'
 
   gem.add_development_dependency 'version', '~> 1.0'
 end
