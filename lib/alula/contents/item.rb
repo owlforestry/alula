@@ -1,6 +1,7 @@
-require 'alula/content/metadata'
+require 'alula/contents/metadata'
 require 'liquid'
 require 'kramdown'
+require 'stringex'
 
 module Alula
   class Content
@@ -27,34 +28,32 @@ module Alula
       end
     
       def self.load(opts = {})
+        # Just return nil right away if we have no item
+        return nil if opts[:item].nil?
+        
         # Return nothing if file is not regular file
-        if (!File.file?(opts[:file]))
-          return nil
-        end
-      
+        return nil unless opts[:item].exists?
+
         # If payload is required by class and file doesn't contain it, just skip it
-        if has_payload?
-          if File.read(opts[:file], 3) != "---"
-            return nil
-          end
-        end
+        return nil if has_payload? && !opts[:item].has_payload?
       
         # All ok
         return self.new(opts)
       end
     
       def initialize(opts = {})
-        @site = opts[:site]
-        @file = opts[:file]
-        @name = opts[:name] || File.basename(@file)
+        @site = opts.delete(:site)
+        @item = opts.delete(:item)
+        @name = @item.name
+        # @name = opts[:name] || File.basename(@file)
         
         @url = {}
         @path = {}
         
         # Initialize metadata
         @metadata = Metadata.new
-        if /^(?<date>(?:\d+-\d+-\d+))-(?<slug>(?:.*))(?<extension>(?:\.[^.]+))$/ =~ @name
-          @metadata.date = date
+        if /^((?<date>(?:\d+-\d+-\d+))-)?(?<slug>(?:.*))(?<extension>(?:\.[^.]+))$/ =~ @name
+          @metadata.date = date || Time.now
           @metadata.slug = slug
           @metadata.extension = extension
         end
@@ -73,29 +72,33 @@ module Alula
       end
          
       # Accessors
-      def url(locale = nil)
+      def url(locale = @site.config.locale)
         @url[locale] ||= begin
           url = if @metadata.permalink
             @metadata.permalink
           else
+            template = self.kind_of?(Page) ? @site.config.pagelinks : @site.config.permalinks
+            
             {
-              "year"  => @metadata.date.strftime('%Y'),
-              "month" => @metadata.date.strftime('%m'),
-              "day"   => @metadata.date.strftime('%d'),
-              "title" => CGI.escape(@metadata.slug)
-            }.inject(@site.config.permalinks) { |result, token|
+              "year"   => @metadata.date.strftime('%Y'),
+              "month"  => @metadata.date.strftime('%m'),
+              "day"    => @metadata.date.strftime('%d'),
+              "locale" => (@site.config.locale == locale && @site.config.hides_base_locale ? "" : locale),
+              "slug"   => CGI.escape(@metadata.slug(locale)).gsub('%2F', '/'),
+              "title"  => @metadata.title(locale).to_url,
+            }.inject(template) { |result, token|
               result.gsub(/:#{Regexp.escape token.first}/, token.last)
             }.gsub(/\/\//, '/')
           end
-          
+          url += ".html" unless url[/\/$/]
           url
         end
       end
       
-      def path(locale = nil)
+      def path(locale = @site.config.locale)
         @path[locale] ||= begin
-          path = File.join(@site.config.public_path, CGI.unescape(self.url(locale)))
-          path = File.join(path, "index.html") unless path[/\/$/].nil?
+          path = ::File.join(CGI.unescape(self.url(locale)))
+          path = ::File.join(path, "index.html") unless path[/\/$/].nil?
           path
         end
       end
@@ -103,9 +106,10 @@ module Alula
       private
       def read_payload
         # Do not read directly to instance variable as we know there is payload
-        return if @file.nil?
+        return if @item.nil?
         
-        source = File.read(@file)
+        # source = File.read(@file)
+        source = @item.read
         if /^(?<manifest>(?:---\s*\n.*?\n?)^(---\s*$\n?))(?<source>.*)/m =~ source
           @source = source
           @metadata.load(manifest)

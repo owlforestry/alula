@@ -4,8 +4,10 @@ source 'https://rubygems.org'
 gemspec
 
 group :development do
+  gem 'coolline'
   gem 'guard'
   gem 'guard-minitest'
+  gem 'pry'
 end
 
 group :test do

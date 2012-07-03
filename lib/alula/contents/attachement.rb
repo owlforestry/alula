@@ -1,4 +1,4 @@
-require 'alula/content/item'
+require 'alula/contents/item'
 
 module Alula
   class Content

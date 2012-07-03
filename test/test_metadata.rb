@@ -1,5 +1,5 @@
 require "minitest_helper"
-require 'alula/content/metadata'
+require 'alula/contents/metadata'
 
 describe Alula::Content::Metadata do
   it "loads empty metadata" do

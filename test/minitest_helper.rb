@@ -7,7 +7,7 @@ SimpleCov.start do
   add_group "Tests", "test/"
 end
 
-require 'turn/autorun'
+require 'turn/autorun' unless ENV["DEBUG"]
 require "minitest/autorun"
 
-Turn.config.format = :outline
+Turn.config.format = :outline unless ENV["DEBUG"]

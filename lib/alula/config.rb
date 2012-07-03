@@ -8,7 +8,7 @@ module Alula
       config = DEFAULT_CONFIG.dup
       
       # Load project specific configuration
-      if (File.exists?(config_file))
+      if (::File.exists?(config_file))
         config.deep_merge!(YAML.load_file(config_file))
       end
       
@@ -23,23 +23,32 @@ module Alula
     end
     
     DEFAULT_CONFIG = {
+      # The title of the blog
       title: "The Unnamed Blog",
+      # Tagline of the blog
+      tagline: "This has no tagline.",
+      # The author, default
+      author: "John Doe",
+      # The host where blog is available
       url: "http://localhost:3000",
-      cdn: nil,
-      asset_host: nil,
+      # Base locale which is used is no other locale defined
+      locale: "en",
       
-      permalinks: '/:year/:month/:title/',
+      # Template for generating post permalinks
+      permalinks: '/:locale/:year/:month/:title/',
+      # Template for generating pages paths
+      pagelinks: '/:locale/:title/',
       
-      # Directories
-      # Content directories
-      content_path: 'content',
-      pages_path: 'content/pages',
-      posts_path: 'content/posts',
-      attachements_path: 'content/attachements',
-      
-      # Public & Generated paths
-      public_path: 'public',
-      
+      # Directories and storage
+      storage: {
+        "file" => {
+          "content_path"      => 'content',
+          "pages_path"        => 'content/pages',
+          "posts_path"        => 'content/posts',
+          "attachements_path" => 'content/attachements',
+          "public_path"       => 'public',
+        }
+      },
     }.freeze
   end
 end
