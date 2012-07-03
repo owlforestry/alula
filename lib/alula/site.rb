@@ -2,6 +2,7 @@ require 'alula/config'
 require 'alula/content'
 require 'alula/context'
 require 'alula/generator'
+require 'alula/storage'
 
 require 'thor'
 
@@ -9,9 +10,15 @@ module Alula
   class Site
     # Global configuration
     attr_reader :config
-
+    
+    # Storage
+    attr_reader :storage
+    
     # Context for rendering
     attr_reader :context
+    
+    # Theme
+    attr_reader :theme
     
     # User generated content
     attr_reader :content
@@ -23,13 +30,9 @@ module Alula
       # Read local config
       @config = Config.new(options)
       
-      # Initialize arrays
-      @generated = []
+      @storage = Alula::Storage.load(site: self)
       
-      # Get Thor shell
-      @shell = Thor::Shell::Basic.new
-      
-      @context = Context.new
+      # @context = Context.new
     end
     
     # Compiles a site to static website
@@ -45,27 +48,26 @@ module Alula
     end
     
     private
-    def prepare(clean = true)
-      say "==> Preparing environment" + (!clean ? "" : " (preserving existing files)")
+    def prepare(preserve = false)
+      say "==> Preparing environment" + (preserve ? " (preserving existing files)" : "")
       
-      if clean
-        FileUtils.rm_rf config.public_path
-      end
-      
-      # Create required directories
-      FileUtils.mkdir_p config.public_path
+      # Delegate preparations to storage module
+      self.storage.prepare(preserve)
     end
     
     def load_content
       say "==> Loading site content"
       
       # Read site content
-      @content = Content.new site: self, config: self.config
+      @content = Content.new(site: self, config: self.config)
       @content.load
     end
     
     def generate_content
       say "==> Running content generators"
+      
+      # Initialize generated content array
+      @generated = []
       
       # Run all generators and generate required 
       @config.content.each do |type, options|
@@ -79,15 +81,21 @@ module Alula
     def render
       say "==> Render site"
       
+      # Load our theme
+      @context = Alula::Context.new
+      @theme = Alula::Theme.load(site: self)
+      
       # Render all user content, parallel...
       (self.content.posts + self.content.pages).each do |content|
-        content.render
+        # Write content to file
+        content.write
       end
       
     end
     
     # Output helpers
     def say(msg)
+      @shell ||= Thor::Shell::Basic.new
       @shell.say msg
     end
   end

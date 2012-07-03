@@ -7,40 +7,45 @@ describe Alula::Content::Post do
   before do
     @site = MiniTest::Mock.new
     @site.expect :context, {}
-    @site.expect :config, OpenStruct.new({permalinks: "/:year/:month/:title/",
+    @site.expect :config, OpenStruct.new({
+      permalinks: "/:year/:month/:title/",
+      pagelinks: "/:locale/:slug/",
       locale: "en", hides_base_locale: true,
-      storage: { "file"     => {
-        "content_path"      => 'test/fixtures',
-        "pages_path"        => 'test/fixtures/pages',
-        "posts_path"        => 'test/fixtures/posts',
-        "attachements_path" => 'test/fixtures/attachements',
-        "public_path"       => 'public',
-        } }
-      })
-    
-    @storage = Alula::Storage.load(site: @site, config: @site.config)
+    })
   end
   
+  def mock_item(name)
+    item = MiniTest::Mock.new
+    item.expect :nil?, false
+    item.expect :exists?, File.exists?("test/fixtures/posts/#{name}")
+    item.expect :name, name
+    if File.exists?("test/fixtures/posts/#{name}")
+      item.expect :has_payload?, File.read("test/fixtures/posts/#{name}", 3) == "---"
+      item.expect :read, File.read("test/fixtures/posts/#{name}")
+    end
+
+    item
+  end
+    
   let :missing_post do
-    @storage.post("invalid.file")
+    mock_item("invalid.file")
   end
   
   let :simple_post do
-    @storage.post("2012-07-02-simple.markdown")
+    mock_item("2012-07-02-simple.markdown")
   end
   
   let :metadata_post do
-    @storage.post("2012-07-03-full-metadata.markdown")
+    mock_item("2012-07-03-full-metadata.markdown")
   end
   
   let :invalid_post do
-    @storage.post("2012-07-02-invalid-post.markdown")
+    mock_item("2012-07-02-invalid-post.markdown")
   end
   
   let :complex_post do
-    @storage.post("2012-07-03-multilingual-full-metadata.markdown")
+    mock_item("2012-07-03-multilingual-full-metadata.markdown")
   end
-  
   
   it "fails with non-existing file" do
     post = Alula::Content::Post.load(item: missing_post, site: @site)
@@ -58,7 +63,7 @@ describe Alula::Content::Post do
     
     # Parse and render
     post.send(:parse_liquid).must_equal "# Header\n\nThis is a simple post.\n"
-    post.send(:parse_markdown).must_equal "<h1 id=\"header\">Header</h1>\n\n<p>This is a simple post.</p>\n"
+    post.send(:parse_markdown).must_equal "<h1>Header</h1>\n\n<p>This is a simple post.</p>\n"
     
     # Path and URI must be correct
     post.path.must_equal "/2012/07/simple-post/index.html"
@@ -95,8 +100,24 @@ describe Alula::Content::Post do
   end
   
   it "renders content on simple post" do
-    puts "--> #{simple_post.inspect}"
-    post = Alula::Content::Post.load(item: simple_post, site: @site)
-    # post.render
+    # Create mockup layout
+    view = MiniTest::Mock.new
+    view.expect :render, "<h1>Header</h1>", [{}]
+    
+    layout = MiniTest::Mock.new
+    
+    theme = MiniTest::Mock.new
+    theme.expect :view, view, ["post"]
+    
+    site = MiniTest::Mock.new
+    site.expect :context, {}
+    site.expect :config, OpenStruct.new({locale: "en"})
+    site.expect :theme, theme
+    post = Alula::Content::Post.load(item: simple_post, site: site)
+    
+    # Render page using current layout, for all languages
+    post.render
+    post.content.must_equal "<h1>Header</h1>"
+    
   end
 end

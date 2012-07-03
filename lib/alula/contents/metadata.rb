@@ -3,6 +3,12 @@ require 'ostruct'
 module Alula
   class Content
     class Metadata
+      def initialize(default = {})
+        default.each do |key, value|
+          self.send("#{key}=", value)
+        end
+      end
+      
       def load(payload)
         meta = YAML.load(payload)
         meta.each do |key, value|
@@ -10,7 +16,7 @@ module Alula
           self.send("#{key}=", value)
         end
       end
-    
+      
       def method_missing(meth, *args, &blk)
         if meth[/=$/]
           instance_variable_set("@#{meth[0..-2]}", *args)

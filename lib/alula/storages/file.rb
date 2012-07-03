@@ -21,6 +21,29 @@ module Alula
       @pages ||= _list_all_in(self.options["pages_path"])
     end
     
+    def attachements
+      @attachements ||= _list_all_in(self.options["attachements_path"])
+    end
+    
+    # 
+    def prepare(preserve = false)
+      if !preserve
+        FileUtils.rm_rf self.options["public_path"]
+      end
+      
+      FileUtils.mkdir_p self.options["public_path"]
+    end
+    
+    def output(path)
+      fname = ::File.join(self.options["public_path"], path)
+      dirname = ::File.dirname(fname)
+      FileUtils.mkdir_p dirname unless ::File.directory?(dirname)
+      
+      ::File.open(fname, "w") do |io|
+        io.puts yield
+      end
+    end
+    
     private
     def _list_all_in(path)
       items = {}

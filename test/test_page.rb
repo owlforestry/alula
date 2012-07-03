@@ -1,45 +1,48 @@
 require "minitest_helper"
 require 'alula/contents/page'
-require 'alula/storages/file'
 
 describe Alula::Content::Page do
   before do
     @site = MiniTest::Mock.new
     @site.expect :context, {}
     @site.expect :config, OpenStruct.new({
-      pagelinks: "/:locale/:slug/",
       permalinks: "/:year/:month/:title/",
+      pagelinks: "/:locale/:slug/",
       locale: "en", hides_base_locale: true,
-      storage: { "file"     => {
-        "content_path"      => 'test/fixtures',
-        "pages_path"        => 'test/fixtures/pages',
-        "posts_path"        => 'test/fixtures/posts',
-        "attachements_path" => 'test/fixtures/attachements',
-        "public_path"       => 'public',
-        } }
-      })
-    
-    @storage = Alula::Storage.load(site: @site, config: @site.config)
+    })
+  end
+  
+  def mock_item(name)
+    item = MiniTest::Mock.new
+    item.expect :nil?, false
+    item.expect :exists?, File.exists?("test/fixtures/pages/#{name}")
+    item.expect :name, name
+    if File.exists?("test/fixtures/pages/#{name}")
+      item.expect :has_payload?, File.read("test/fixtures/pages/#{name}", 3) == "---"
+      item.expect :read, File.read("test/fixtures/pages/#{name}")
+    end
+
+    item
   end
   
   let :simple_page do
-    @storage.page("simple-page.markdown")
+    mock_item("simple-page.markdown")
   end
   
   let :invalid_page do
-    @storage.page("invalid-page.markdown")
+    mock_item("invalid-page.markdown")
   end
   
   let :multilingual_page do
-    @storage.page("multilingual-page.markdown")
+    mock_item("multilingual-page.markdown")
   end
   
   let :subpage do
-    @storage.page("section/subpage.markdown")
+    mock_item("section/subpage.markdown")
   end
   
   let :missing_page do
-    @storage.page("missing.page")
+    mock_item("missing.page")
   end
   
   it "fails with non-existing file" do
@@ -62,7 +65,7 @@ describe Alula::Content::Page do
     # Parse and render
     page.send(:parse_liquid).must_equal "# Header\n\nThis is a simple page.\n"
 
-    page.send(:parse_markdown).must_equal "<h1 id=\"header\">Header</h1>\n\n<p>This is a simple page.</p>\n"
+    page.send(:parse_markdown).must_equal "<h1>Header</h1>\n\n<p>This is a simple page.</p>\n"
   end
   
   it "parses multilingual page" do

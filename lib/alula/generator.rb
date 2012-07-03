@@ -1,9 +1,10 @@
-require 'alula/generator/paginate'
-require 'alula/generator/categories'
-
 module Alula
   class Generator
     attr_reader :options
+    
+    # Lazy=load generators
+    autoload :Paginate, 'alula/generators/paginate'
+    autoload :Categories, 'alula/generators/categories'
     
     def initialize(options = {}, opts)
       @options = options

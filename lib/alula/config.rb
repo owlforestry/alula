@@ -31,8 +31,13 @@ module Alula
       author: "John Doe",
       # The host where blog is available
       url: "http://localhost:3000",
+      
       # Base locale which is used is no other locale defined
       locale: "en",
+      hides_base_locale: true, # Hide default locale
+      
+      # Default theme
+      theme: 'minimal',
       
       # Template for generating post permalinks
       permalinks: '/:locale/:year/:month/:title/',
@@ -49,6 +54,9 @@ module Alula
           "public_path"       => 'public',
         }
       },
+      
+      # Content generators, by default none
+      content: []
     }.freeze
   end
 end

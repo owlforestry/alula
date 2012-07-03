@@ -9,5 +9,6 @@ end
 
 require 'turn/autorun' unless ENV["DEBUG"]
 require "minitest/autorun"
+require "minitest/mock"
 
 Turn.config.format = :outline unless ENV["DEBUG"]

@@ -1,6 +1,6 @@
-require 'alula/content/post'
-require 'alula/content/page'
-require 'alula/content/attachement'
+require 'alula/contents/post'
+require 'alula/contents/page'
+require 'alula/contents/attachement'
 
 module Alula
   class Content
@@ -9,8 +9,7 @@ module Alula
     attr_reader :attachements
     
     def initialize(opts = {})
-      @site = opts[:site]
-      @config = opts[:config]
+      @site = opts.delete(:site)
       
       @pages = []
       @posts = []
@@ -28,31 +27,25 @@ module Alula
       # Load all posts if requested
       if (types.include?(:posts))
         # Read posts
-        Dir[File.join(@config.posts_path, "**", "*")].each do |entry|
-          post = Post.load(site: @site, file: entry)
-          if (post)
-            @posts << post
-          end
+        @site.storage.posts.each do |name, entry|
+          post = Post.load(item: entry, site: @site)
+          @posts << post unless post.nil?
         end
       end
       
       # Load all pages if requested
       if (types.include?(:pages))
-        Dir[File.join(@config.pages_path, "**", "*")].each do |entry|
-          page = Page.load(site: @site, file: entry)
-          if (page)
-            @pages << page
-          end
+        @site.storage.pages.each do |name, entry|
+          page = Page.load(item: entry, site: @site)
+          @pages << page unless page.nil?
         end
       end
 
       # Load all pages if requested
       if (types.include?(:attachements))
-        Dir[File.join(@config.attachements_path, "**", "*")].each do |entry|
-          attachement = Attachement.load(site: @site, file: entry)
-          if (attachement)
-            @attachements << attachement
-          end
+        @site.storage.attachements.each do |name, entry|
+          attachement = Attachement.load(item: entry, site: @site)
+          @attachements << attachement unless attachement.nil?
         end
       end
 

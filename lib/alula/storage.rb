@@ -2,6 +2,8 @@ module Alula
   class Storage
     attr_reader :options
     
+    autoload :File, 'alula/storages/file'
+    
     def self.load(opts = {})
       site = opts[:site]
       
@@ -20,7 +22,6 @@ module Alula
     def initialize(options, opts = {})
       @options = options
       @site = opts[:site]
-      @config = @site.config
     end
     
     def post(name)

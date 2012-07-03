@@ -1,5 +1,6 @@
 require 'alula/contents/metadata'
 require 'liquid'
+require 'alula/plugins/locale'
 require 'kramdown'
 require 'stringex'
 
@@ -9,11 +10,14 @@ module Alula
       # Instance variables, internal
       # @source   :: raw source from file, liquid + markdown
       # @markdown :: parsed liquid, only markdown
-      # @content  :: parsed markdown, raw content without layout
+      # @body     :: parsed markdown, raw content without layout
+      # @content  :: rendered content, using view, without layout
+      
+      # Metadata, contains all informative data for item
       attr_reader :metadata
-      attr_reader :content
       
       attr_reader :name
+      attr_reader :site
       
       def self.has_payload
         class_variable_set(:@@payload, true)
@@ -50,8 +54,12 @@ module Alula
         @url = {}
         @path = {}
         
+        # Initialize content variables
+        reset
+        
         # Initialize metadata
-        @metadata = Metadata.new
+        @metadata = Metadata.new({layout: 'default', view: (self.class.to_s == "Alula::Content::Page" ? "page" : "post")})
+        
         if /^((?<date>(?:\d+-\d+-\d+))-)?(?<slug>(?:.*))(?<extension>(?:\.[^.]+))$/ =~ @name
           @metadata.date = date || Time.now
           @metadata.slug = slug
@@ -62,22 +70,61 @@ module Alula
         read_payload if has_payload?
       end
       
-      # Renders actual content item and saves it to disk
-      def render
-        # Parse content
-        parse_liquid
-        parse_markdown
+      # Renders actual content of itm using current layout
+      # This handles all locales automatically
+      def render(locale)
+        @content[locale] ||= begin
+          # Make sure our content is parsed
+          parse_liquid(locale)
+          parse_markdown(locale)
         
-        puts "--> Save #{name} to #{path("base")}"
+          self.view.render(item: self, content: self.body(locale), locale: locale)
+        end
+      end
+      
+      def write
+        # Write all languages
+        languages = self.metadata.languages || [self.site.config.locale]
+        
+        languages.each do |locale|
+          puts "--> outputting language #{locale} to #{path(locale)}"
+          # Render our content
+          self.render(locale)
+          
+          output = self.layout.render(item: self, locale: locale) do
+            self.content(locale)
+          end
+          
+          # Write content to file
+          @site.storage.output(self.path(locale)) do
+            output
+          end
+        end
       end
          
       # Accessors
+      def layout
+        @layout ||= @site.theme.layout(self.metadata.layout)
+      end
+      
+      def view
+        @view ||= @site.theme.view(self.metadata.view)
+      end
+      
+      def content(locale = @site.config.locale)
+        @content[locale]
+      end
+      
+      def body(locale = @site.config.locale)
+        @body[locale]
+      end
+      
       def url(locale = @site.config.locale)
         @url[locale] ||= begin
           url = if @metadata.permalink
             @metadata.permalink
           else
-            template = self.kind_of?(Page) ? @site.config.pagelinks : @site.config.permalinks
+            template = self.class.to_s == "Alula::Content::Page" ? @site.config.pagelinks : @site.config.permalinks
             
             {
               "year"   => @metadata.date.strftime('%Y'),
@@ -103,6 +150,13 @@ module Alula
         end
       end
       
+      # Resets all cached variables and languages etc.
+      def reset
+        @markdown = {}
+        @body = {}
+        @content = {}
+      end
+      
       private
       def read_payload
         # Do not read directly to instance variable as we know there is payload
@@ -116,16 +170,22 @@ module Alula
         end
       end
       
-      def parse_liquid
-        @markdown ||= begin
-          Liquid::Template.parse(@source).render(@site.context.to_liquid)
+      def parse_liquid(locale)
+        @markdown[locale] ||= begin
+          begin
+            _old_locale = @site.context.locale
+            @site.context.locale = locale
+            Liquid::Template.parse(@source).render(@site.context.to_liquid)
+          ensure
+            @site.context.locale = _old_locale
+          end
         end
       end
       
-      def parse_markdown
-        @content ||= begin
-          Kramdown::Document.new(@markdown, {
-            auto_ids: true,
+      def parse_markdown(locale)
+        @body[locale] ||= begin
+          Kramdown::Document.new(@markdown[locale], {
+            auto_ids: false,
             footnote_nr: 1,
             entity_output: 'as_char',
             html_to_native: true,
