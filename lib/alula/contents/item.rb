@@ -163,8 +163,8 @@ module Alula
       def url(locale = nil)
         locale ||=  @@current_locale || self.site.config.locale
         @url[locale] ||= begin
-          url = if @metadata.permalink
-            @metadata.permalink
+          url = if @metadata.permalink(locale)
+            @metadata.permalink(locale)
           else
             template = @metadata.template || (self.class.to_s == "Alula::Content::Page" ? @site.config.pagelinks : @site.config.permalinks)
             self.substitutes(locale).inject(template) { |result, token|
@@ -246,6 +246,7 @@ module Alula
       def substitutes(locale = nil)
         locale ||=  @@current_locale || self.site.config.locale
         
+        binding.pry if @name[/this-site/]
         @substitutes[locale] ||= begin
           subs = {
             "year"   => @metadata.date.strftime('%Y'),
