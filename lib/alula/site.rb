@@ -3,8 +3,11 @@ require 'alula/content'
 require 'alula/context'
 require 'alula/generator'
 require 'alula/storage'
+require 'alula/manifest'
+require 'alula/helpers'
 
 require 'thor'
+require 'sprockets'
 
 module Alula
   class Site
@@ -51,7 +54,11 @@ module Alula
       prepare
       
       load_content
-            
+      
+      process_attachements
+      
+      compile_assets
+      
       render
     end
     
@@ -72,6 +79,31 @@ module Alula
       
       # Delegate preparations to storage module
       self.storage.prepare(preserve)
+      
+      # Load theme
+      @context = Alula::Context.new(site: self, storage: self.storage)
+      @context.send(:extend, Helpers)
+      
+      @theme = Alula::Theme.load(site: self)
+      
+      # Create our asset environment
+      @sprockets = Sprockets::Environment.new
+      @context.environment = @sprockets
+      
+      # Add generated assets
+      @sprockets.append_path @storage.path(:assets)
+      
+      # Add theme
+      %w{stylesheets javascripts images}.each do |path|
+        @sprockets.append_path ::File.join(self.theme.path, path)
+      end
+      
+      # Plugins
+      # Attachements
+      # Customisation
+      %w{stylesheets javascripts images static}.each do |path|
+        @sprockets.append_path @storage.path(:custom, path)
+      end
     end
     
     def load_content
@@ -91,12 +123,38 @@ module Alula
       end
     end
     
+    def process_attachements
+      puts "==> Processing attachements"
+    end
+    
+    def compile_assets
+      puts "==> Compiling assets"
+      
+      # Generate stylesheet
+      @storage.output("assets/style.css") do |io|
+        io.puts "/*"
+        
+        # Theme style
+        io.puts " *= require #{self.config.theme}"
+        
+        # Plugins
+        
+        # Blog customization
+        if @storage.custom("stylesheets/custom.css")
+          io.puts " *= require custom"
+        end
+        
+        io.puts "*/"
+      end
+      
+      # Compile all assets
+      @manifest = Manifest.new(@sprockets, @storage.path(:assets))
+      @manifest.compile
+      
+    end
+    
     def render
       say "==> Render site"
-      
-      # Load our theme
-      @context = Alula::Context.new(site: self)
-      @theme = Alula::Theme.load(site: self)
       
       # Render all user content, parallel...
       (self.content.posts + self.content.pages).each do |content|

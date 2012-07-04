@@ -246,7 +246,6 @@ module Alula
       def substitutes(locale = nil)
         locale ||=  @@current_locale || self.site.config.locale
         
-        binding.pry if @name[/this-site/]
         @substitutes[locale] ||= begin
           subs = {
             "year"   => @metadata.date.strftime('%Y'),

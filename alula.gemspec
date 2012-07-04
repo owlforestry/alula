@@ -24,7 +24,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'sprockets', '~> 2.4'
   gem.add_dependency 'thor', '~> 0.14'
   # gem.add_dependency 'rmagick', '~> 2.13'
-  # gem.add_dependency 'sass', '~> 3.1'
+  gem.add_dependency 'sass', '~> 3.1'
   # gem.add_dependency 'coffee-script', '~> 2.2'
   gem.add_dependency 'uglifier', '~> 1.2'
   # gem.add_dependency 'front-compiler', '~> 1.1'

@@ -51,6 +51,7 @@ module Alula
           "pages_path"        => 'content/pages',
           "posts_path"        => 'content/posts',
           "attachements_path" => 'content/attachements',
+          "custom_path"       => 'custom',
           "public_path"       => 'public',
         }
       },
