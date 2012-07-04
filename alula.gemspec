@@ -19,6 +19,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'thin'
   gem.add_dependency 'tilt'
   gem.add_dependency 'liquid'
+  gem.add_dependency 'builder'
   gem.add_dependency 'kramdown'
   gem.add_dependency 'sprockets', '~> 2.4'
   gem.add_dependency 'thor', '~> 0.14'

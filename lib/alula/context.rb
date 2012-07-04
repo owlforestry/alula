@@ -2,8 +2,11 @@ require 'liquid/context'
 
 module Alula
   class Context
-    def initialize(data = {})
-      @data = data
+    def initialize(default = {})
+      @data = {}
+      default.each do |key, value|
+        @data[key.to_s] = value
+      end
     end
 
     def []=(key, value)

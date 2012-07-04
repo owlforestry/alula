@@ -34,12 +34,24 @@ module Alula
       @views = {}
     end
     
+    def searchpath(type, name)
+      [
+        # Theme path
+        ::File.join(self.path, type, "#{name}.*"),
+        
+        # Alula vendor path
+        ::File.join(::File.dirname(__FILE__), "..", "..", "vendor", type, "#{name}.*")
+      ]
+    end
+    
     def layout(name)
       @layouts[name] ||= begin
         # Find our layout name
-        file = Dir[::File.join(self.path, "layouts", "#{name}.*")].first
+        file = Dir[*self.searchpath("layouts", name)].first
         if file
           Layout.new(theme: self, name: name, file: file)
+        else
+          raise "Cannot find layout #{name}"
         end
       end
     end
@@ -50,6 +62,8 @@ module Alula
         file = Dir[::File.join(self.path, "views", "#{name}.*")].first
         if file
           View.new(theme: self, name: name, file: file)
+        else
+          raise "Cannot find view #{name}"
         end
       end
     end

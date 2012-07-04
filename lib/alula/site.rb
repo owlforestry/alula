@@ -17,6 +17,9 @@ module Alula
     # Context for rendering
     attr_reader :context
     
+    # Site metadata information
+    attr_reader :metadata
+    
     # Theme
     attr_reader :theme
     
@@ -32,7 +35,14 @@ module Alula
       
       @storage = Alula::Storage.load(site: self)
       
-      # @context = Context.new
+      @metadata = Alula::Content::Metadata.new({
+        base_locale: @config.locale,
+        
+        title: @config.title,
+        author: @config.author,
+        tagline: @config.tagline,
+        url: @config.url,
+      })
     end
     
     # Compiles a site to static website
@@ -41,10 +51,19 @@ module Alula
       prepare
       
       load_content
-      
-      generate_content
-      
+            
       render
+    end
+    
+    # Proxy to metadata
+    def method_missing(meth, *args, &blk)
+      # Proxy to metadata
+      if !meth[/=$/] and self.metadata.respond_to?(meth)
+        args.unshift(self.context.locale || self.config.locale) if args.empty?
+        self.metadata.send(meth, *args)
+      else
+        super
+      end
     end
     
     private
@@ -59,22 +78,16 @@ module Alula
       say "==> Loading site content"
       
       # Read site content
-      @content = Content.new(site: self, config: self.config)
+      @content = Content.new(site: self)
       @content.load
-    end
-    
-    def generate_content
-      say "==> Running content generators"
       
-      # Initialize generated content array
-      @generated = []
-      
-      # Run all generators and generate required 
-      @config.content.each do |type, options|
-        cls_name = type[0].upcase + type[1..-1]
-        cls = Alula::Generator.const_get(cls_name)
-        generator = cls.new(OpenStruct.new(options), site: self, config: self.config)
-        generator.generate_content
+      # Do we have index page defined
+      if self.config.index
+        index_page = @content.by_slug(self.config.index)
+        if index_page
+          index_page.metadata.slug = "index"
+          index_page.metadata.template = "/:locale/:slug"
+        end
       end
     end
     
@@ -82,7 +95,7 @@ module Alula
       say "==> Render site"
       
       # Load our theme
-      @context = Alula::Context.new
+      @context = Alula::Context.new(site: self)
       @theme = Alula::Theme.load(site: self)
       
       # Render all user content, parallel...

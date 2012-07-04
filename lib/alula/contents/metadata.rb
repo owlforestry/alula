@@ -17,6 +17,15 @@ module Alula
         end
       end
       
+      def respond_to?(name)
+        # Accept all setters
+        return true if name.to_s =~ /=$/
+        
+        return true if instance_variable_defined?("@#{name}")
+        
+        super
+      end
+      
       def method_missing(meth, *args, &blk)
         if meth[/=$/]
           instance_variable_set("@#{meth[0..-2]}", *args)
@@ -28,7 +37,7 @@ module Alula
               # Make sure we always have string key
               value[args[0]]
             else
-              value[value.keys.first]
+              value[@base_locale]
             end
           else
             value
@@ -49,7 +58,7 @@ module Alula
         end
       end
 
-      def languages
+      def languages(locale = nil)
         if @title.kind_of?(Hash)
           @title.keys
         else
