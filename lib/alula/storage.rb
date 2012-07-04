@@ -1,8 +1,8 @@
+require 'alula/storages/filestorage'
+
 module Alula
   class Storage
     attr_reader :options
-    
-    autoload :File, 'alula/storages/file'
     
     def self.load(opts = {})
       site = opts[:site]
@@ -10,7 +10,7 @@ module Alula
       # Get storage class
       # puts "--> #{site.config.storage}"
       type = site.config.storage.keys.first
-      cls_name = type[0].upcase + type[1..-1]
+      cls_name = type[0].upcase + type[1..-1] + "Storage"
       if self.const_defined?(cls_name)
         cls = self.const_get(cls_name)
         return cls.new(site.config.storage[type], opts)
@@ -30,6 +30,10 @@ module Alula
     
     def page(name)
       self.pages[name]
+    end
+    
+    def custom(name)
+      self.customs[name]
     end
   end
 end
