@@ -45,11 +45,12 @@ module Alula
         return self.new(opts)
       end
     
-      def initialize(opts = {})
+      def initialize(opts = {}, hooks = {})
         @site = opts.delete(:site)
         @item = opts.delete(:item)
         @name = opts.delete(:name) || @item.name
-        # @name = opts[:name] || File.basename(@file)
+        
+        @hooks = hooks
         
         @url = {}
         @path = {}
@@ -125,9 +126,13 @@ module Alula
 
             puts "--> outputting language #{locale} to #{path(locale)}"
 
+            # if @hooks[:before_render]
+            #   @hooks[:before_render].call(self)
+            # end
+
             # Render our content
             self.render(locale)
-            
+                        
             output = self.layout.render(item: self, locale: locale) do
               self.content(locale)
             end
@@ -225,9 +230,8 @@ module Alula
       end
       
       def flush_render
-        # Reset current rendering locale
-        @@current_locale = nil
-        
+        # Initialize current locale
+        @@current_locale ||= nil
         @content = {}
       end
       

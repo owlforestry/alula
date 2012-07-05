@@ -34,7 +34,7 @@ module Alula
           template: self.options.template,
           site: self.site,
           view: self.options.view || "paginate",
-        })
+        }, before_render: ->(item){ item.flush_render; item.metadata.embedded = true })
       end
     end
     
