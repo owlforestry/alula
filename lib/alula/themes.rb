@@ -1,9 +1,4 @@
-require 'alula/engine/theme'
+require 'alula/theme'
 
-begin
-  themes_dir = File.expand_path(File.join(File.dirname(__FILE__), %w{.. .. themes}))
-  Dir[File.join(themes_dir, "*")].each do |theme_dir|
-    name = File.basename(theme_dir)
-    Alula::Engine::Theme.register name, theme_dir
-  end
-end
+# Theme name, theme top-directory
+Alula::Theme.register :minimal, File.expand_path(File.join(File.dirname(__FILE__), %w{.. .. themes}))
