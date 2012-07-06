@@ -1,3 +1,9 @@
 - item.posts.each do |post|
 	%h1= post.title
 	%p= post.body
+
+%p.navigation
+	- if item.previous
+		%a{class: "left", title: "Previous Post: #{item.previous.title}", href: item.previous.url} &laquo; #{item.previous.title}
+	- if item.next
+		%a{class: "right", title: "Next Post: #{item.next.title}", href: item.next.url} #{item.next.title} &raquo;
