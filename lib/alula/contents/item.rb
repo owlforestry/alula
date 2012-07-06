@@ -19,6 +19,8 @@ module Alula
       attr_reader :name
       attr_reader :site
       
+      attr_accessor :navigation
+      
       def self.has_payload
         class_variable_set(:@@payload, true)
       end
@@ -102,8 +104,8 @@ module Alula
       # This handles all locales automatically
       def render(locale)
         @content[locale] ||= begin
-          _old_locale = @@current_locale
-          @@current_locale = locale
+          _old_locale = self.current_locale
+          self.current_locale = locale
           
           # Make sure our content is parsed
           parse_liquid(locale)
@@ -111,7 +113,7 @@ module Alula
         
           self.view.render(item: self, content: self.body(locale), locale: locale)
         ensure
-          @@current_locale = _old_locale
+          self.current_locale = _old_locale
         end
       end
       
@@ -121,8 +123,8 @@ module Alula
         
         languages.each do |locale|
           begin
-            _old_locale = @@current_locale
-            @@current_locale = locale
+            _old_locale = self.current_locale
+            self.current_locale = locale
 
             puts "--> outputting language #{locale} to #{path(locale)}"
 
@@ -142,7 +144,7 @@ module Alula
               output
             end
           ensure
-            @@current_locale = _old_locale
+            self.current_locale = _old_locale
           end
         end
       end
@@ -157,16 +159,24 @@ module Alula
       end
       
       # Accessors
+      def current_locale
+        @@current_locale ||= nil
+      end
+      
+      def current_locale=(newLocale)
+        @@current_locale = newLocale
+      end
+      
       def content(locale = nil)
-        @content[(locale || @@current_locale || self.site.config.locale)]
+        @content[(locale || self.current_locale || self.site.config.locale)]
       end
       
       def body(locale = nil)
-        @body[(locale || @@current_locale || self.site.config.locale)]
+        @body[(locale || self.current_locale || self.site.config.locale)]
       end
       
       def url(locale = nil)
-        locale ||=  @@current_locale || self.site.config.locale
+        locale ||=  self.current_locale || self.site.config.locale
         @url[locale] ||= begin
           url = if @metadata.permalink(locale)
             @metadata.permalink(locale)
@@ -185,11 +195,11 @@ module Alula
       end
       
       def id(locale = nil)
-        @ids[(locale || @@current_locale || self.site.config.locale)] ||= self.url(locale).gsub(/[\/]/, ' ').to_url
+        @ids[(locale || self.current_locale || self.site.config.locale)] ||= self.url(locale).gsub(/[\/]/, ' ').to_url
       end
       
       def path(locale = nil)
-        locale ||= @@current_locale || self.site.config.locale
+        locale ||= self.current_locale || self.site.config.locale
         @path[locale] ||= begin
           path = ::File.join(CGI.unescape(self.url(locale)))
           path = ::File.join(path, "index.html") unless path[/\/$/].nil?
@@ -197,28 +207,15 @@ module Alula
         end
       end
       
-      # Render time accessors
       def previous(locale = nil)
-        locale ||= @@current_locale || @site.config.locale
-        @navigation[locale] ||= self.site.content.posts.select { |item| item.languages.include?(locale) }
-        
-        pos = @navigation[locale].index(self)
-        if pos and pos < (@navigation[locale].count - 1)
-          @navigation[locale][pos + 1]
-        else
-          nil
+        if @hooks[:previous]
+          instance_eval(&@hooks[:previous])
         end
       end
       
       def next(locale = nil)
-        locale ||= @@current_locale || @site.config.locale
-        @navigation[locale] ||= self.site.content.posts.select { |item| item.languages.include?(locale) }
-        
-        pos = @navigation[locale].index(self)
-        if pos and pos > 0
-          @navigation[locale][pos - 1]
-        else
-          nil
+        if @hooks[:next]
+          instance_eval(&@hooks[:next])
         end
       end
       
@@ -231,7 +228,7 @@ module Alula
       
       def flush_render
         # Initialize current locale
-        @@current_locale ||= nil
+        self.current_locale ||= nil
         @content = {}
       end
       
@@ -239,7 +236,7 @@ module Alula
       def method_missing(meth, *args, &blk)
         # Proxy to metadata
         if !meth[/=$/] and metadata.respond_to?(meth)
-          args.unshift(@@current_locale || @site.config.locale) if args.empty?
+          args.unshift(self.current_locale || @site.config.locale) if args.empty?
           metadata.send(meth, *args)
         else
           super
@@ -248,7 +245,7 @@ module Alula
       
       # Substitues for URL
       def substitutes(locale = nil)
-        locale ||=  @@current_locale || self.site.config.locale
+        locale ||=  self.current_locale || self.site.config.locale
         
         @substitutes[locale] ||= begin
           subs = {
