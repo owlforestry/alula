@@ -52,7 +52,11 @@ module Alula
         @item = opts.delete(:item)
         @name = opts.delete(:name) || @item.name
         
+        # Set up method overrides
         @hooks = hooks
+        # hooks.each do |name, impl|
+        #   self.class.send(:define_method, name, &impl)
+        # end
         
         @url = {}
         @path = {}
@@ -209,16 +213,23 @@ module Alula
       
       def previous(locale = nil)
         if @hooks[:previous]
-          instance_eval(&@hooks[:previous])
+          instance_exec(locale, &@hooks[:previous])
         end
       end
       
       def next(locale = nil)
         if @hooks[:next]
-          instance_eval(&@hooks[:next])
+          instance_exec(locale, &@hooks[:next])
         end
       end
       
+      def navigation(locale = nil)
+        if @hooks[:navigation]
+          instance_exec(locale, &@hooks[:navigation])
+        end
+      end
+      
+      # 
       # Resets all cached variables and languages etc.
       def flush
         flush_render
@@ -238,6 +249,8 @@ module Alula
         if !meth[/=$/] and metadata.respond_to?(meth)
           args.unshift(self.current_locale || @site.config.locale) if args.empty?
           metadata.send(meth, *args)
+        # elsif @hooks[meth]
+        #   instance_eval(&@hooks[meth])
         else
           super
         end

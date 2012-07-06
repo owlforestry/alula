@@ -36,27 +36,25 @@ module Alula
           site: self.site,
           view: self.options.view || "paginate",
         },
-        previous: ->(x){
-          locale ||= self.current_locale || @site.config.locale
-          self.navigation[locale] ||= self.site.content.pages.select { |item| item.metadata.generator == self.generator and item.languages.include?(locale) }
-          
-          pos = self.navigation[locale].index(self)
-          if pos and pos < (self.navigation[locale].count - 1)
-            self.navigation[locale][pos + 1]
+        :previous => ->(locale) {
+          pos = self.navigation(locale).index(self)
+          if pos and pos < (self.navigation(locale).count - 1)
+            self.navigation(locale)[pos + 1]
           else
             nil
           end
         },
-        next: ->(x){
-          locale ||= self.current_locale || @site.config.locale
-          self.navigation[locale] ||= self.site.content.pages.select { |item| item.metadata.generator == self.generator and item.languages.include?(locale) }
-          
-          pos = self.navigation[locale].index(self)
+        :next => ->(locale) {
+          pos = self.navigation(locale).index(self)
           if pos and pos > 0
-            self.navigation[locale][pos - 1]
+            self.navigation(locale)[pos - 1]
           else
             nil
           end
+        },
+        :navigation => ->(locale) {
+          locale ||= self.current_locale || self.site.config.locale
+          @navigation[locale] ||= self.site.content.pages.select { |item| item.metadata.generator == self.generator and item.languages.include?(locale) }
         }
         )
       end
