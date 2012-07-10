@@ -7,7 +7,7 @@ module Alula
       super
   
       # Check we have given directories
-      %w{content_path posts_path pages_path attachements_path}.each do |dir|
+      %w{content_path posts_path pages_path attachments_path}.each do |dir|
         raise "Directory #{options[dir]} for #{dir} does not exists!" unless ::File.directory?(options[dir])
       end
     end
@@ -21,15 +21,15 @@ module Alula
       @pages ||= _list_all_in(self.options["pages_path"])
     end
 
-    def attachements
-      @attachements ||= _list_all_in(self.options["attachements_path"])
+    def attachments
+      @attachments ||= _list_all_in(self.options["attachments_path"])
     end
 
     def customs
       @customs ||= _list_all_in(self.options["custom_path"])
     end
     
-    def path(type, appendum = nil)
+    def path(type, *appendum)
       dirname = case type
       when :public
         File.join(self.options["public_path"])
@@ -37,6 +37,8 @@ module Alula
         File.join(self.options["custom_path"])
       when :assets
         File.join(self.options["public_path"], "assets")
+      when :cache
+        File.join(self.options["cache_path"])
       end
 
       dirname = File.join(dirname, appendum) if appendum

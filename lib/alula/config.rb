@@ -50,14 +50,33 @@ module Alula
           "content_path"      => 'content',
           "pages_path"        => 'content/pages',
           "posts_path"        => 'content/posts',
-          "attachements_path" => 'content/attachements',
+          "attachments_path"  => 'content/attachments',
           "custom_path"       => 'custom',
+          "cache_path"        => 'cache',
           "public_path"       => 'public',
         }
       },
       
-      # Content generators, by default none
-      content: []
+      # CDN Configuration
+      cdn: {
+        "hosts" => ["/"],
+      },
+      
+      # Attachement Processors
+      attachments: {
+        "image" => {
+          "size"      => "800x600",
+          "thumbnail" => "300x300",
+          "keep_tags" => ["CopyrightNotice", "Title", "DateTimeOriginal"],
+          "hires"     => true,
+        },
+        "video" => {},
+        "audio" => {},
+        
+        "processors" => ["magick", "cloudinary"],
+        "magick" => {},
+        "cloudinary" => { "user" => "user", "password" => "password"}
+      }
     }.freeze
   end
 end

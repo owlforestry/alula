@@ -15,7 +15,7 @@ describe "Content" do
     storage = MiniTest::Mock.new
     storage.expect :posts, { "item" => item }
     storage.expect :pages, { "item" => item }
-    storage.expect :attachements, { "item" => item }
+    storage.expect :attachments, { "item" => item }
     @site.expect :storage, storage
   end
   
@@ -25,6 +25,6 @@ describe "Content" do
     
     @content.pages.count.must_equal 1
     @content.posts.count.must_equal 1
-    @content.attachements.count.must_equal 1
+    @content.attachments.count.must_equal 1
   end
 end

@@ -1,12 +1,12 @@
 require 'alula/contents/post'
 require 'alula/contents/page'
-require 'alula/contents/attachement'
+require 'alula/contents/attachment'
 
 module Alula
   class Content
     attr_reader :pages
     attr_reader :posts
-    attr_reader :attachements
+    attr_reader :attachments
     attr_reader :generated
     
     def initialize(opts = {})
@@ -14,27 +14,27 @@ module Alula
       
       @pages = []
       @posts = []
-      @attachements = []
+      @attachments = []
     end
     
     # Load our site content
     def load
       # Load everything we can have
-      read_content(:posts, :pages, :attachements)
+      read_content(:posts, :pages, :attachments)
       
       # Generate our dynamic content (pages, categories, archives, etc. etc.)
       generate_content
     end
     
     def by_name(name)
-      (self.pages + self.posts + self.attachements).each do |item|
+      (self.pages + self.posts + self.attachments).each do |item|
         return item if item.name == name
       end
       nil
     end
     
     def by_slug(slug)
-      (self.pages + self.posts + self.attachements).each do |item|
+      (self.pages + self.posts + self.attachments).each do |item|
         return item if item.slug == slug
       end
       nil
@@ -63,10 +63,10 @@ module Alula
       end
 
       # Load all pages if requested
-      if (types.include?(:attachements))
-        @site.storage.attachements.each do |name, entry|
-          attachement = Attachement.load(item: entry, site: @site)
-          @attachements << attachement unless attachement.nil?
+      if (types.include?(:attachments))
+        @site.storage.attachments.each do |name, entry|
+          attachment = Attachment.load(item: entry, site: @site)
+          @attachments << attachment unless attachment.nil?
         end
       end
 

@@ -1,6 +1,6 @@
 require 'alula/contents/metadata'
+require 'alula/core_ext'
 require 'liquid'
-require 'alula/plugins/locale'
 require 'kramdown'
 require 'stringex'
 
@@ -87,6 +87,19 @@ module Alula
         
         # If payload requested, read it
         read_payload if has_payload?
+      end
+      
+      # Functionality, existence
+      def exists?
+        @item.exists?
+      end
+      
+      def extension
+        @item.extension
+      end
+      
+      def filepath
+        @item.filepath
       end
       
       # Sorting

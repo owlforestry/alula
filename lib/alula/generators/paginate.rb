@@ -22,7 +22,9 @@ module Alula
             [ lang, posts.slice(page * self.options.items, self.options.items) ]
           end
         ]
-        titles = Hash[languages.collect {|lang, x| [lang, "Page - #{page + 1}"]}]
+        titles = Hash[
+          languages.collect {|lang, x| [lang, I18n.t("paginate.title", locale: lang, page: (page + 1))]}
+        ]
 
         self.site.content.pages << Alula::Content::Page.new({
           generator: self,

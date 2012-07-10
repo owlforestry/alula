@@ -9,9 +9,3 @@ group :development do
   gem 'guard-minitest'
   gem 'pry'
 end
-
-group :test do
-  gem 'minitest'
-  gem 'turn'
-  gem 'simplecov'
-end

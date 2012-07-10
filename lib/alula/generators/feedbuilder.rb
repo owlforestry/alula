@@ -9,7 +9,7 @@ module Alula
           @languages[lang] << post
         end
       end
-      
+      titles = Hash[@languages.collect {|lang, x| [lang, I18n.t("feedbuilder.recent_posts", locale: lang)]}]
       posts = Hash[
         @languages.collect do |lang, posts|
           [ lang, posts.slice(0, self.options.items) ]
@@ -19,7 +19,7 @@ module Alula
       self.site.content.pages << Alula::Content::Page.new({
         generator: self,
         posts: posts,
-        title: Hash[@languages.collect {|lang, x| [lang, "Recent Posts"]}],
+        title: titles,
         name: "feed.xml",
         slug: "feed",
         template: self.options.template || "/:locale/:name",

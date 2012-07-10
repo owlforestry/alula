@@ -9,7 +9,7 @@ describe "File Storage" do
       "content_path"      => 'test/fixtures',
       "pages_path"        => 'test/fixtures/pages',
       "posts_path"        => 'test/fixtures/posts',
-      "attachements_path" => 'test/fixtures/attachements',
+      "attachments_path"  => 'test/fixtures/attachments',
       "public_path"       => 'public',
       }
   end

@@ -2,7 +2,7 @@ require 'alula/contents/item'
 
 module Alula
   class Content
-    class Attachement < Item
+    class Attachment < Item
     end
   end
 end

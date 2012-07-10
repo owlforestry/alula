@@ -15,7 +15,7 @@ describe "Storage" do
     storage.must_be_nil
     
     @site.config.storage = {"file" => { "content_path" => 'test/fixtures', "pages_path" => 'test/fixtures/pages',
-      "posts_path" => 'test/fixtures/posts', "attachements_path" => 'test/fixtures/attachements', "public_path" => 'public' }}
+      "posts_path" => 'test/fixtures/posts', "attachments_path" => 'test/fixtures/attachments', "public_path" => 'public' }}
     storage = Alula::Storage.load(site: @site)
     storage.wont_be_nil
     

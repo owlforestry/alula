@@ -2,12 +2,15 @@ require 'alula/config'
 require 'alula/content'
 require 'alula/context'
 require 'alula/generator'
+require 'alula/attachment_processor'
+require 'alula/cdn'
 require 'alula/storage'
 require 'alula/manifest'
 require 'alula/helpers'
 
 require 'thor'
 require 'sprockets'
+require 'i18n'
 
 module Alula
   class Site
@@ -20,8 +23,14 @@ module Alula
     # Context for rendering
     attr_reader :context
     
+    # CDN Resolver for Site
+    attr_reader :cdn
+    
     # Site metadata information
     attr_reader :metadata
+    
+    # Site attachment mapping
+    attr_reader :attachments
     
     # Theme
     attr_reader :theme
@@ -46,6 +55,18 @@ module Alula
         tagline: @config.tagline,
         url: @config.url,
       })
+      
+      @attachments = AttachmentProcessor.new(site: self)
+      
+      # Set up CDN resolver
+      @cdn = CDN.load(site: self)
+      
+      # Set up I18n
+      l10n_path = File.join(File.dirname(__FILE__), "..", "..", "locales", "l10n", "*.yml")
+      locale_path = File.join(File.dirname(__FILE__), "..", "..", "locales", "*.yml")
+      I18n.load_path += Dir[l10n_path]
+      I18n.load_path += Dir[locale_path]
+      I18n.default_locale = @config.locale
     end
     
     # Compiles a site to static website
@@ -55,7 +76,7 @@ module Alula
       
       load_content
       
-      process_attachements
+      process_attachments
       
       compile_assets
       
@@ -87,22 +108,26 @@ module Alula
       @theme = Alula::Theme.load(site: self)
       
       # Create our asset environment
-      @sprockets = Sprockets::Environment.new
-      @context.environment = @sprockets
+      @environment = Sprockets::Environment.new
+      @context.environment = @environment
+      @context.attachments = self.attachments
+      
+      # Add generated attachements
+      @environment.append_path @storage.path(:cache, "attachments")
       
       # Add generated assets
-      @sprockets.append_path @storage.path(:assets)
+      @environment.append_path @storage.path(:assets)
       
       # Add theme
       %w{stylesheets javascripts images}.each do |path|
-        @sprockets.append_path ::File.join(self.theme.path, path)
+        @environment.append_path ::File.join(self.theme.path, path)
       end
       
       # Plugins
       # Attachements
       # Customisation
       %w{stylesheets javascripts images static}.each do |path|
-        @sprockets.append_path @storage.path(:custom, path)
+        @environment.append_path @storage.path(:custom, path)
       end
     end
     
@@ -123,8 +148,17 @@ module Alula
       end
     end
     
-    def process_attachements
-      puts "==> Processing attachements"
+    def process_attachments
+      puts "==> Processing attachments"
+      
+      self.content.attachments.each do |attachment|
+        if processor = attachments.get(attachment)
+          processor.process(attachment)
+        else
+          puts "--> Cannot process attachment #{attachment}, copying it..."
+        end
+      end
+
     end
     
     def compile_assets
@@ -148,9 +182,8 @@ module Alula
       end
       
       # Compile all assets
-      @manifest = Manifest.new(@sprockets, @storage.path(:assets))
+      @manifest = Manifest.new(@environment, @storage.path(:assets))
       @manifest.compile
-      
     end
     
     def render

@@ -4,10 +4,10 @@ module Alula
       name += ".css" if File.extname(name).empty?
       if asset_url(name)
         # Inline?
-        if File.size(File.join(self.storage.path(:public), asset_url(name))) > 10
+        if self.environment[name].pathname.size > 10
           "<link rel=\"stylesheet\" href=\"#{asset_url(name)}\" type=\"text/css\" />"
         else
-          content = File.read(self.storage.path(:public), asset_url(name))
+          content = self.environment[name].pathname.read
           "<style type=\"text/css\">#{content}</style>"
         end
       end
@@ -15,15 +15,11 @@ module Alula
     
     def asset_url(name)
       asset = if self.environment[name]
-        File.join("/", "assets", self.environment[name].digest_path)
-      elsif /^(?<prefix>(images|thumbnails))\/(?<name>.+)/ =~ name
-        # Try to find attachment
-        if self.attachments[name.downcase]
-          asset_url(File.join(prefix, self.attachments[name.downcase]))
-        end
+        # Get asset URL
+        asset_path = File.join("assets", self.environment[name].digest_path)
+        self.site.cdn.url_for(asset_path, file: self.environment[name].pathname.to_s)
       end
       asset
     end
-    
   end
 end

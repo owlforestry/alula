@@ -23,7 +23,8 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'kramdown'
   gem.add_dependency 'sprockets', '~> 2.4'
   gem.add_dependency 'thor', '~> 0.14'
-  # gem.add_dependency 'rmagick', '~> 2.13'
+  gem.add_dependency 'i18n'
+  gem.add_dependency 'rmagick', '~> 2.13'
   gem.add_dependency 'sass', '~> 3.1'
   # gem.add_dependency 'coffee-script', '~> 2.2'
   gem.add_dependency 'uglifier', '~> 1.2'
@@ -31,9 +32,14 @@ Gem::Specification.new do |gem|
   # gem.add_dependency 'activesupport', '~> 3.2'
   gem.add_dependency 'stringex', '~> 1.3'
   gem.add_dependency 'powerbar'
+  gem.add_dependency 'mimemagic'
   # gem.add_dependency 'aws-sdk'
   # gem.add_dependency 'zencoder'
-  # gem.add_dependency 'mini_exiftool', '~> 1.3'
+  gem.add_dependency 'mini_exiftool', '~> 1.3'
 
   gem.add_development_dependency 'version', '~> 1.0'
+  gem.add_development_dependency 'minitest'
+  gem.add_development_dependency 'turn'
+  gem.add_development_dependency 'simplecov'
+  
 end
