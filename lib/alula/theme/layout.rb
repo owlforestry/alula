@@ -1,5 +1,6 @@
 require 'alula/theme/view'
 require 'tilt'
+require 'sass'  # As suggested by tilt
 
 module Alula
   class Theme

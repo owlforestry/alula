@@ -1,25 +1,36 @@
-require 'ostruct'
-require 'alula/support/deep_merge'
+require 'hashie/mash'
 
 module Alula
   class Config
     def initialize(override = {}, config_file = "config.yml")
       # Load default configuration
-      config = DEFAULT_CONFIG.dup
+      @config = Hashie::Mash.new(DEFAULT_CONFIG)
       
       # Load project specific configuration
       if (::File.exists?(config_file))
-        config.deep_merge!(YAML.load_file(config_file))
+        @config.update(YAML.load_file(config_file))
       end
       
       # Load overrides
-      config.deep_merge!(override)
-      
-      @config = OpenStruct.new(config)
+      @config.update(override)
     end
     
     def method_missing(meth, *args, &blk)
-      @config.send(meth, *args)
+      # @config.send(:[], *([meth] + args))
+      
+      if meth[/=$/]
+        @config.send(meth, *args)
+      else
+        # Localisation support
+        value = @config.send(:[], *([meth] + args))
+        if value.kind_of?(Hashie::Mash)
+          # Try environment & locale first
+          return value[environment] if value.has_key?(environment)
+        end
+        
+        value
+      end
+      
     end
     
     DEFAULT_CONFIG = {
@@ -62,6 +73,17 @@ module Alula
         "hosts" => ["/"],
       },
       
+      # Content generators
+      generators: {
+        paginate: {
+          items: 10,
+          template: "/:locale/page/:page/",
+        },
+        feedbuilder: {
+          items: 10,
+        },
+      },
+      
       # Attachement Processors
       attachments: {
         "image" => {
@@ -70,12 +92,23 @@ module Alula
           "keep_tags" => ["CopyrightNotice", "Title", "DateTimeOriginal"],
           "hires"     => true,
         },
-        "video" => {},
+        "video" => {
+          "size-hd"        => "1280x720",
+          "size-mobile-hd" => "1280x720",
+          "size-sd"        => "640x360",
+          "size-mobile-sd" => "640x360",
+          "thumbnail"      => "300x300",            
+          "formats"        => ["mp4", "webm", "ogg"],
+          "hires"          => true,
+          "mobile"         => true,
+        },
         "audio" => {},
         
-        "processors" => ["magick", "cloudinary"],
-        "magick" => {},
-        "cloudinary" => { "user" => "user", "password" => "password"}
+        "processors" => ["magick", "zencoder"],
+        "magick"     => {},
+        "zencoder"   => {
+          "bucket" => "alula.attachments",
+        }
       }
     }.freeze
   end

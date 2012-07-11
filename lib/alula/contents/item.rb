@@ -77,6 +77,7 @@ module Alula
           
           # Utilities
           base_locale: @site.config.locale,
+          environment: @site.config.environment,
         }.merge(opts))
         
         if /^((?<date>(?:\d+-\d+-\d+))-)?(?<slug>(?:.*))(?<extension>(?:\.[^.]+))$/ =~ @name
@@ -142,12 +143,6 @@ module Alula
           begin
             _old_locale = self.current_locale
             self.current_locale = locale
-
-            puts "--> outputting language #{locale} to #{path(locale)}"
-
-            # if @hooks[:before_render]
-            #   @hooks[:before_render].call(self)
-            # end
 
             # Render our content
             self.render(locale)

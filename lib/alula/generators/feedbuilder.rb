@@ -1,3 +1,5 @@
+require 'builder' # As suggested by tilt
+
 module Alula
   class Generator::FeedBuilder < Generator
     def generate

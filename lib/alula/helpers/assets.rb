@@ -13,13 +13,21 @@ module Alula
       end
     end
     
-    def asset_url(name)
-      asset = if self.environment[name]
+    def asset_path(name)
+      return if name.nil?
+
+      if self.environment[name]
         # Get asset URL
         asset_path = File.join("assets", self.environment[name].digest_path)
-        self.site.cdn.url_for(asset_path, file: self.environment[name].pathname.to_s)
       end
-      asset
+    end
+    
+    def asset_url(name)
+      return if name.nil?
+
+      if self.environment[name]
+        self.site.cdn.url_for(asset_path(name), file: self.environment[name].pathname.to_s)
+      end
     end
   end
 end

@@ -1,5 +1,3 @@
-require 'ostruct'
-
 module Alula
   class Content
     class Metadata
@@ -33,15 +31,20 @@ module Alula
           # Localisation support
           value = instance_variable_get("@#{meth}")
           if value.kind_of?(Hash)
-            if value.has_key?(args[0])
-              # Make sure we always have string key
-              value[args[0]]
+            # Try environment & locale first
+            if value.has_key?(environment) and value[environment].kind_of?(Hash)
+              return value[environment][args[0]] if value[environment].has_key?(args[0])
+              return value[environment][base_locale] if value[environment].has_key?(base_locale)
+              return value[environment]
             else
-              value[@base_locale]
+              # Try locales
+              return value[args[0]] if value.has_key?(args[0])
+              return value[base_locale] if value.has_key?(base_locale)
+              return value[environment] if value.has_key?(environment)
             end
-          else
-            value
           end
+          
+          value
         end
       end
     
@@ -62,7 +65,7 @@ module Alula
         if @title.kind_of?(Hash)
           @title.keys
         else
-          nil
+          [base_locale]
         end
       end
     end

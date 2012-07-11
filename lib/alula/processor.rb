@@ -9,38 +9,72 @@ module Alula
     
     def self.mimetype(*mimetypes)
       (class << self; self; end).send(:define_method, "mimetypes") do
-        mimetypes
+        mimetypes.collect do |m|
+          if m.kind_of?(String)
+            Regexp.new("^#{m}$")
+          else
+            m
+          end
+        end
       end
     end
     
-    def initialize(options, opts)
-      @site = opts.delete(:site)
-      @attachments = opts.delete(:attachments)
-      
-      @options = options
+    def self.available?(options)
+      true
     end
     
-    def process?(item, opts)
-      if self.class.respond_to?(:mimetypes)
+    def self.process?(item, opts)
+      if self.respond_to?(:mimetypes)
         mimetype = if opts[:fast]
           MimeMagic.by_extension(item.extension)
         else
           MimeMagic.by_magic(File.open(item.filepath))
         end
-
-        return self.class.mimetypes.include?(mimetype.type)
+        
+        return !(self.mimetypes.select{|re| re.match(mimetype.type)}.empty?)
       end
       
       return false
+    end
+    
+    def initialize(item, opts)
+      @item = item
+      @site = opts.delete(:site)
+      @attachments = opts.delete(:attachments)
+      
+      @options = opts.delete(:options)
+      
+      # Networked processors, create global 'queues' to prevent multiple simultanous upload/downloads
+      @@upload ||= Mutex.new
+      @@download ||= Mutex.new
     end
     
     def cleanup
       @item = nil
     end
     
-    def process(item)
-      @item = item
+    def process
     end
+    
+    def asset_path(name, type)
+      asset_name = self.attachments.asset_name(name, type.to_s)
+      output = File.join(self.site.storage.path(:cache, "attachments"), asset_name)
+      # Make sure our directory exists
+      output_dir = self.site.storage.path(:cache, "attachments", File.dirname(asset_name))
+      
+      output
+    end
+    
+    def info
+      @info ||= begin
+        info = MiniExiftool.new self.item.filepath
+        Hashie::Mash.new({
+          width: info.imagewidth,
+          height: info.imageheight,
+        })
+      end
+    end
+    
   end
 end
 

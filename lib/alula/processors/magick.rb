@@ -1,5 +1,5 @@
 require 'alula/processors/image'
-require 'ostruct'
+require 'hashie/mash'
 require 'RMagick'
 require 'mini_exiftool'
 
@@ -7,8 +7,6 @@ module Alula
   class Magick < ImageProcessor
     # Register mimetypes
     mimetype "image/jpeg", "image/png", "image/gif"
-    
-    AttachmentProcessor.register('magick', self)
     
     def resize_image(opts)
       output = opts.delete(:output)
@@ -41,8 +39,9 @@ module Alula
     
     def info
       @info ||= begin
+        binding.pry if self.item.nil?
         info = ::Magick::Image.ping(self.item.filepath).first
-        OpenStruct.new({
+        Hashie::Mash.new({
           width: info.columns,
           height: info.rows,
         })
@@ -81,3 +80,5 @@ module Alula
     
   end
 end
+
+Alula::AttachmentProcessor.register('magick', Alula::Magick)

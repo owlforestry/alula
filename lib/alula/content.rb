@@ -75,7 +75,7 @@ module Alula
     def generate_content
       @site.config.generators.each do |type, options|
         
-        generator = Alula::Generator.load(type: type, options: OpenStruct.new(options), site: @site)
+        generator = Alula::Generator.load(type: type, options: options, site: @site)
         if generator
           generator.generate
         end

@@ -8,6 +8,8 @@ module Alula
     
     def initialize(opts)
       @site = opts.delete(:site)
+      
+      @@lock = Mutex.new
     end
     
     def mapping
@@ -30,25 +32,9 @@ module Alula
     
     def get(item)
       # Try to use cached processor for extension
-      if cached[item.extension] and cached[item.extension].process?(item, fast: true)
-        return cached[item.extension]
-      end
-      
-      available.each do |t, processor|
-        if processor.process?(item, fast: true)
-          cached[item.extension] = processor
-          return processor
-        end
-      end
-      # Fast identify didn't worked, go through slow detection
-      available.each do |t, processor|
-        if processor.process?(item, fast: false)
-          cached[item.extension] = processor
-          return processor
-        end
-      end
-      
-      binding.pry
+      type = _type(item)
+      options = site.config.attachments[type]
+      self.processors[type].new(item, options: options, site: site, attachments: self)
     end
     
     private
@@ -56,18 +42,33 @@ module Alula
       @cached ||= {}
     end
     
+    def _type(item)
+      if cached[item.extension] and self.processors[cached[item.extension]].process?(item, fast: true)
+        return cached[item.extension]
+      end
+      
+      types = available.collect { |t| [t, false] } + available.collect { |t| [t, true] }
+      types.each do |type, fast|
+        processor = self.processors[type]
+        if processor.process?(item, fast: fast)
+          cached[item.extension] = type
+          return type
+        end
+      end
+      
+      return "dummy"
+    end
+    
     def available
-      @available ||= begin
-        Hash[
-          self.site.config.attachments["processors"]
-            .select { |p| self.processors.has_key?(p) }
-            .collect { |p|
-              options = site.config.attachments[p]
-              processor = self.processors[p].new(options, site: site, attachments: self)
-              
-              [p, processor]
-            }
-          ]
+      @@lock.synchronize do
+        @available ||= begin
+          ava = self.site.config.attachments.processors.select { |p|
+            options = self.site.config.attachments[p] || {}
+            self.processors.has_key?(p) and self.processors[p].available?(options)
+          }
+          puts "Available processors: #{ava.inspect}"
+          ava
+        end
       end
     end
   end

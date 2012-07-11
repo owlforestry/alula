@@ -1,6 +1,6 @@
 module Alula
   class ImageProcessor < Processor
-    def process(item)
+    def process
       super
       
       sizes.each do |size|
@@ -15,10 +15,11 @@ module Alula
           item.name
         end
         
-        asset_name = self.attachments.asset_name(name, size[:type].to_s)
-        output = File.join(self.site.storage.path(:cache, "attachments"), asset_name)
-        # Make sure our directory exists
-        output_dir = self.site.storage.path(:cache, "attachments", File.dirname(asset_name))
+        output = asset_path(name, size[:type].to_s)
+        # asset_name = self.attachments.asset_name(name, size[:type].to_s)
+        # output = File.join(self.site.storage.path(:cache, "attachments"), asset_name)
+        # # Make sure our directory exists
+        # output_dir = self.site.storage.path(:cache, "attachments", File.dirname(asset_name))
         
         # Skip image processing if output already exists...
         next if File.exists?(output)

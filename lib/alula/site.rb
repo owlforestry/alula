@@ -1,3 +1,5 @@
+require 'alula/core_ext'
+
 require 'alula/config'
 require 'alula/content'
 require 'alula/context'
@@ -5,12 +7,13 @@ require 'alula/generator'
 require 'alula/attachment_processor'
 require 'alula/cdn'
 require 'alula/storage'
-require 'alula/manifest'
 require 'alula/helpers'
+require 'alula/progress'
 
 require 'thor'
 require 'sprockets'
 require 'i18n'
+require 'parallel'
 
 module Alula
   class Site
@@ -22,6 +25,9 @@ module Alula
     
     # Context for rendering
     attr_reader :context
+    
+    # Progress displayer
+    attr_reader :progress
     
     # CDN Resolver for Site
     attr_reader :cdn
@@ -45,16 +51,20 @@ module Alula
       # Read local config
       @config = Config.new(options)
       
-      @storage = Alula::Storage.load(site: self)
+      @storage = Storage.load(site: self)
       
-      @metadata = Alula::Content::Metadata.new({
+      @metadata = Content::Metadata.new({
         base_locale: @config.locale,
+        environment: @config.environment,
         
         title: @config.title,
         author: @config.author,
         tagline: @config.tagline,
         url: @config.url,
       })
+      
+      # Progress displayer
+      @progress = Progress.new(debug: options["debug"])
       
       @attachments = AttachmentProcessor.new(site: self)
       
@@ -144,6 +154,7 @@ module Alula
         if index_page
           index_page.metadata.slug = "index"
           index_page.metadata.template = "/:locale/:slug"
+          index_page.metadata.title = Hash[index_page.metadata.languages.collect{|lang| [lang, metadata.title(lang)]}]
         end
       end
     end
@@ -151,14 +162,27 @@ module Alula
     def process_attachments
       puts "==> Processing attachments"
       
-      self.content.attachments.each do |attachment|
+      # pbar = ProgressBar.new "Attachments", self.content.attachments.count
+      progress.create :attachments, title: "Attachments", total: self.content.attachments.count
+      progress.display
+      
+      @@lock = Mutex.new
+      
+      Parallel.map(self.content.attachments, :in_threads => Parallel.processor_count) do |attachment|
         if processor = attachments.get(attachment)
-          processor.process(attachment)
-        else
-          puts "--> Cannot process attachment #{attachment}, copying it..."
+          processor.process
+        end
+        @@lock.synchronize do
+          progress.step(:attachments)
         end
       end
-
+      
+      progress.finish(:attachments)
+      progress.hide
+      
+      # DEBUG
+      require 'json'
+      File.open(self.storage.path(:cache) + "/mapping.json", 'w') {|io| io.puts self.attachments.mapping.to_json}
     end
     
     def compile_assets
@@ -182,19 +206,35 @@ module Alula
       end
       
       # Compile all assets
+      progress.create :assets, title: "Compiling assets", total: @environment.each_logical_path.count
+      progress.display
+      
       @manifest = Manifest.new(@environment, @storage.path(:assets))
+      @manifest.progress = -> {
+        progress.step(:assets)
+      }
+
       @manifest.compile
+      progress.finish(:assets)
+      progress.hide
     end
     
     def render
       say "==> Render site"
       
+      progress.create :render, title: "Rendering content", total: (self.content.posts.count + self.content.pages.count)
+      progress.display
+      
       # Render all user content, parallel...
       (self.content.posts + self.content.pages).each do |content|
         # Write content to file
         content.write
+        
+        progress.step(:render)
       end
       
+      progress.finish(:render)
+      progress.hide
     end
     
     # Output helpers

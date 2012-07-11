@@ -1,10 +1,14 @@
+require 'mini_exiftool'
+require 'hashie/mash'
+
 module Alula
   class ImageTag < Tag
     def prepare
+      @info = {}
       @classes = []
       @align = "left"
       
-      if m = /(")?(?:(.+))\1(?: (.+))?/.match(@markup)
+      if m = /(["'])?([^"']+)\1?(?: (.+))?/.match(@markup)
         @source = m[2]
         options = m[3]
       end
@@ -26,28 +30,52 @@ module Alula
     end
     
     def content
-      imagetag(@source, :image)
+      # binding.pry
+      hires = hires_url(@source, :image)
+      tag = "<a href=\"#{attachment_url(@source, :image)}\""
+      tag += " data-hires=\"#{hires}\"" if context.site.config.attachments["image"]["hires"] and hires
+      tag += ">"
+      tag += imagetag(@source, :thumbnail)
+      tag += "</a>"
     end
     
     def imagetag(source, type)
-      name = File.join(type.to_s, source)
-      asset_name = self.context.attachments.mapping[name]
-      src = self.context.asset_url(asset_name)
+      # binding.pry
+      src = attachment_url(source, type)
+      hires = hires_url(source, type)
       
       tag = "<img"
-      # tag += " alt=\"#{self.alternative}\"" if self.alternative
-      # tag += " title=\"#{self.title}\"" if self.title
-      # tag += " class=\"#{(self.classes + [@align]).join(" ")}\""
+      tag += " alt=\"#{@alternative}\"" if @alternative
+      tag += " title=\"#{@title}\"" if @title
+      tag += " class=\"#{(@classes + [@align]).join(" ")}\""
       if context.site.config.attachments["image"]["lazyload"]
-        tag += " src=\"#{context.asset_url("grey.gif")}\""
+        tag += " src=\"#{attachment_url("grey.gif")}\""
         tag += " data-original=\"#{src}\""
       else
         tag += " src=\"#{src}\""
       end
-      # tag += " data-hires=\"#{self.hires}\"" if context.config.attachments["images"]["hires"] and self.hires
-      # tag += " width=\"#{self.width}\" height=\"#{self.height}\""
+      tag += " data-hires=\"#{hires}\"" if context.site.config.attachments["image"]["hires"] and hires
+      tag += " width=\"#{info(source, type).width}\" height=\"#{info(source, type).height}\""
       tag += " />"
     end
+    
+    private
+    def hires_url(source, type)
+      hires_source = source.gsub(/(#{File.extname(source)})$/, '-hires\1')
+      attachment_url(hires_source, type)
+    end
+    
+    # def info(source, type)
+    #   @info[source] ||= begin
+    #     file = File.join self.context.storage.path(:public), self.context.asset_path(attachment_path(source, type))
+    #     info = MiniExiftool.new file
+    #     Hashie::Mash.new({
+    #       width: info.imagewidth,
+    #       height: info.imageheight,
+    #     })
+    #   end
+    # end
+    
   end
 end
 

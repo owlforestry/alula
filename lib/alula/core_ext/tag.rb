@@ -18,16 +18,44 @@ module Alula
       super
       
       @tagname = tagname
-      @markup = markup
+      @markup = markup.strip
       @tokens = tokens
+      
+      @info = {}
       
       prepare if respond_to?("prepare")
     end
     
     def render(context)
       @context = context
-      content if respond_to?("content")
+      if respond_to?("content")
+        content
+      else
+        super
+      end
     end
+    
+    private
+    def info(source, type = nil)
+      @info[source] ||= begin
+        file = self.context.asset_path(attachment_path(source, type))
+        info = MiniExiftool.new File.join self.context.storage.path(:public), file
+        Hashie::Mash.new({
+          width: info.imagewidth,
+          height: info.imageheight,
+        })
+      end
+    end
+    
+    def attachment_path(source, type = nil)
+      name = (type.nil?) ? source : File.join(type.to_s, source)
+      self.context.attachments.mapping[name]
+    end
+    
+    def attachment_url(source, type = nil)
+      self.context.asset_url(attachment_path(source, type))
+    end
+    
   end
   
   class Tag < Liquid::Tag
