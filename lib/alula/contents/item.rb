@@ -277,10 +277,13 @@ module Alula
       def method_missing(meth, *args, &blk)
         # Proxy to metadata
         if !meth[/=$/] and metadata.respond_to?(meth)
+          # Invalidate some attributes depending on this
+          if %w{template name slug}.include?(meth[0..-2])
+            var = instance_variable_get("@#{meth[0..-2]}")
+            instance_variable_set("@#{meth[0..2]}", var.class.new)
+          end
           args.unshift(self.current_locale || @site.config.locale) if args.empty?
           metadata.send(meth, *args)
-        # elsif @hooks[meth]
-        #   instance_eval(&@hooks[meth])
         else
           super
         end
@@ -313,6 +316,7 @@ module Alula
           return instance_exec(locale, &@hooks[:next])
         end
         
+        return unless self.class.to_s[/Page|Post/]
         mtime = nil
         unless @item.nil?
           mtime = @item.mtime
