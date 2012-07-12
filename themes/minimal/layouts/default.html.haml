@@ -1,33 +1,37 @@
 !!!
 %html
-	%head
-		%meta{charset: "utf-8"}
-		%title= (item.title ? "#{item.title} - " : "") + site.title
-		
-		= stylesheet_link
-		= javascript_link
-		%meta{name: "viewport", content: "width=device-width, initial-scale=1"}
-		%link{rel: "alternate", type: "application/rss+xml", title: "RSS", href: "/feed.xml"}
-		/[if lt IE 9]
-			= javascript_link "html5shiv"
-		= addons :head
-	
-	%body{class: item.id}
-		%div.wrapper
-			%header
-				%h1= link_to site.title, site.url
-				%p= site.tagline
-			
-			%section
-				= yield
-			
-			%footer
-				%p
-					Blog by
-					= site.author
-				%p
-					%small
-						Powered by Alula &mdash; Theme by&nbsp;
-						%a{href: "https://github.com/orderedlist"} orderedlist
-		= #javascript_link "script-footer"
-		= addons :body
+  %head
+    %meta{charset: "utf-8"}
+    %title= (item.title ? "#{item.title} - " : "") + site.title
+    
+    = stylesheet_link
+    = javascript_link
+    %meta{name: "viewport", content: "width=device-width, initial-scale=1"}
+    %link{rel: "alternate", type: "application/rss+xml", title: "RSS", href: "/feed.xml"}
+    /[if lt IE 9]
+      = javascript_link "html5shiv"
+    = addons :head
+    
+  %body{class: item.id}
+    %div.wrapper
+      %header
+        %h1= link_to site.title, site.url
+        %p= site.tagline
+        
+        -# Page list
+        .sidebar
+          - item.sidebar.each do |item|
+            %p= link_to item.title, url_for(item.url)
+        
+      %section
+        = yield
+      
+      %footer
+        %p
+          Blog by
+          = site.author
+        %p
+          %small
+            Powered by #{link_to "Alula", "http://www.alula.in"} &mdash;
+            Theme by #{link_to "orderedlist", "https://github.com/orderedlist/minimal"}
+    = addons :body
