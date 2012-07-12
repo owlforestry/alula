@@ -3,7 +3,7 @@
 
 jQuery ->
 	# Hi-res support
-	if $.getDevicePixelRatio() <= 1
+	if jQuery.getDevicePixelRatio() <= 1
 		jQuery("img[data-original]").lazyload
 			data_attribute: "original"
 	else
