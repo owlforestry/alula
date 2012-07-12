@@ -43,32 +43,53 @@ module Alula
     
     private
     def read_content(*types)
+      @@lock = Mutex.new
       # Load all posts if requested
       if (types.include?(:posts))
         # Read posts
-        @site.storage.posts.each do |name, entry|
+        @site.progress.create :load_posts, title: "Loading posts", total: @site.storage.posts.count
+        @site.progress.display
+        Parallel.map(@site.storage.posts, :in_threads => Parallel.processor_count) do |item|
+          name, entry = item
           post = Post.load(item: entry, site: @site)
           @posts << post unless post.nil?
+          @@lock.synchronize { @site.progress.step :load_posts }
         end
         # Sort
         @posts.sort!.reverse!
+        @site.progress.finish :load_posts
       end
       
       # Load all pages if requested
       if (types.include?(:pages))
-        @site.storage.pages.each do |name, entry|
+        @site.progress.create :load_pages, title: "Loading pages", total: @site.storage.pages.count
+        @site.progress.display
+        
+        Parallel.map(@site.storage.pages, :in_thread => Parallel.processor_count) do |item|
+          name, entry = item
           page = Page.load(item: entry, site: @site)
           @pages << page unless page.nil?
+          
+          @@lock.synchronize { @site.progress.step :load_pages }
         end
         @pages.sort!
+        @site.progress.finish :load_pages
       end
 
       # Load all pages if requested
       if (types.include?(:attachments))
-        @site.storage.attachments.each do |name, entry|
+        @site.progress.create :load_attachments, title: "Loading attachments", total: @site.storage.attachments.count
+        @site.progress.display
+        
+        Parallel.map(@site.storage.attachments, :in_thread => Parallel.processor_count) do |item|
+          name, entry = item
           attachment = Attachment.load(item: entry, site: @site)
           @attachments << attachment unless attachment.nil?
+          
+          @@lock.synchronize { @site.progress.step :load_attachments }
         end
+        
+        @site.progress.finish :load_attachments
       end
       
       # Load all statics
