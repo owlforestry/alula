@@ -88,6 +88,14 @@ module Alula
         },
       },
       
+      # Plugins
+      plugins: {},
+      
+      # Blog Content options
+      content: {
+        emphasis: true,
+      },
+      
       # Attachement Processors
       attachments: {
         "image" => {
@@ -95,6 +103,7 @@ module Alula
           "thumbnail" => "300x300",
           "keep_tags" => ["CopyrightNotice", "Title", "DateTimeOriginal"],
           "hires"     => true,
+          "lazyload"  => true,
         },
         "video" => {
           "size-hd"        => "1280x720",

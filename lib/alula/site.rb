@@ -1,12 +1,13 @@
 require 'alula/core_ext'
 
 require 'alula/config'
+require 'alula/plugin'
+require 'alula/storage'
 require 'alula/content'
 require 'alula/context'
 require 'alula/generator'
 require 'alula/attachment_processor'
 require 'alula/cdn'
-require 'alula/storage'
 require 'alula/helpers'
 require 'alula/progress'
 
@@ -17,6 +18,8 @@ require 'parallel'
 
 module Alula
   class Site
+    def self.instance; @@instance; end
+    
     # Global configuration
     attr_reader :config
     
@@ -31,6 +34,9 @@ module Alula
     
     # CDN Resolver for Site
     attr_reader :cdn
+    
+    # Site Plugins
+    attr_reader :plugins
     
     # Site metadata information
     attr_reader :metadata
@@ -48,6 +54,8 @@ module Alula
     attr_reader :generated
     
     def initialize(options)
+      @@instance = self
+      
       # Read local config
       @config = Config.new(options)
 
@@ -73,6 +81,8 @@ module Alula
       # Set up CDN resolver
       @cdn = CDN.load(site: self)
       
+      @plugins = {}
+      
       # Set up I18n
       l10n_path = File.join(File.dirname(__FILE__), "..", "..", "locales", "l10n", "*.yml")
       locale_path = File.join(File.dirname(__FILE__), "..", "..", "locales", "*.yml")
@@ -83,6 +93,9 @@ module Alula
     
     # Compiles a site to static website
     def generate
+      # Load our plugins
+      load_plugins
+      
       # Prepare public folder
       prepare
       
@@ -111,6 +124,14 @@ module Alula
     end
     
     private
+    def load_plugins
+      config.plugins.each do |name, options|
+        if plugin = Alula::Plugin.load(name, options)
+          @plugins[name] = plugin
+        end
+      end
+    end
+    
     def prepare(preserve = false)
       say "==> Preparing environment" + (preserve ? " (preserving existing files)" : "")
       
@@ -125,6 +146,14 @@ module Alula
       
       # Create our asset environment
       @environment = Sprockets::Environment.new
+      @environment.context_class.class_eval do
+        # include Helpers
+        def context; Alula::Site.instance.context; end
+        def method_missing(meth, *args, &blk)
+          return context.send(meth, *args, &blk) if context.respond_to?(meth)
+          super
+        end
+      end
       @context.environment = @environment
       @context.attachments = self.attachments
       
@@ -134,16 +163,38 @@ module Alula
       # Add generated assets
       @environment.append_path @storage.path(:assets)
       
-      # Add theme
-      %w{stylesheets javascripts images}.each do |path|
-        @environment.append_path ::File.join(self.theme.path, path)
+      # Theme, plugins, vendor and customisation
+      [
+        self.theme.path,
+        *plugins.collect{|name, plugin| plugin.asset_path},
+        ::File.join(File.dirname(__FILE__), "..", "..", "vendor"),
+      ].each do |path|
+        %w{stylesheets javascripts images}.each {|p|
+          @environment.append_path ::File.join(path, p)
+        }
       end
-      
-      # Plugins
-      # Attachements
+        
+      # # Add theme
+      # %w{stylesheets javascripts images}.each do |path|
+      #   @environment.append_path ::File.join(self.theme.path, path)
+      # end
+      # 
+      # # Plugins
+      # plugins.each do |plugin|
+      #   %w{stylesheets javascripts images}.each do |path|
+      #     @environment.append_path ::File.join(plugin.asset_path, path)
+      #   end
+      # end
+      # 
+      # # Vendor assets
+      # vendor_path = ::File.join(File.dirname(__FILE__), "..", "..", "vendor")
+      # %w{stylesheets javascripts images}.each do |path|
+      #   @environment.append_path ::File.join(vendor_path, path)
+      # end
+      # 
       # Customisation
-      %w{stylesheets javascripts images static}.each do |path|
-        @environment.append_path @storage.path(:custom, path)
+      %w{stylesheets javascripts images}.each do |path|
+        @environment.prepend_path @storage.path(:custom, path)
       end
     end
     
@@ -202,13 +253,35 @@ module Alula
         io.puts " *= require #{self.config.theme}"
         
         # Plugins
-        
-        # Blog customization
-        if @storage.custom("stylesheets/custom.css")
-          io.puts " *= require custom"
+        @plugins.each do |name, plugin|
+          io.puts " *= require #{name}"
         end
         
+        # Blog customization
+        io.puts " *= require custom" if @storage.custom("stylesheets/custom.css")
+        
         io.puts "*/"
+      end
+      
+      # Generate javascript
+      @storage.output("assets/script.js") do |io|
+        io.puts "/*"
+
+        # Theme scripts
+        io.puts " *= require #{self.config.theme}"
+
+        # Plugins
+        @plugins.each do |name, plugin|
+          io.puts " *= require #{name}"
+        end
+
+        # Vendored
+        io.puts " *= require lazyload" if self.config.attachments.image.lazyload
+        io.puts " *= require emphasis" if self.config.content.emphasis
+
+        # Customisation
+        io.puts " *= require custom" if @storage.custom("javascripts/custom.js")
+        io.puts " */"
       end
       
       # Compile all assets

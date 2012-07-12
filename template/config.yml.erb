@@ -1,0 +1,42 @@
+#
+# Alula Configuration File
+#
+# You set different values for different
+# locales and environments if required for some options
+#
+# For example to localise title use following syntax
+# title:
+#   en: Title in English
+#   fi: Otsikko suomeksi
+#
+# To have different options for different environments
+# title:
+#   development: Title (development)
+#   production: Title
+#
+# To combine  
+# title:
+#   development:
+#     en: Title (development)
+#     fi: Otsikko (kehitysversio)
+#   production:
+#     en: Title
+#     fi: Otsikko
+#
+# Existing environments:
+# - development  => By default, when testing locally
+# - production   => Enabled when generating site with --production option
+#
+
+# OPTIONS
+# Localisation and environments supported
+title: The title for blog
+tagline: The cathy tagline for your blog
+author: You name
+url:
+  development: http://0.0.0.0:3000
+  production: http://your.host.here
+
+# Use paginated page as blog index
+# This could be set to any slug of post or page to change default index page
+index: page-1

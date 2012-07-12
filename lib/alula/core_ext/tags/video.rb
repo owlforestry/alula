@@ -27,14 +27,13 @@ module Alula
     end
     
     def content
-      # binding.pry
       video_tag(@source)
     end
     
     def video_tag(source)
       poster = source.gsub(/#{File.extname(source)}$/, '.png')
       info = info(poster, :thumbnail)
-      poster = attachment_url(poster, "thumbnail")
+      poster = attachment_url(poster, :thumbnail)
       
       tag = "<video"
       tag += " controls"

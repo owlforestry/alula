@@ -13,6 +13,20 @@ module Alula
       end
     end
     
+    def javascript_link(name = "script")
+      name += ".js" if File.extname(name).empty?
+      if asset_url(name)
+        # Inline?
+        if self.environment[name].pathname.size > 10
+          # "<link rel=\"stylesheet\" href=\"#{asset_url(name)}\" type=\"text/css\" />"
+          "<script src=\"#{asset_url(name)}\"></script>"
+        else
+          content = self.environment[name].pathname.read
+          "<script>#{content}</script>"
+        end
+      end      
+    end
+    
     def asset_path(name)
       return if name.nil?
 

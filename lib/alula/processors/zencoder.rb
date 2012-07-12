@@ -40,7 +40,7 @@ module Alula
       upload_item unless item_uploaded
       
       # Create encoding profiles
-      job = {input: "s3://#{@bucket.name}/#{@object.key}", outputs: []}
+      job = {input: "s3://#{@bucket.name}/#{@object.key}", outputs: [], test: !!self.site.config.testing}
       
       profiles.each { |name, profile| job[:outputs] << profile }
       

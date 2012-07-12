@@ -28,7 +28,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'i18n'
   gem.add_dependency 'rmagick', '~> 2.13'
   gem.add_dependency 'sass', '~> 3.1'
-  # gem.add_dependency 'coffee-script', '~> 2.2'
+  gem.add_dependency 'coffee-script', '~> 2.2'
   gem.add_dependency 'uglifier', '~> 1.2'
   # gem.add_dependency 'front-compiler', '~> 1.1'
   # gem.add_dependency 'activesupport', '~> 3.2'

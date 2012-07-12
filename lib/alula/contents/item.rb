@@ -222,7 +222,10 @@ module Alula
       end
       
       def id(locale = nil)
-        @ids[(locale || self.current_locale || self.site.config.locale)] ||= self.url(locale).gsub(/[\/]/, ' ').to_url
+        @ids[(locale || self.current_locale || self.site.config.locale)] ||= self.url(locale)
+          .gsub(/\.\S+$/, '')
+          .gsub(/[\/]/, ' ')
+          .to_url
       end
       
       def path(locale = nil)
@@ -317,10 +320,13 @@ module Alula
         @markdown[locale] ||= begin
           begin
             _old_locale = @site.context.locale
+            _old_item = @site.context.item
             @site.context.locale = locale
+            @site.context.item = self
             Liquid::Template.parse(@source).render(@site.context.to_liquid)
           ensure
             @site.context.locale = _old_locale
+            @site.context.item = _old_item
           end
         end
       end

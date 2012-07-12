@@ -1,3 +1,4 @@
+require 'alula/core_ext/tag'
 require 'mini_exiftool'
 require 'hashie/mash'
 
@@ -30,7 +31,6 @@ module Alula
     end
     
     def content
-      # binding.pry
       hires = hires_url(@source, :image)
       tag = "<a href=\"#{attachment_url(@source, :image)}\""
       tag += " data-hires=\"#{hires}\"" if context.site.config.attachments["image"]["hires"] and hires
@@ -48,13 +48,13 @@ module Alula
       tag += " alt=\"#{@alternative}\"" if @alternative
       tag += " title=\"#{@title}\"" if @title
       tag += " class=\"#{(@classes + [@align]).join(" ")}\""
-      if context.site.config.attachments["image"]["lazyload"]
+      if context.site.config.attachments.image.lazyload
         tag += " src=\"#{attachment_url("grey.gif")}\""
         tag += " data-original=\"#{src}\""
       else
         tag += " src=\"#{src}\""
       end
-      tag += " data-hires=\"#{hires}\"" if context.site.config.attachments["image"]["hires"] and hires
+      tag += " data-hires=\"#{hires}\"" if context.site.config.attachments.image.hires and hires
       tag += " width=\"#{info(source, type).width}\" height=\"#{info(source, type).height}\""
       tag += " />"
     end

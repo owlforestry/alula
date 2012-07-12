@@ -5,7 +5,8 @@ module Alula
   class CLI < Thor
     include Thor::Actions
     
-    source_root File.expand_path(File.join(File.dirname(__FILE__), *%w[.. .. template]))
+    TEMPLATE_DIR = File.expand_path(File.join(File.dirname(__FILE__), *%w[.. .. template]))
+    source_root TEMPLATE_DIR
     
     def self.generate_options
       option :development, :type => :boolean, :default => true,
@@ -14,12 +15,36 @@ module Alula
         :desc => "Generate site using production settings. Compresses all assets and HTML."
       option :verbose, :type => :boolean, :default => false,
         :desc => "Be verbose during site generation."
+      option :test, :type => :boolean, :default => false,
+        :desc => "Turn on some testing features, i.e. doesn't upload/convert all files etc."
       option :debug, :type => :boolean, :default => false
     end    
     
     desc "version", "Displays current version information about loaded components"
     def version
       Alula::Version.print
+    end
+    
+    desc "new [PATH]", "Creates a new empty blog"
+    def new(path = ".")
+      puts "Create blog at #{path}"
+      
+      # Init directories
+      %w{content
+        content/attachments content/pages content/posts content/static
+        custom
+        custom/images custom/javascripts custom/stylesheets}.each do |dir|
+        empty_directory File.join(path, dir)
+        create_file File.join(path, dir, ".gitkeep")
+      end
+      Dir[File.join(TEMPLATE_DIR, "**/*")].each do |tpl|
+        name = tpl.gsub("#{TEMPLATE_DIR}/", '')
+        if tpl[/\.erb$/]
+          template tpl, File.join(path, name.gsub(/\.erb$/, ''))
+        else
+          copy_file tpl, File.join(path, name)
+        end
+      end
     end
     
     desc "generate", "Generates blog"
@@ -64,8 +89,9 @@ module Alula
     def site
       @site ||= Alula::Site.new({
         "environment" => (!options["development"] or options["production"]) ? "production" : "development",
-        "verbose" => options["verbose"],
-        "debug" => options["debug"],
+        "verbose"     => options["verbose"],
+        "debug"       => options["debug"],
+        "testing"     => options["test"]
       })
     end
   end
