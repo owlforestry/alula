@@ -72,7 +72,7 @@ module Alula
         # Initialize metadata
         @metadata = Metadata.new({
           # Defaults
-          date: Time.now,
+          date: Time.new(0),
           pin: 500, # Default sorting pin
           layout: 'default',
           view: (self.class.to_s == "Alula::Content::Page" ? "page" : "post"),
@@ -112,14 +112,13 @@ module Alula
       def <=>(other)
         # Sort by date
         cmp = self.date <=> other.date
-        if cmp == 0
-          # Sort by pinning, smaller marks newer post
-          cmp = other.metadata.pin <=> self.metadata.pin
-          if cmp == 0
-            # Sort by slug name alphabetically
-            cmp = self.slug <=> other.slug
-          end
-        end
+
+        # Sort by pinning, smaller marks higher in the list
+        cmp == 0 and cmp = self.metadata.pin <=> other.metadata.pin
+          
+        # Sort by slug name alphabetically
+        cmp == 0 and cmp = self.slug <=> other.slug
+
         cmp
       end
       
