@@ -216,7 +216,7 @@ module Alula
       # Read site content
       @content = Content.new(site: self)
       @content.load
-      
+
       # Do we have index page defined
       if self.config.index
         index_page = @content.by_slug(self.config.index)
@@ -231,7 +231,6 @@ module Alula
     def process_attachments
       puts "==> Processing attachments"
       
-      # pbar = ProgressBar.new "Attachments", self.content.attachments.count
       progress.create :attachments, title: "Attachments", total: self.content.attachments.count
       progress.display
       
@@ -325,6 +324,16 @@ module Alula
       end
       
       progress.finish(:render)
+      
+      # Copy static content
+      progress.create :static, title: "Copy statics", total: self.content.statics.count
+      self.content.statics.each do |static|
+        @storage.output(static.name) { |io| io.write(static.read) }
+        
+        progress.step :static
+      end
+      progress.finish :static
+      
       progress.hide
     end
     

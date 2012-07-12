@@ -7,7 +7,7 @@ module Alula
     attr_reader :pages
     attr_reader :posts
     attr_reader :attachments
-    attr_reader :generated
+    attr_reader :statics
     
     def initialize(opts = {})
       @site = opts.delete(:site)
@@ -15,12 +15,13 @@ module Alula
       @pages = []
       @posts = []
       @attachments = []
+      @statics = []
     end
     
     # Load our site content
     def load
       # Load everything we can have
-      read_content(:posts, :pages, :attachments)
+      read_content(:posts, :pages, :attachments, :statics)
       
       # Generate our dynamic content (pages, categories, archives, etc. etc.)
       generate_content
@@ -69,7 +70,13 @@ module Alula
           @attachments << attachment unless attachment.nil?
         end
       end
-
+      
+      # Load all statics
+      if (types.include?(:statics))
+        @site.storage.statics.each do |name, entry|
+          @statics << entry
+        end
+      end
     end
     
     def generate_content

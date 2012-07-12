@@ -65,6 +65,7 @@ module Alula
           pages_path:       'content/pages',
           posts_path:       'content/posts',
           attachments_path: 'content/attachments',
+          static_path:      'content/static',
           custom_path:      'custom',
           cache_path:       'cache',
           public_path:      'public',

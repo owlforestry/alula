@@ -29,6 +29,10 @@ module Alula
       @customs ||= _list_all_in(self.options["custom_path"])
     end
     
+    def statics
+      @statics ||= _list_all_in(self.options["static_path"])
+    end
+    
     def path(type, *appendum)
       dirname = case type
       when :public
