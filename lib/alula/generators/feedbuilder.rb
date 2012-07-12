@@ -18,7 +18,7 @@ module Alula
         end
       ]
       
-      self.site.content.pages << Alula::Content::Page.new({
+      @feed_page = Alula::Content::Page.new({
         generator: self,
         posts: posts,
         title: titles,
@@ -31,8 +31,14 @@ module Alula
       :previous => ->(locale) { nil },
       :next => ->(locale) { nil },
       :navigation => ->(locale) { nil },
-      # :render => ->(locale) { self.posts.select{|post| post.metadata.view = "feed_post"; post.flush }}
       )
+      self.site.content.pages << @feed_page
+      
+      # Add link to head
+      Alula::Plugin.addon(:head, ->(context) {
+        "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"RSS\" href=\"#{context.url_for(@feed_page.url(context.locale))}\">"
+      })
+      # -# %link{rel: "alternate", type: "application/rss+xml", title: "RSS", href: "/feed.xml"}
     end
   end
 end
