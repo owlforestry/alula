@@ -64,6 +64,7 @@ module Alula
         @ids = {}
         @navigation = {}
         @substitutes = {}
+        @sidebar = {}
         
         # Initialize content variables
         flush
@@ -81,6 +82,7 @@ module Alula
           environment: @site.config.environment,
           
           last_modified: _last_modified,
+          generator: nil,
         }.merge(opts))
         
         if /^((?<date>(?:\d+-\d+-\d+))-)?(?<slug>(?:.*))(?<extension>(?:\.[^.]+))$/ =~ @name
@@ -202,6 +204,21 @@ module Alula
       def markdown(locale = nil)
         @markdown[(locale || self.current_locale || self.site.config.locale)] ||= begin
           parse_liquid(locale)
+        end
+      end
+      
+      def sidebar(locale = nil)
+        locale ||= self.current_locale || self.site.config.locale
+        @sidebar[locale] ||= begin
+          items = self.site.config.content.sidebar.collect do |item|
+            case item
+            when :pages
+              self.site.content.pages.select{|p| p.generator.nil? and p.languages.include?(locale) }
+            when :languages
+              languages.collect{|lang| Hashie::Mash.new({url: url(lang), title: lang}) }
+            end
+          end
+          items.flatten.select {|i| !i.nil?}
         end
       end
       

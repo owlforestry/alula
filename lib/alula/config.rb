@@ -96,6 +96,7 @@ module Alula
       # Blog Content options
       content: {
         emphasis: true,
+        sidebar: [ :pages ]
       },
       
       # Attachement Processors
