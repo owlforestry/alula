@@ -14,7 +14,7 @@ module Alula
         @pbars.delete(identifier)
       end
       
-      @pbars[identifier] = ProgressBar.new(opts[:title], opts[:total])
+      @pbars[identifier] = ProgressBar.new(opts[:title], opts[:total] == 0 ? 0.1 : opts[:total])
     end
     
     def step(identifier)
