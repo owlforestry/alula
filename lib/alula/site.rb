@@ -202,13 +202,13 @@ module Alula
         *plugins.collect{|name, plugin| plugin.asset_path},
         ::File.join(File.dirname(__FILE__), "..", "..", "vendor"),
       ].each do |path|
-        %w{stylesheets javascripts images}.each {|p|
-          @environment.append_path ::File.join(path, p)
+        %w{javascripts stylesheets images}.each {|p|
+          @environment.append_path ::File.join(path, "assets", p)
         }
       end
       
       # Customisation
-      %w{stylesheets javascripts images}.each do |path|
+      %w{javascripts stylesheets images}.each do |path|
         @environment.prepend_path @storage.path(:custom, path)
       end
     end
