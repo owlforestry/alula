@@ -1,7 +1,0 @@
-source 'https://rubygems.org'
-
-gem 'alula'
-gem 'alula-themes'
-
-# Enable this if you would like to have some extra plugins, such as fancybox or sublimevideo
-#gem 'alula-plugins'

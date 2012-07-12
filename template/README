@@ -1,0 +1,16 @@
+Alula Blog
+
+Directories:
+
+- content/          This has blog contents, posts, pages, attachments
+    posts/          Put all posts here
+    pages/          Put all static pages here
+    static/         Put all files that needs to be just copied to public here
+    attachments/    Put all attachments, photos, videos here
+- custom/           Blog customisation
+    stylesheets/    Custom stylesheets
+    custom.css      Add your blog customisations here, you may use sprockets directives here
+    javascripts/    Custom javascripts, not yet implemented
+    images/         Custom images, fonts, etc.
+- cache/            Contains generated content, it is a good idea to keep this around...
+- public/           Contains your generated blog ready for publishing

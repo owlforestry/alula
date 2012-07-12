@@ -1,5 +1,9 @@
 require 'thor'
 require 'alula/site'
+if File.exists?("Gemfile")
+  require 'bundler'
+  Bundler.require
+end
 
 module Alula
   class CLI < Thor
@@ -26,6 +30,8 @@ module Alula
     end
     
     desc "new [PATH]", "Creates a new empty blog"
+    option :edge, :type => :boolean, :default => false, :desc => "Use edge version from GIT"
+    option :path, :type => :string, :desc => "Use given path as alula source"
     def new(path = ".")
       puts "Create blog at #{path}"
       
