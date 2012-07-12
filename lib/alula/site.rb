@@ -117,6 +117,10 @@ module Alula
       I18n.load_path += Dir[l10n_path]
       I18n.load_path += Dir[locale_path]
       I18n.default_locale = @config.locale
+      
+      # Set up default head addons
+      Alula::Plugin.addon(:head, "<meta name=\"generator\" content=\"Alula #{Alula::VERSION}\">")
+      Alula::Plugin.addon(:head, ->(context){"<link rel=\"icon\" type=\"image/png\" href=\"#{context.asset_url('favicon.png')}\">"})
     end
     
     # Compiles a site to static website
