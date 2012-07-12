@@ -53,9 +53,12 @@ module Alula
     end
     
     def attachment_url(source, type = nil)
-      self.context.asset_url(attachment_path(source, type))
+      asset_url(attachment_path(source, type))
     end
     
+    def asset_url(name)
+      self.context.asset_url(name)
+    end
   end
   
   class Tag < Liquid::Tag
