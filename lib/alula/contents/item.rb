@@ -158,11 +158,7 @@ module Alula
           
             # Write content to file
             @site.storage.output(self.path(locale)) do
-              if self.site.config.environment == "production"
-                self.site.compressors.html.compress(output)
-              else
-                output
-              end
+              self.site.compressors.html.compress(output)
             end
           ensure
             self.current_locale = _old_locale
