@@ -1,0 +1,17 @@
+.post
+	.meta
+		%time{datetime: item.date.strftime("%FT%T%:z"), pubdate: true, data: {updated: true}}
+			= item.date.strftime("%a %d %b %Y")
+
+	%h1= item.title
+	= content
+
+	- if item.navigation
+		%p.navigation
+			- if item.previous
+				%a{class: "left", title: "Previous Post: #{item.previous.title}", href: item.previous.url} &laquo; #{item.previous.title}
+			- if item.next
+				%a{class: "right", title: "Next Post: #{item.next.title}", href: item.next.url} #{item.next.title} &raquo;
+	
+	.spacer
+	

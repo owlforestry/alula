@@ -2,7 +2,7 @@
 %html
 	%head
 		%meta{charset: "utf-8"}
-		%title= (page.title ? "#{page.title} - " : "") + site.title
+		%title= (item.title ? "#{item.title} - " : "") + site.title
 		
 		= stylesheet_link
 		= javascript_link
@@ -10,16 +10,16 @@
 		%link{rel: "alternate", type: "application/rss+xml", title: "RSS", href: "/feed.xml"}
 		/[if lt IE 9]
 			= javascript_link "html5shiv"
-		= addons(:head)
+		= addons :head
 	
-	%body{class: page.id}
+	%body{class: item.id}
 		%div.wrapper
 			%header
-				%h1= link_to site.title, site.base_url
+				%h1= link_to site.title, site.url
 				%p= site.tagline
 			
 			%section
-				= page.content
+				= yield
 			
 			%footer
 				%p
@@ -29,5 +29,5 @@
 					%small
 						Powered by Alula &mdash; Theme by&nbsp;
 						%a{href: "https://github.com/orderedlist"} orderedlist
-		= javascript_link "scripts_body"
-		= addons(:body)
+		= #javascript_link "script-footer"
+		= addons :body

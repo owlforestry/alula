@@ -17,7 +17,7 @@ Gem::Specification.new do |gem|
   
   gem.add_dependency 'alula', '~> 0.3.0a'
   gem.add_dependency 'haml'
-  gem.add_dependency 'builder'
+  # gem.add_dependency 'builder'
   
   gem.add_development_dependency 'version', '~> 1.0'
 end
