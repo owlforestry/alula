@@ -9,9 +9,9 @@ module Alula
       @classes = []
       @align = "left"
       
-      if m = /(["'])?([^"' ]+)\1?(?: (.+))?/.match(@markup)
-        @source = m[2]
-        options = m[3]
+      if m = /^([\"'][\S\. ]+[\"']|[\S\.]+)(.*)$/.match(@markup)
+        @source = m[1].gsub(/^['"]?([^'"]+)['"]?$/, '\1')
+        options = m[2]
       end
       
       if options
