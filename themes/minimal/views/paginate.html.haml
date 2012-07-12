@@ -1,9 +1,11 @@
 - item.posts.each do |post|
-	%h1= post.title
-	%p= post.body
+	.post
+		%h1= link_to post.title, post.url
+		%p= post.body
+		.spacer
 
 %p.navigation
 	- if item.previous
-		%a{class: "left", title: "Previous Post: #{item.previous.title}", href: item.previous.url} &laquo; #{item.previous.title}
+		%a{class: "left", title: "Older Posts: #{I18n.t('paginate.older_posts', locale: locale)}", href: item.previous.url} &laquo; #{I18n.t('paginate.older_posts', locale: locale)}
 	- if item.next
-		%a{class: "right", title: "Next Post: #{item.next.title}", href: item.next.url} #{item.next.title} &raquo;
+		%a{class: "right", title: "Newer Posts: #{I18n.t('paginate.newer_posts', locale: locale)}", href: item.next.url} #{I18n.t('paginate.newer_posts', locale: locale)} &raquo;

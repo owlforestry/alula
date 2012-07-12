@@ -5,17 +5,17 @@
 		%title= (item.title ? "#{item.title} - " : "") + site.title
 		
 		= stylesheet_link
-		= #javascript_link
+		= javascript_link
 		%meta{name: "viewport", content: "width=device-width, initial-scale=1"}
 		%link{rel: "alternate", type: "application/rss+xml", title: "RSS", href: "/feed.xml"}
 		/[if lt IE 9]
-			= #javascript_link "html5shiv"
+			= javascript_link "html5shiv"
+		= addons :head
 	
 	%body{class: item.id}
 		%div.wrapper
 			%header
-				%h1= site.title
-				%p= site.url
+				%h1= link_to site.title, site.url
 				%p= site.tagline
 			
 			%section
@@ -29,5 +29,5 @@
 					%small
 						Powered by Alula &mdash; Theme by&nbsp;
 						%a{href: "https://github.com/orderedlist"} orderedlist
-		= #javascript_link "scripts_body"
-		= #addons(:body)
+		= #javascript_link "script-footer"
+		= addons :body
