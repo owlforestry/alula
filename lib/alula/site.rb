@@ -272,7 +272,7 @@ module Alula
         end
         
         # Blog customization
-        io.puts " *= require custom" if @storage.custom("stylesheets/custom.css")
+        io.puts " *= require custom" if @storage.custom(/stylesheets\/custom.css.*$/)
         
         io.puts "*/"
       end

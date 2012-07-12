@@ -33,7 +33,11 @@ module Alula
     end
     
     def custom(name)
-      self.customs[name]
+      if name.kind_of?(Regexp)
+        self.customs.select{|key, item| key[name]}
+      else
+        self.customs[name]
+      end
     end
   end
 end
