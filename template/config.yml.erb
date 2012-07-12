@@ -1,59 +1,42 @@
-# Alula Blog
+#
+# Alula Configuration File
+#
+# You set different values for different
+# locales and environments if required for some options
+#
+# For example to localise title use following syntax
+# title:
+#   en: Title in English
+#   fi: Otsikko suomeksi
+#
+# To have different options for different environments
+# title:
+#   development: Title (development)
+#   production: Title
+#
+# To combine  
+# title:
+#   development:
+#     en: Title (development)
+#     fi: Otsikko (kehitysversio)
+#   production:
+#     en: Title
+#     fi: Otsikko
+#
+# Existing environments:
+# - development  => By default, when testing locally
+# - production   => Enabled when generating site with --production option
+#
 
-# Blog main title
-title: <%= default_config["title"] %>
+# OPTIONS
+# Localisation and environments supported
+title: The title for blog
+tagline: The cathy tagline for your blog
+author: You name
+url:
+  development: http://0.0.0.0:3000
+  production: http://your.host.here
 
-# Subtitle, tagline
-tagline: <%= default_config["tagline"] %>
-
-# Author of this blog
-author: <%= default_config["author"] %>
-
-# Theme for blog, see alula-themes gem for more choices
-#theme: <%= default_config["theme"] %>
-
-# Site URL
-url: <%= default_config["url"] %>
-
-# Permalink format
-#permalink: <%= default_config["permalink"] %>
-
-# Number of posts per page
-#paginate: <%= default_config["paginate"] %>
-
-# Path for paginated pages
-#paginate_path: <%= default_config["paginate_path"] %>
-
-# Number of recent posts in RSS Feed
-#feed_posts: <%= default_config["feed_posts"] %>
-
-# Images options
-#images:
-  # Resize attachment images to this size
-  # size: <%= default_config["images"]["size"] %>
-  # Generate thumbnails of this size
-  # thumbnails: <%= default_config["images"]["thumbnails"] %>
-
-# Videos options
-# videos:
-  # Resize HD videos to this size
-  # size_hd: <%= default_config["videos"]["size_hd"] %>
-  # Resize SD videos to this size, or generate SD version from HD video
-  # size_sd: <%= default_config["videos"]["size_sd"] %>
-  # Generate given size thumbnails
-  # thumbnails: <%= default_config["videos"]["thumbnails"] %>
-  # By default Alula uses Zencoder for generating proper videos
-  # zencoder:
-    # Zencoder API token
-    # token: <%= default_config["videos"]["zencoder"]["token"] %>
-    # Amazon S3 key id for creating bucket and accessing it
-    # key_id: <%= default_config["videos"]["zencoder"]["key_id"] %>
-    # Amazon S3 access key for creating and accessing upload bucket
-    # access_key: <%= default_config["videos"]["zencoder"]["access_key"] %>
-
-# Plugins
-plugins:
-  # fancybox:
-    # personal: true	# Uncomment this ONLY if this blog is for personal use only
-  # sublimevideo:
-    # token: 			# Insert your sublimevideo token here
+# Use paginated page as blog index
+# This could be set to any slug of post or page to change default index page
+index: page-1

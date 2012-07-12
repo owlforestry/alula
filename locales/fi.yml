@@ -1,0 +1,3 @@
+fi:
+  paginate:
+    title: Sivu %{page}
