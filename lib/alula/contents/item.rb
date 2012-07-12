@@ -3,6 +3,7 @@ require 'alula/core_ext'
 require 'liquid'
 require 'kramdown'
 require 'stringex'
+require 'shellwords'
 
 module Alula
   class Content
@@ -316,7 +317,7 @@ module Alula
         unless @item.nil?
           mtime = @item.mtime
           if self.site.git
-            rev = %x{git rev-list -n 1 HEAD #{@item.filepath}}.strip
+            rev = %x{git rev-list -n 1 HEAD #{Shellwords.escape(@item.filepath)}}.strip
             time = %x{git show --pretty=format:%ai --abbrev-commit #{rev}|head -1}.strip
             mtime = Time.parse(time) rescue nil
           end
