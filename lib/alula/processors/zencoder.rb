@@ -67,7 +67,6 @@ module Alula
     def upload_item
       # Fetch upload lock to guarantee that we're onlyones to upload
       @@upload.synchronize do
-        binding.pry
         self.site.progress.create :upload, title: "Uploading #{item.name}", total: File.size(item.filepath)
         self.site.progress.set_file_transfer(:upload)
 

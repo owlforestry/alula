@@ -39,7 +39,6 @@ module Alula
     
     def info
       @info ||= begin
-        binding.pry if self.item.nil?
         info = ::Magick::Image.ping(self.item.filepath).first
         Hashie::Mash.new({
           width: info.columns,
