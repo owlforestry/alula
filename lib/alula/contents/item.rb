@@ -125,10 +125,15 @@ module Alula
           _old_locale = self.current_locale
           self.current_locale = locale
           
+          # Flush if we have generator
+          if @hooks[:render]
+            instance_exec(locale, &@hooks[:render])
+          end
+          
           # Make sure our content is parsed
           parse_liquid(locale)
           parse_markdown(locale)
-        
+          
           self.view.render(item: self, content: self.body(locale), locale: locale)
         ensure
           self.current_locale = _old_locale
@@ -180,15 +185,25 @@ module Alula
       end
       
       def content(locale = nil)
-        @content[(locale || self.current_locale || self.site.config.locale)]
+        @content[(locale || self.current_locale || self.site.config.locale)] ||= begin
+          render(locale)
+        end
       end
       
       def body(locale = nil)
-        @body[(locale || self.current_locale || self.site.config.locale)]
+        @body[(locale || self.current_locale || self.site.config.locale)] ||= begin
+          parse_markdown(locale)
+        end
+      end
+      
+      def markdown(locale = nil)
+        @markdown[(locale || self.current_locale || self.site.config.locale)] ||= begin
+          parse_liquid(locale)
+        end
       end
       
       def url(locale = nil)
-        locale ||=  self.current_locale || self.site.config.locale
+        locale ||= self.current_locale || self.site.config.locale
         @url[locale] ||= begin
           url = if @metadata.permalink(locale)
             @metadata.permalink(locale)
@@ -312,7 +327,7 @@ module Alula
       
       def parse_markdown(locale)
         @body[locale] ||= begin
-          Kramdown::Document.new(@markdown[locale], {
+          Kramdown::Document.new(markdown(locale), {
             auto_ids: false,
             footnote_nr: 1,
             entity_output: 'as_char',

@@ -10,9 +10,9 @@ xml.rss :version => "2.0" do
     for post in item.posts
       xml.item do
         xml.title { xml.cdata! post.title }
-        xml.description { xml.cdata! post.content }
+        xml.description { xml.cdata! post.body }
         xml.pubDate post.date.strftime("%a, %d %b %Y %H:%M:%S %z")
-        xml.link "#{site.url}/#{post.url}"
+        xml.link "#{site.url}#{post.url}"
       end
     end
   end

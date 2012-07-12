@@ -8,13 +8,9 @@ module Alula
       site = opts[:site]
       
       # Check if we have environment related
-      if site.config.cdn.has_key?("development") or site.config.cdn.has_key?("production")
-        binding.pry
-      else
-        site.config.cdn.each do |cdn, opts|
-          if cdns.has_key?(cdn)
-            return cdns[cdn].new(opts, site: site)
-          end
+      site.config.cdn.reverse_each do |cdn, opts|
+        if cdns.has_key?(cdn)
+          return cdns[cdn].new(opts, site: site)
         end
       end
       

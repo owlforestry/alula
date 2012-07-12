@@ -50,7 +50,7 @@ module Alula
     def initialize(options)
       # Read local config
       @config = Config.new(options)
-      
+
       @storage = Storage.load(site: self)
       
       @metadata = Content::Metadata.new({
@@ -61,6 +61,8 @@ module Alula
         author: @config.author,
         tagline: @config.tagline,
         url: @config.url,
+        
+        theme: @config.theme,
       })
       
       # Progress displayer
@@ -91,6 +93,10 @@ module Alula
       compile_assets
       
       render
+      
+      # Store cached version of configuration
+      cached_config = File.join(storage.path(:cache), "config.yml")
+      @config.write_cache(cached_config)
     end
     
     # Proxy to metadata

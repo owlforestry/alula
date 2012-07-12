@@ -59,7 +59,8 @@ module Alula
     def view(name)
       @views[name] ||= begin
         # Find our layout name
-        file = Dir[::File.join(self.path, "views", "#{name}.*")].first
+        # file = Dir[::File.join(self.path, "views", "#{name}.*")].first
+        file = Dir[*self.searchpath("views", name)].first
         if file
           View.new(theme: self, name: name, file: file)
         else

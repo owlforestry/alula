@@ -3,36 +3,39 @@ require 'hashie/mash'
 module Alula
   class Config
     def initialize(override = {}, config_file = "config.yml")
+      @config = Hashie::Mash.new
+      @_used = Hashie::Mash.new # Keep track of applied configuration
+      
       # Load default configuration
-      @config = Hashie::Mash.new(DEFAULT_CONFIG)
+      @config.update(DEFAULT_CONFIG)
       
       # Load project specific configuration
-      if (::File.exists?(config_file))
-        @config.update(YAML.load_file(config_file))
-      end
+      @config.update(YAML.load_file(config_file)) if ::File.exists?(config_file)
       
       # Load overrides
       @config.update(override)
     end
     
+    def write_cache(file)
+      File.open(file, 'w') {|io| io.puts JSON.parse(@_used.to_json).to_yaml }
+    end
+    
     def method_missing(meth, *args, &blk)
-      # @config.send(:[], *([meth] + args))
-      
       if meth[/=$/]
         @config.send(meth, *args)
       else
-        # Localisation support
-        value = @config.send(:[], *([meth] + args))
+        value = @config.send(:[], meth)
         if value.kind_of?(Hashie::Mash)
-          # Try environment & locale first
-          return value[environment] if value.has_key?(environment)
+          # Try environment
+          value = value[environment] if value.has_key?(environment)
         end
+        @_used.send("#{meth}=", value)
         
         value
       end
-      
     end
     
+    private
     DEFAULT_CONFIG = {
       # The title of the blog
       title: "The Unnamed Blog",
@@ -57,20 +60,21 @@ module Alula
       
       # Directories and storage
       storage: {
-        "file" => {
-          "content_path"      => 'content',
-          "pages_path"        => 'content/pages',
-          "posts_path"        => 'content/posts',
-          "attachments_path"  => 'content/attachments',
-          "custom_path"       => 'custom',
-          "cache_path"        => 'cache',
-          "public_path"       => 'public',
+        file: {
+          content_path:     'content',
+          pages_path:       'content/pages',
+          posts_path:       'content/posts',
+          attachments_path: 'content/attachments',
+          custom_path:      'custom',
+          cache_path:       'cache',
+          public_path:      'public',
         }
       },
       
       # CDN Configuration
       cdn: {
-        "hosts" => ["/"],
+        development: { hosts: ["/"] },
+         production: { hosts: ["/"] },
       },
       
       # Content generators
@@ -110,6 +114,6 @@ module Alula
           "bucket" => "alula.attachments",
         }
       }
-    }.freeze
+    }
   end
 end

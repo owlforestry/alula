@@ -5,7 +5,7 @@ module Alula
         File.join("/", name)
       else
         host = self.options[Digest::MD5.hexdigest(name).to_i(16) % self.options.count]
-        File.join("//", host, name)
+        File.join(host, name)
       end
     end
   end

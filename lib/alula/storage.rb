@@ -9,7 +9,7 @@ module Alula
       
       # Get storage class
       # puts "--> #{site.config.storage}"
-      type = site.config.storage.keys.first
+      type = site.config.storage.keys.last
       cls_name = type[0].upcase + type[1..-1] + "Storage"
       if self.const_defined?(cls_name)
         cls = self.const_get(cls_name)

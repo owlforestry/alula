@@ -27,7 +27,12 @@ module Alula
         template: self.options.template || "/:locale/:name",
         site: self.site,
         layout: "feed",
-      })
+      },
+      :previous => ->(locale) { nil },
+      :next => ->(locale) { nil },
+      :navigation => ->(locale) { nil },
+      # :render => ->(locale) { self.posts.select{|post| post.metadata.view = "feed_post"; post.flush }}
+      )
     end
   end
 end
