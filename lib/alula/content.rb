@@ -49,7 +49,7 @@ module Alula
         # Read posts
         @site.progress.create :load_posts, title: "Loading posts", total: @site.storage.posts.count
         @site.progress.display
-        Parallel.map(@site.storage.posts, :in_threads => Parallel.processor_count) do |item|
+        @site.storage.posts.each do |item|
           name, entry = item
           post = Post.load(item: entry, site: @site)
           @posts << post unless post.nil?
@@ -65,7 +65,7 @@ module Alula
         @site.progress.create :load_pages, title: "Loading pages", total: @site.storage.pages.count
         @site.progress.display
         
-        Parallel.map(@site.storage.pages, :in_thread => Parallel.processor_count) do |item|
+        @site.storage.pages.each do |item|
           name, entry = item
           page = Page.load(item: entry, site: @site)
           @pages << page unless page.nil?
@@ -81,7 +81,7 @@ module Alula
         @site.progress.create :load_attachments, title: "Loading attachments", total: @site.storage.attachments.count
         @site.progress.display
         
-        Parallel.map(@site.storage.attachments, :in_thread => Parallel.processor_count) do |item|
+        @site.storage.attachments.each do |item|
           name, entry = item
           attachment = Attachment.load(item: entry, site: @site)
           @attachments << attachment unless attachment.nil?
