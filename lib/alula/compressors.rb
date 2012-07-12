@@ -4,7 +4,7 @@ require 'htmlcompressor'
 
 module Alula
   class Compressors
-    class DummyCompressors
+    class DummyCompressor
       def compress(content)
         content
       end
