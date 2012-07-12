@@ -2,6 +2,7 @@ module Alula
   class Generator
     autoload :Paginate, 'alula/generators/paginate'
     autoload :FeedBuilder, 'alula/generators/feedbuilder'
+    autoload :Sitemap, 'alula/generators/sitemap'
     
     attr_reader :options
     attr_reader :site

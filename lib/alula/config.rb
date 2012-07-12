@@ -86,6 +86,7 @@ module Alula
         feedbuilder: {
           items: 10,
         },
+        sitemap: {}
       },
       
       # Plugins

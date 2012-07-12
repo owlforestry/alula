@@ -218,6 +218,7 @@ module Alula
             url += ".html" unless url[/\/$/] and ::File.extname(url).empty?
           end
           url
+          # File.join(self.site.config.url(locale), url)
         end
       end
       
