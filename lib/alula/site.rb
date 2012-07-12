@@ -80,6 +80,9 @@ module Alula
         url: @config.url,
         
         theme: @config.theme,
+        
+        # Use this to store information of GIT site or note
+        git: ::File.directory?(".git"),
       })
       
       # Progress displayer

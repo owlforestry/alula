@@ -24,6 +24,14 @@ module Alula
       ::File.read(@file, 3) == "---"
     end
     
+    def size
+      ::File.size(@file)
+    end
+    
+    def mtime
+      ::File.mtime(@file)
+    end
+    
     def read
       ::File.read(@file)
     end

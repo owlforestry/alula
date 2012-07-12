@@ -78,6 +78,8 @@ module Alula
           # Utilities
           base_locale: @site.config.locale,
           environment: @site.config.environment,
+          
+          last_modified: _last_modified,
         }.merge(opts))
         
         if /^((?<date>(?:\d+-\d+-\d+))-)?(?<slug>(?:.*))(?<extension>(?:\.[^.]+))$/ =~ @name
@@ -305,6 +307,23 @@ module Alula
       end
       
       private
+      def _last_modified
+        if @hooks[:last_modified]
+          return instance_exec(locale, &@hooks[:next])
+        end
+        
+        mtime = nil
+        unless @item.nil?
+          mtime = @item.mtime
+          if self.site.git
+            rev = %x{git rev-list -n 1 HEAD #{@item.filepath}}.strip
+            time = %x{git show --pretty=format:%ai --abbrev-commit #{rev}|head -1}.strip
+            mtime = Time.parse(time) rescue nil
+          end
+        end
+        mtime
+      end
+      
       def read_payload
         # Do not read directly to instance variable as we know there is payload
         return if @item.nil?

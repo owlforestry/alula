@@ -4,7 +4,7 @@ module Alula
   class Generator::Sitemap < Generator
     def generate
       urls = (self.site.content.posts + self.site.content.pages).collect do |content|
-        content.languages.collect{|lang| content.url(lang)}
+        content.languages.collect{|lang| {url: content.url(lang), lastmod: content.last_modified } }
       end
 
       self.site.content.pages << Alula::Content::Page.new({
