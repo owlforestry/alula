@@ -7,8 +7,12 @@ module Alula
         generator: self,
         urls: ->(context) {
           (context.site.content.posts + context.site.content.pages).collect { |content|
-            content.languages.collect{|lang| {url: content.url(lang), lastmod: content.last_modified } }
-          }.flatten
+            content.languages.collect{|lang| {
+              url: content.url(lang),
+              lastmod: content.last_modified,
+              priority: content.generator.nil? ? 0.5 : 0.3,
+            }
+          }}.flatten
           },
         title: "Sitemap",
         name: "sitemap.xml",
