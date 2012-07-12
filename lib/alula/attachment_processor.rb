@@ -62,12 +62,10 @@ module Alula
     def available
       @@lock.synchronize do
         @available ||= begin
-          ava = self.site.config.attachments.processors.select { |p|
+          self.site.config.attachments.processors.select { |p|
             options = self.site.config.attachments[p] || {}
             self.processors.has_key?(p) and self.processors[p].available?(options)
           }
-          puts "Available processors: #{ava.inspect}"
-          ava
         end
       end
     end
