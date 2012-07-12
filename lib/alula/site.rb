@@ -7,6 +7,7 @@ require 'alula/content'
 require 'alula/context'
 require 'alula/generator'
 require 'alula/attachment_processor'
+require 'alula/compressors'
 require 'alula/cdn'
 require 'alula/helpers'
 require 'alula/progress'
@@ -15,6 +16,11 @@ require 'thor'
 require 'sprockets'
 require 'i18n'
 require 'parallel'
+require 'hashie/mash'
+
+# Silence Tilt
+require 'sass'
+require 'coffee-script'
 
 module Alula
   class Site
@@ -37,6 +43,9 @@ module Alula
     
     # Site Plugins
     attr_reader :plugins
+    
+    # Compressors
+    attr_reader :compressors
     
     # Site metadata information
     attr_reader :metadata
@@ -75,6 +84,22 @@ module Alula
       
       # Progress displayer
       @progress = Progress.new(debug: options["debug"])
+      
+      # Compressors
+      compressors = if @config.environment == "production"
+        {
+          html: Alula::Compressors::HTMLCompressor.new,
+          css: Alula::Compressors::CSSCompressor.new,
+          js: Alula::Compressors::JSCompressor.new,
+        }
+      else
+        {
+          html: Alula::Compressors::DummyCompressor.new,
+          css: Alula::Compressors::DummyCompressor.new,
+          js: Alula::Compressors::DummyCompressor.new,
+        }
+      end
+      @compressors = Hashie::Mash.new(compressors)
       
       @attachments = AttachmentProcessor.new(site: self)
       
@@ -146,6 +171,11 @@ module Alula
       
       # Create our asset environment
       @environment = Sprockets::Environment.new
+      # Add compressor support
+      # if config.environment == "production"
+      @environment.css_compressor = @compressors.css
+      @environment.js_compressor = @compressors.js
+      # end
       @environment.context_class.class_eval do
         # include Helpers
         def context; Alula::Site.instance.context; end
@@ -173,25 +203,7 @@ module Alula
           @environment.append_path ::File.join(path, p)
         }
       end
-        
-      # # Add theme
-      # %w{stylesheets javascripts images}.each do |path|
-      #   @environment.append_path ::File.join(self.theme.path, path)
-      # end
-      # 
-      # # Plugins
-      # plugins.each do |plugin|
-      #   %w{stylesheets javascripts images}.each do |path|
-      #     @environment.append_path ::File.join(plugin.asset_path, path)
-      #   end
-      # end
-      # 
-      # # Vendor assets
-      # vendor_path = ::File.join(File.dirname(__FILE__), "..", "..", "vendor")
-      # %w{stylesheets javascripts images}.each do |path|
-      #   @environment.append_path ::File.join(vendor_path, path)
-      # end
-      # 
+      
       # Customisation
       %w{stylesheets javascripts images}.each do |path|
         @environment.prepend_path @storage.path(:custom, path)
