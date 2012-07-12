@@ -6,15 +6,18 @@ module Alula
       @pbars = {}
       @interval = 1.0
       @options = options
+      
+      @@lock = Mutex.new
     end
     
     def create(identifier, opts)
       if @pbars[identifier]
         @pbars[identifier].finish
-        @pbars.delete(identifier)
       end
       
-      @pbars[identifier] = ProgressBar.new(opts[:title], opts[:total] == 0 ? 0.1 : opts[:total])
+      @@lock.synchronize do
+        @pbars[identifier] = ProgressBar.new(opts[:title], opts[:total] == 0 ? 0.1 : opts[:total])
+      end
     end
     
     def step(identifier)
@@ -39,7 +42,9 @@ module Alula
       if @pbars[identifier]
         @pbars[identifier].finish
         _display
-        @pbars.delete(identifier)
+        @@lock.synchronize do
+          @pbars.delete(identifier)
+        end
       end
     end
     
@@ -63,11 +68,13 @@ module Alula
     
     private
     def _display(first = false)
-      output = @pbars.collect {|identifier, pbar| pbar.render }
-      unless @options[:debug] or first
-        print "\e[#{output.count}F"
+      @@lock.synchronize do
+        output = @pbars.collect {|identifier, pbar| pbar.render }
+        unless @options[:debug] or first
+          print "\e[#{output.count}F"
+        end
+        puts output.join("\n")
       end
-      puts output.join("\n")
     end
   end
 end
