@@ -272,7 +272,10 @@ module Alula
         end
         
         # Blog customization
-        io.puts " *= require custom" if @storage.custom(/stylesheets\/custom.css.*$/)
+        @storage.custom(/stylesheets\/.*.css.*$/).each do |name, item|
+          name = File.basename(name).gsub(/(\.\S+)$/, '')
+          io.puts " *= require #{name}"
+        end
         
         io.puts "*/"
       end
@@ -294,7 +297,10 @@ module Alula
         io.puts " *= require emphasis" if self.config.content.emphasis
 
         # Customisation
-        io.puts " *= require custom" if @storage.custom("javascripts/custom.js")
+        @storage.custom(/javascripts\/.*.js.*$/).each do |name, item|
+          name = File.basename(name).gsub(/(\.\S+)$/, '')
+          io.puts " *= require #{name}"
+        end
         io.puts " */"
       end
       
