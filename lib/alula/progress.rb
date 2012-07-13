@@ -6,6 +6,7 @@ module Alula
       @pbars = {}
       @interval = 1.0
       @options = options
+      @display = false
       
       @@lock = Mutex.new
     end
@@ -17,12 +18,16 @@ module Alula
       
       @@lock.synchronize do
         @pbars[identifier] = ProgressBar.new(opts[:title], opts[:total] == 0 ? 0.1 : opts[:total])
+        if @options[:debug]
+          @pbars[identifier].settings.force_mode = :notty
+        end
       end
     end
     
     def step(identifier)
       if @pbars[identifier]
         @pbars[identifier].step
+        _display
       end
     end
 
@@ -49,6 +54,7 @@ module Alula
     end
     
     def display
+      @display = true
       _display(true)
       unless @options[:debug]
         @update_thread = Thread.new {
@@ -61,6 +67,7 @@ module Alula
     end
     
     def hide
+      @display = false
       if @update_thread
         Thread.kill(@update_thread)
       end
@@ -68,6 +75,8 @@ module Alula
     
     private
     def _display(first = false)
+      return unless @display
+      
       @@lock.synchronize do
         output = @pbars.collect {|identifier, pbar| pbar.render }
         unless @options[:debug] or first
