@@ -1,8 +1,8 @@
 - item.posts.each do |post|
   .post
     .meta
-      %time{datetime: item.date.strftime("%FT%T%:z"), pubdate: true, data: {updated: true}}
-        = item.date.strftime("%a %d %b %Y")
+      %time{datetime: post.date.strftime("%FT%T%:z"), pubdate: true, data: {updated: true}}
+        = post.date.strftime("%a %d %b %Y")
     
     %h1= link_to post.title, post.url
     %p= post.body
