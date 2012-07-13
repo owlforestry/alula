@@ -1,17 +1,17 @@
 .post
-	.meta
-		%time{datetime: item.date.strftime("%FT%T%:z"), pubdate: true, data: {updated: true}}
-			= item.date.strftime("%a %d %b %Y")
-
-	%h1= item.title
-	= content
-
-	- if item.navigation
-		%p.navigation
-			- if item.previous
-				%a{class: "left", title: "Previous Post: #{item.previous.title}", href: item.previous.url} &laquo; #{item.previous.title}
-			- if item.next
-				%a{class: "right", title: "Next Post: #{item.next.title}", href: item.next.url} #{item.next.title} &raquo;
-	
-	.spacer
+  .meta
+    %time{datetime: item.date.strftime("%FT%T%:z"), pubdate: true, data: {updated: true}}
+      = I18n.l(item.date, locale: locale)
+  
+  %h1= item.title
+  = content
+  
+  - if item.navigation
+    %p.navigation
+      - if item.previous
+        %a{class: "left", title: I18n.t('post.previous', locale: locale), href: item.previous.url} &laquo; #{I18n.t('post.previous', locale: locale)}
+      - if item.next
+        %a{class: "right", title: I18n.t('post.next', locale: locale), href: item.next.url} #{I18n.t('post.next', locale: locale)} &raquo;
+  
+  .spacer
 	
