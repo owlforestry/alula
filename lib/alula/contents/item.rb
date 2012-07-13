@@ -86,7 +86,7 @@ module Alula
         }.merge(opts))
         
         if /^((?<date>(?:\d+-\d+-\d+))-)?(?<slug>(?:.*))(?<extension>(?:\.[^.]+))$/ =~ @name
-          @metadata.date = date unless date.nil?
+          @metadata.date = Time.parse(date) unless date.nil? rescue @metadata.date
           @metadata.slug = slug unless slug.nil?
           @metadata.extension = extension unless extension.nil?
         end
