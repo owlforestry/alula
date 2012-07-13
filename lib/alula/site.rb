@@ -119,8 +119,10 @@ module Alula
       # Set up I18n
       l10n_path = File.join(File.dirname(__FILE__), "..", "..", "locales", "l10n", "*.yml")
       locale_path = File.join(File.dirname(__FILE__), "..", "..", "locales", "*.yml")
+      custom_locale_path = File.join(@storage.path(:custom, "locales"), "*.yml")
       I18n.load_path += Dir[l10n_path]
       I18n.load_path += Dir[locale_path]
+      I18n.load_path += Dir[custom_locale_path]
       I18n.default_locale = @config.locale
       
       # Set up default head addons
