@@ -16,7 +16,6 @@ module Alula
       self.settings.tty.finite.template.main = '${<msg>}: ${<percent>% } ${[<bar>] }${ ETA: <eta>}'
       self.settings.tty.finite.template.barchar = 'o'
       self.settings.tty.finite.template.padchar = ' '
-      self.settings.tty.finite.template.close = "\e[?25h" if opts[:multi]
     end
     
     def file_transfer_mode
