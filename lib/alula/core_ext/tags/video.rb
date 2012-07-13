@@ -2,28 +2,11 @@ module Alula
   class VideoTag < Tag
     def prepare
       @info = {}
-      @classes = []
-      @align = "left"
-      
-      if m = /^([\"'][\S\. ]+[\"']|[\S\.]+)(.*)$/.match(@markup)
-        @source = m[1].gsub(/^['"]?([^'"]+)['"]?$/, '\1')
-        options = m[2]
-      end
-      
-      if options
-        options.scan(/(\S+):["]?((?:.(?!["]?\s+(?:\S+):|[>"]))+.)["]?/) do |name, value|
-          case name
-            when "title"
-              @title = value
-              @alternative ||= value
-            when "alt"
-              @alternative = value
-              @title ||= value
-            when "align"
-              @align = value
-          end
-        end
-      end
+
+      @options["classes"] ||= []
+      @options["title"] ||= @options["alternative"]
+      @options["alternative"] ||= @options["title"]
+      @options["classes"] += @options["classes"] || ["left"]
     end
     
     def content
@@ -37,7 +20,7 @@ module Alula
       
       tag = "<video"
       tag += " controls"
-      tag += " class=\"#{(@classes + [@align]).join(" ")}\""
+      tag += " class=\"#{(@options["classes"]).join(" ")}\""
       tag += " width=\"#{info.width}\""
       tag += " height=\"#{info.height}\""
       tag += " poster=\"#{poster}\""

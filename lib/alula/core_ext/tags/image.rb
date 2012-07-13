@@ -6,28 +6,11 @@ module Alula
   class ImageTag < Tag
     def prepare
       @info = {}
-      @classes = []
-      @align = "left"
-      
-      if m = /^([\"'][\S\. ]+[\"']|[\S\.]+)(.*)$/.match(@markup)
-        @source = m[1].gsub(/^['"]?([^'"]+)['"]?$/, '\1')
-        options = m[2]
-      end
-      
-      if options
-        options.scan(/(\S+):["]?((?:.(?!["]?\s+(?:\S+):|[>"]))+.)["]?/) do |name, value|
-          case name
-            when "title"
-              @title = value
-              @alternative ||= value
-            when "alt"
-              @alternative = value
-              @title ||= value
-            when "align"
-              @align = value
-          end
-        end
-      end
+
+      @options["classes"] ||= []
+      @options["title"] ||= @options["alternative"]
+      @options["alternative"] ||= @options["title"]
+      @options["classes"] += [@options["align"]] || ["left"]
     end
     
     def content
@@ -43,11 +26,11 @@ module Alula
       src = attachment_url(source, type)
       hires = hires_url(source, type)
       
-      classes = opts.delete(:classes) || (@classes + [@align])
+      classes = opts.delete(:classes) || @options["classes"]
       
       tag = "<img"
-      tag += " alt=\"#{@alternative}\"" if @alternative
-      tag += " title=\"#{@title}\"" if @title
+      tag += " alt=\"#{@options["alternative"]}\"" if @options["alternative"]
+      tag += " title=\"#{@options["title"]}\"" if @options["title"]
       tag += " class=\"#{classes.join(" ")}\""
       if context.site.config.attachments.image.lazyload
         tag += " src=\"#{asset_url("grey.gif")}\""

@@ -14,5 +14,4 @@ module Alula
   end
 end
 
-# Liquid::Template.register_tag 'locale', Alula::LocaleTag
 Alula::Tag.register :locale, Alula::LocaleTag

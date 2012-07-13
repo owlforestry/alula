@@ -22,6 +22,17 @@ module Alula
       @tokens = tokens
       
       @info = {}
+      @options = {}
+      
+      # Parse tag options
+      if m = /^([\"'][\S\. ]+[\"']|[\S\.]+)(.*)$/.match(@markup)
+        @source = m[1].gsub(/^['"]?([^'"]+)['"]?$/, '\1')
+        if m[2]
+          m[2].scan(/(\S+):["]?((?:.(?!["]?\s+(?:\S+):|[>"]))+.)["]?/) do |name, value|
+            @options[name] = value
+          end
+        end
+      end
       
       prepare if respond_to?("prepare")
     end
