@@ -102,6 +102,12 @@ module Alula
         sidebar: [ :pages ]
       },
       
+      assets: {
+        production: {
+          compress: true,
+        },
+      },
+      
       # Attachement Processors
       attachments: {
         "image" => {

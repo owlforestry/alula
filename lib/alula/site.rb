@@ -92,7 +92,7 @@ module Alula
       @progress = Progress.new(debug: options["debug"])
       
       # Compressors
-      compressors = if @config.environment == "production"
+      compressors = if @config.assets.compress
         {
           html: Alula::Compressors::HTMLCompressor.new,
           css: Alula::Compressors::CSSCompressor.new,
