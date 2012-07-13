@@ -11,7 +11,7 @@
       = javascript_link "html5shiv"
     = addons :head
     
-  %body{class: item.id}
+  %body{class: [item.id, "lang-#{locale}"]}
     %div.wrapper
       %header
         %h1= link_to site.title, site.url
