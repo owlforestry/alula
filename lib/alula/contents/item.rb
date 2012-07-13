@@ -4,6 +4,7 @@ require 'liquid'
 require 'kramdown'
 require 'stringex'
 require 'shellwords'
+require 'htmlentities'
 
 module Alula
   class Content
@@ -373,16 +374,22 @@ module Alula
       
       def parse_markdown(locale)
         @body[locale] ||= begin
+          coder = HTMLEntities.new
+          quotes = %w{single.left single.right double.left double.right}.collect {|q|
+            coder.encode(I18n.t("quotes.#{q}", locale: locale), :decimal).gsub(/&#(\d+);/, '\1')
+          }
+          
           body = Kramdown::Document.new(markdown(locale), {
             auto_ids: false,
             footnote_nr: 1,
             entity_output: 'as_char',
             html_to_native: true,
             toc_levels: '1..6',
+            smart_quotes: quotes,
           }).to_html
           
           self.site.filters.each do |name, filter|
-            body = filter.process(body)
+            body = filter.process(body, locale)
           end
           
           body

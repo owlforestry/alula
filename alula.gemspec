@@ -37,6 +37,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'aws-sdk'
   gem.add_dependency 'zencoder'
   gem.add_dependency 'mini_exiftool', '~> 1.3'
+  gem.add_dependency 'htmlentities'
 
   gem.add_development_dependency 'version', '~> 1.0'
   gem.add_development_dependency 'minitest'

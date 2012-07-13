@@ -1,0 +1,24 @@
+en:
+  quotes:
+    single:
+      left: ‘
+      right: ’
+    double:
+      left: “
+      right: ”
+fi:
+  quotes:
+    single:
+      left: ’
+      right: ’
+    double:
+      left: ”
+      right: ”
+zh-CN:
+  quotes:
+    single:
+      left: ‘
+      right: ’
+    double:
+      left: ”
+      right: ”
