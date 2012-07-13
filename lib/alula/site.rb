@@ -44,6 +44,9 @@ module Alula
     # Site Plugins
     attr_reader :plugins
     
+    # Site filters
+    attr_reader :filters
+    
     # Compressors
     attr_reader :compressors
     
@@ -111,6 +114,8 @@ module Alula
       
       @plugins = {}
       
+      @filters = {}
+      
       # Set up I18n
       l10n_path = File.join(File.dirname(__FILE__), "..", "..", "locales", "l10n", "*.yml")
       locale_path = File.join(File.dirname(__FILE__), "..", "..", "locales", "*.yml")
@@ -125,8 +130,9 @@ module Alula
     
     # Compiles a site to static website
     def generate
-      # Load our plugins
+      # Load our plugins and filters
       load_plugins
+      load_filters
       
       # Prepare public folder
       prepare
@@ -160,6 +166,14 @@ module Alula
       config.plugins.each do |name, options|
         if plugin = Alula::Plugin.load(name, options)
           @plugins[name] = plugin
+        end
+      end
+    end
+    
+    def load_filters
+      config.content.filters.each do |name, options|
+        if filter = Alula::Filter.load(name, options)
+          @filters[name] = filter
         end
       end
     end

@@ -237,7 +237,6 @@ module Alula
             url += ".html" unless url[/\/$/] and ::File.extname(url).empty?
           end
           url
-          # File.join(self.site.config.url(locale), url)
         end
       end
       
@@ -374,13 +373,19 @@ module Alula
       
       def parse_markdown(locale)
         @body[locale] ||= begin
-          Kramdown::Document.new(markdown(locale), {
+          body = Kramdown::Document.new(markdown(locale), {
             auto_ids: false,
             footnote_nr: 1,
             entity_output: 'as_char',
             html_to_native: true,
             toc_levels: '1..6',
           }).to_html
+          
+          self.site.filters.each do |name, filter|
+            body = filter.process(body)
+          end
+          
+          body
         end
       end
     end

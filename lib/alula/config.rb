@@ -96,6 +96,9 @@ module Alula
       # Blog Content options
       content: {
         emphasis: true,
+        filters: {
+          smilies: nil,
+        },
         sidebar: [ :pages ]
       },
       
