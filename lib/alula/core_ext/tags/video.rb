@@ -6,7 +6,7 @@ module Alula
       @options["classes"] ||= []
       @options["title"] ||= @options["alternative"]
       @options["alternative"] ||= @options["title"]
-      @options["classes"] += @options["classes"] || ["left"]
+      @options["classes"] += [@options["align"] || "left"]
     end
     
     def content
