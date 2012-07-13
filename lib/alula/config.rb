@@ -56,7 +56,7 @@ module Alula
       # Template for generating post permalinks
       permalinks: '/:locale/:year/:month/:title/',
       # Template for generating pages paths
-      pagelinks: '/:locale/:title/',
+      pagelinks: '/:locale/:slug',
       
       # Directories and storage
       storage: {
