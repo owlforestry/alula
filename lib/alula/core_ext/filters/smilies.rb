@@ -27,7 +27,7 @@ module Alula
     SMILIES = Hash[*MAP.collect{|cls, keys| keys.collect{|key| [key, "<span class=\"smilies-#{cls}\">#{key}</span>"]}}.flatten]
     SMILIES_RE = Regexp.new(SMILIES.keys.collect{|k| Regexp.escape(k)}.join("|"))
     
-    def process(content)
+    def process(content, locale)
       content.gsub(SMILIES_RE, SMILIES)
     end
   end

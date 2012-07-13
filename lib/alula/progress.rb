@@ -37,6 +37,12 @@ module Alula
       end
     end
     
+    def title(identifier, title)
+      if @pbars[identifier]
+        @pbars[identifier].message = title
+      end
+    end
+    
     def set_file_transfer(identifier)
       if @pbars[identifier]
         @pbars[identifier].file_transfer_mode

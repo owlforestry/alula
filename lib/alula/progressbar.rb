@@ -3,6 +3,7 @@ require 'powerbar'
 module Alula
   class ProgressBar < PowerBar
     attr_accessor :showing
+    attr_accessor :message
     
     def initialize(message, total, opts = {})
       super(opts)
