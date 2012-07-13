@@ -51,7 +51,11 @@ module Alula
 
     def to_liquid
       @liquid ||= begin
-        liquid = Liquid::Context.new(nil, nil, :proxy => self)
+        liquid = Liquid::Context.new(
+          nil,  # Environments
+          nil,  # Outer Scope
+          {:proxy => self}, # Registers
+          true) # Rethrow errors
         liquid.class.class_eval do
           def method_missing(meth, *args, &blk)
             if registers[:proxy].respond_to?(meth.to_s)
