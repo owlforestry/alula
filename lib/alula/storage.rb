@@ -3,6 +3,7 @@ require 'alula/storages/filestorage'
 module Alula
   class Storage
     attr_reader :options
+    attr_reader :outputted
     
     def self.load(opts = {})
       site = opts[:site]
@@ -22,6 +23,8 @@ module Alula
     def initialize(options, opts = {})
       @options = options
       @site = opts[:site]
+      
+      @outputted = []
     end
     
     def post(name)

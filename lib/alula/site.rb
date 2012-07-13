@@ -135,7 +135,7 @@ module Alula
       load_filters
       
       # Prepare public folder
-      prepare
+      prepare(true)
       
       load_content
       
@@ -145,6 +145,7 @@ module Alula
       
       render
       
+      cleanup
       # Store cached version of configuration
       cached_config = File.join(storage.path(:cache), "config.yml")
       @config.write_cache(cached_config)
@@ -191,7 +192,7 @@ module Alula
       @theme = Alula::Theme.load(site: self)
       
       # Create our asset environment
-      @environment = Sprockets::Environment.new
+      @environment = Environment.new
       # Add compressor support
       # if config.environment == "production"
       @environment.css_compressor = @compressors.css
@@ -362,6 +363,29 @@ module Alula
       progress.finish :static
       
       progress.hide
+    end
+    
+    def cleanup
+      say "==> Cleaning up"
+      
+      asset_path = @storage.path(:assets)
+      assets = @environment.used
+        .collect{|u| @environment[u]}
+        .reject{|u| u.nil?}
+        .collect{|u| File.join(asset_path, u.digest_path)}
+      outputted = @storage.outputted.reject{|o|o[/^#{asset_path}/]}
+      
+      keep = assets + outputted
+      Dir[File.join(@storage.path(:public), "**", "*")].each do |entry|
+        next unless File.file?(entry)
+        FileUtils.rm entry if File.file?(entry) and !keep.include?(entry)
+      end
+      
+      # Clean up empty directories
+      Dir[File.join(@storage.path(:public), "**", "*")].each do |entry|
+        next unless File.directory?(entry)
+        FileUtils.rmdir entry if Dir[File.join(entry, "**", "*")].count == 0
+      end
     end
     
     # Output helpers

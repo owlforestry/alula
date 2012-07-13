@@ -4,23 +4,20 @@ module Alula
   class Manifest < Sprockets::Manifest
     attr_accessor :progress
     
-    def assets
-      @__assets ||= super
-      @_assets ||= AssetTracker.new @__assets, @progress
+    def assets_with_tracking
+      @_assets ||= AssetTracker.new assets_without_tracking, @progress
     end
+    alias_method :assets_without_tracking, :assets
+    alias_method :assets, :assets_with_tracking
     
     private
     class AssetTracker
       def initialize(hash, progress_callback)
         @hash = hash
-        @used = []
         @progress_cb = progress_callback
       end
       
-      def used; @used.uniq; end
-      
       def [](key)
-        @used << @hash[key]
         @hash[key]
       end
       

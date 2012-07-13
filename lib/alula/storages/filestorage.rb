@@ -69,6 +69,9 @@ module Alula
       ::File.open(fname, "w") do |io|
         io.puts yield io
       end
+      
+      # Mark saved file
+      @outputted << fname
     end
 
     private
