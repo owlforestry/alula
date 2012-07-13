@@ -53,6 +53,8 @@ module Alula
     def info(source, type = nil)
       @info["#{source}#{type.to_s}"] ||= begin
         file = self.context.asset_path(attachment_path(source, type))
+        return Hashie::Mash.new if file.nil?
+        
         info = MiniExiftool.new File.join self.context.storage.path(:public), file
         Hashie::Mash.new({
           width: info.imagewidth,

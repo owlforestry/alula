@@ -162,7 +162,7 @@ module Alula
             end
           
             # Write content to file
-            @site.storage.output(self.path(locale)) do
+            @site.storage.output_public(self.path(locale)) do
               self.site.compressors.html.compress(output)
             end
           ensure

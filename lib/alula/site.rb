@@ -213,7 +213,7 @@ module Alula
       @environment.append_path @storage.path(:cache, "attachments")
       
       # Add generated assets
-      @environment.append_path @storage.path(:assets)
+      @environment.append_path @storage.path(:cache, "assets")
       
       # Theme, plugins, vendor and customisation
       [
@@ -279,7 +279,7 @@ module Alula
       puts "==> Compiling assets"
       
       # Generate stylesheet
-      @storage.output("assets/style.css") do |io|
+      @storage.output(:cache, "assets/style.css") do |io|
         io.puts "/*"
         
         # Theme style
@@ -300,7 +300,7 @@ module Alula
       end
       
       # Generate javascript
-      @storage.output("assets/script.js") do |io|
+      @storage.output(:cache, "assets/script.js") do |io|
         io.puts "/*"
 
         # Theme scripts
@@ -328,11 +328,10 @@ module Alula
       progress.display
       
       @manifest = Manifest.new(@environment, @storage.path(:assets))
-      @manifest.progress = -> {
-        progress.step(:assets)
-      }
-
+      @manifest.progress = -> { progress.step(:assets) }
+      
       @manifest.compile
+
       progress.finish(:assets)
       progress.hide
     end
@@ -348,6 +347,7 @@ module Alula
         # Write content to file
         content.write
         
+        progress.title(:render, "%20s" % content.name[0..19]) if self.config.debug
         progress.step(:render)
       end
       
@@ -356,7 +356,7 @@ module Alula
       # Copy static content
       progress.create :static, title: "Copy statics", total: self.content.statics.count
       self.content.statics.each do |static|
-        @storage.output(static.name) { |io| io.write(static.read) }
+        @storage.output_public(static.name) { |io| io.write(static.read) }
         
         progress.step :static
       end

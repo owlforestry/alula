@@ -61,8 +61,17 @@ module Alula
       FileUtils.mkdir_p self.options["public_path"]
     end
 
-    def output(path)
-      fname = ::File.join(self.options["public_path"], path)
+    def output_public(path, &blk)
+      fname = output(:public, path, &blk)
+      
+      # Mark saved file
+      @outputted << fname
+    end
+    
+    def output(path, file, &blk)
+      path = path(path, File.dirname(file))
+      
+      fname = ::File.join(path, File.basename(file))
       dirname = ::File.dirname(fname)
       FileUtils.mkdir_p dirname unless ::File.directory?(dirname)
   
@@ -70,10 +79,9 @@ module Alula
         io.puts yield io
       end
       
-      # Mark saved file
-      @outputted << fname
+      fname
     end
-
+    
     private
     def _list_all_in(path)
       items = {}
