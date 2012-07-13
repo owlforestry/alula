@@ -42,12 +42,6 @@ module Alula
       tag += " width=\"#{info(source, type).width}\" height=\"#{info(source, type).height}\""
       tag += " />"
     end
-    
-    private
-    def hires_url(source, type)
-      hires_source = source.gsub(/(#{File.extname(source)})$/, '-hires\1')
-      attachment_url(hires_source, type)
-    end
   end
 end
 

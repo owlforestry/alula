@@ -28,6 +28,8 @@ module Alula
       if m = /^([\"'][\S\. ]+[\"']|[\S\.]+)(.*)$/.match(@markup)
         @source = m[1].gsub(/^['"]?([^'"]+)['"]?$/, '\1')
         @source = "" if @source == '""'
+        @options["source"] = @source unless @source.empty?
+
         if m[2]
           m[2].scan(/(\S+):["]?((?:.(?!["]?\s+(?:\S+):|[>"]))+.)["]?/) do |name, value|
             @options[name] = value
@@ -70,6 +72,11 @@ module Alula
     
     def asset_url(name)
       self.context.asset_url(name)
+    end
+    
+    def hires_url(source, type)
+      hires_source = source.gsub(/(#{File.extname(source)})$/, '-hires\1')
+      attachment_url(hires_source, type)
     end
   end
   
