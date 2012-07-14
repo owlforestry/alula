@@ -271,8 +271,8 @@ footer {
   header ul {
     display:none;
   }
-  
-  img, video {
+
+  img, video, .img {
 	&.left, &.right {
     float: none;
 	  clear: both;
