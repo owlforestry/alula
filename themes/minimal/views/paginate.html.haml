@@ -6,7 +6,7 @@
           = I18n.l(post.date, format: "%a %d %b %Y", locale: locale)
     
       %h1{itemprop:"headline"}= link_to post.title, post.url
-      .postBody{itemprop:"articleBody"}= post.body
+      .articleBody{itemprop:"articleBody"}= post.body
     
       .spacer
 

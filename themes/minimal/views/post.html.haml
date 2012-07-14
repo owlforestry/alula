@@ -5,7 +5,7 @@
         = I18n.l(item.date, format: "%a %d %b %Y", locale: locale)
   
     %h1{itemprop:"headline"}= item.title
-    .postBody{itemprop:"articleBody"}= content
+    .articleBody{itemprop:"articleBody"}= content
   
     - if item.navigation
       %p.navigation
