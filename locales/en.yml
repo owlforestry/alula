@@ -1,5 +1,6 @@
 en:
   recent_posts: Recent Posts
   paginate:
+    title: Page %{page}
     older_posts: Older
     newer_posts: Newer

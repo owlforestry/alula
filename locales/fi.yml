@@ -1,3 +1,6 @@
 fi:
+  recent_posts: Viimeisimmät kirjoitukset
   paginate:
     title: Sivu %{page}
+    older_posts: Vanhemmat
+    newer_posts: Uudemmat
