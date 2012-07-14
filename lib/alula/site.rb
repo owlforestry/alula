@@ -129,10 +129,6 @@ module Alula
       Alula::Plugin.addon(:head, "<meta name=\"generator\" content=\"Alula #{Alula::VERSION}\">")
       Alula::Plugin.addon(:head, ->(context){"<link rel=\"icon\" type=\"image/png\" href=\"#{context.asset_url('favicon.png')}\">"})
       
-      # Set up mandatory footer info
-      if config.content.emphasis
-        Alula::Plugin.addon(:footer, "<a href=\"https://github.com/NYTimes/Emphasis\" title=\"Emphasis\">&para;</a>&nbsp;&ndash;Emphasis</a><br />")
-      end
     end
     
     # Compiles a site to static website
@@ -324,7 +320,6 @@ module Alula
 
         # Vendored
         io.puts " *= require lazyload" if self.config.attachments.image.lazyload
-        io.puts " *= require emphasis" if self.config.content.emphasis
 
         # Customisation
         @storage.custom(/javascripts\/.*.js.*$/).each do |name, item|
@@ -334,7 +329,7 @@ module Alula
         io.puts " */"
       end
       # Add javascript to end of body
-      Alula::Plugin.addon(:body, ->(context){ context.javascript_link("script", defer: true) })
+      Alula::Plugin.addon(:body, ->(context){ context.javascript_link("script") })
       
       # Compile all assets
       progress.create :assets, title: "Compiling assets", total: @environment.each_logical_path.count

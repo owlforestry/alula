@@ -91,11 +91,12 @@ module Alula
       },
       
       # Plugins
-      plugins: {},
+      plugins: {
+        emphasis: {},
+      },
       
       # Blog Content options
       content: {
-        emphasis: true,
         filters: {
           smilies: nil,
         },

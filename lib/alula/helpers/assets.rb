@@ -17,6 +17,12 @@ module Alula
     
     def javascript_link(name = "script", opts = {})
       name += ".js" if File.extname(name).empty?
+      case Alula::Plugin.script_load_mode
+      when :async
+        opts[:async] = true
+      when :defer
+        opts[:defer] = true
+      end
       options = opts.collect{|name,value| !!value == value ? (value ? "#{name}" : "") : "#{name}=\"#{value}\"" }.join(" ")
       
       if asset_url(name)
