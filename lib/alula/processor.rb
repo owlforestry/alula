@@ -67,10 +67,11 @@ module Alula
     
     def info
       @info ||= begin
-        info = MiniExiftool.new self.item.filepath
+        # info = MiniExiftool.new self.item.filepath
+        info = Dimensions.dimensions(self.item.filepath)
         Hashie::Mash.new({
-          width: info.imagewidth,
-          height: info.imageheight,
+          width: info[0],
+          height: info[1],
         })
       end
     end
