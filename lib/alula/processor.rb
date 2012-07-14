@@ -1,4 +1,5 @@
 require 'mimemagic'
+require 'mini_exiftool'
 
 module Alula
   class Processor
@@ -67,8 +68,11 @@ module Alula
     
     def info
       @info ||= begin
-        # info = MiniExiftool.new self.item.filepath
         info = Dimensions.dimensions(self.item.filepath)
+        info ||= begin
+          _info = MiniExiftool.new self.item.filepath
+          [_info.imagewidth, _info.imageheight]
+        end
         Hashie::Mash.new({
           width: info[0],
           height: info[1],

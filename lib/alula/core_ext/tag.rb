@@ -58,6 +58,10 @@ module Alula
         
         # info = MiniExiftool.new File.join self.context.storage.path(:public), file
         info = Dimensions.dimensions(File.join(self.context.storage.path(:public), file))
+        info ||= begin
+          _info = MiniExiftool.new File.join(self.context.storage.path(:public), file)
+          [_info.imagewidth, _info.imageheight]
+        end
         Hashie::Mash.new({
           width: info[0],
           height: info[1],
