@@ -18,7 +18,7 @@ module Alula
         
         @context = @theme.context
         
-        @template = Tilt.new(@file)
+        @template = Tilt.new(@file, nil, @theme.options(@file))
       end
       
       def view(name)

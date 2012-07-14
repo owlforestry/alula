@@ -16,7 +16,7 @@ module Alula
         @context = @theme.context
         
         # Load our template
-        @template = Tilt.new(@file)
+        @template = Tilt.new(@file, nil, @theme.options(@file))
       end
       
       def render(content, &blk)

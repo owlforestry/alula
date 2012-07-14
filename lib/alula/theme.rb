@@ -68,5 +68,14 @@ module Alula
         end
       end
     end
+    
+    def options(file)
+      options = case File.extname(file)[1..-1]
+        when "haml"
+          { :format => :html5 }
+        else
+          {}
+        end
+    end
   end
 end
