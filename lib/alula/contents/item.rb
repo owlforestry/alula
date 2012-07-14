@@ -156,11 +156,16 @@ module Alula
 
             # Render our content
             self.render(locale)
-                        
+            
             output = self.layout.render(item: self, locale: locale) do
               self.content(locale)
             end
-          
+            
+            # Filter output
+            self.site.filters.each do |name, filter|
+              output = filter.output(output, locale) if filter.respond_to?(:output)
+            end
+            
             # Write content to file
             @site.storage.output_public(self.path(locale)) do
               self.site.compressors.html.compress(output)
@@ -215,7 +220,11 @@ module Alula
             when :pages
               self.site.content.pages.select{|p| p.generator.nil? and p.languages.include?(locale) }
             when :languages
-              languages.collect{|lang| Hashie::Mash.new({url: url(lang), title: lang}) }
+              languages
+                .reject{|lang| lang == locale}
+                .collect{|lang| Hashie::Mash.new({url: url(lang), title: I18n.t('language_name', locale: lang)}) }
+            else
+              @content.by_slug(self.config.index)
             end
           end
           items.flatten.select {|i| !i.nil?}
@@ -389,7 +398,7 @@ module Alula
           }).to_html
           
           self.site.filters.each do |name, filter|
-            body = filter.process(body, locale)
+            body = filter.process(body, locale) if filter.respond_to?(:process)
           end
           
           body
