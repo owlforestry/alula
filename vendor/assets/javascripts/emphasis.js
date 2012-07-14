@@ -59,7 +59,7 @@ var Emphasis = {
         We use PrototypeJS for its css selector awesomeness, but your needs might be simpler (getElementsByTagName('p') etc.)
     */
     // this.paraSelctors      = $('#article-content p');
-        this.paraSelctors      = $('section p');
+        this.paraSelctors      = $('.articleBody p');
 
     //  Class names
         this.classReady        = "emReady";
@@ -523,7 +523,7 @@ var Emphasis = {
 };
 
 $(window).bind('load', function() {
-  Emphasis.init();  
+	Emphasis.init();
 });
 
 });

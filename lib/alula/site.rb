@@ -131,7 +131,7 @@ module Alula
       
       # Set up mandatory footer info
       if config.content.emphasis
-        Alula::Plugin.addon(:footer, "<a href=\"https://github.com/NYTimes/Emphasis\" title=\"Emphasis\">&para;&nbsp;-enabled.</a><br />")
+        Alula::Plugin.addon(:footer, "<a href=\"https://github.com/NYTimes/Emphasis\" title=\"Emphasis\">&para;</a>&nbsp;&ndash;Emphasis</a><br />")
       end
     end
     
@@ -334,7 +334,7 @@ module Alula
         io.puts " */"
       end
       # Add javascript to end of body
-      Alula::Plugin.addon(:body, ->(context){ context.javascript_link("script", async: true) })
+      Alula::Plugin.addon(:body, ->(context){ context.javascript_link("script", defer: true) })
       
       # Compile all assets
       progress.create :assets, title: "Compiling assets", total: @environment.each_logical_path.count
