@@ -300,6 +300,8 @@ module Alula
         
         io.puts "*/"
       end
+      # Add stlesheet to template
+      Alula::Plugin.addon(:head, ->(context){ context.stylesheet_link("style") })
       
       # Generate javascript
       @storage.output(:cache, "assets/script.js") do |io|
@@ -324,6 +326,8 @@ module Alula
         end
         io.puts " */"
       end
+      # Add javascript to end of body
+      Alula::Plugin.addon(:body, ->(context){ context.javascript_link("script") })
       
       # Compile all assets
       progress.create :assets, title: "Compiling assets", total: @environment.each_logical_path.count
