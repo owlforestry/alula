@@ -100,7 +100,7 @@ module Alula
         filters: {
           smilies: nil,
         },
-        sidebar: [ :pages ]
+        sidebar: [ :pages, :languages ]
       },
       
       assets: {
