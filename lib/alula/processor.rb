@@ -48,6 +48,7 @@ module Alula
       # Networked processors, create global 'queues' to prevent multiple simultanous upload/downloads
       @@upload ||= Mutex.new
       @@download ||= Mutex.new
+      @@lock ||= Mutex.new
     end
     
     def cleanup

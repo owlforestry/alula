@@ -14,11 +14,13 @@ module Alula
     def initialize(item, opts)
       super
       
-      ::Zencoder.api_key = options.token
-      @s3 = ::AWS::S3.new({
-        :access_key_id     => options.key_id,
-        :secret_access_key => options.access_key,
-      })
+      @@lock.synchronize do
+        ::Zencoder.api_key = options.token
+        @s3 = ::AWS::S3.new({
+          :access_key_id     => options.key_id,
+          :secret_access_key => options.access_key,
+        })
+      end
     end
     
     def cleanup
