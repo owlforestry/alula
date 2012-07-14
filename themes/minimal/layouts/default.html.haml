@@ -31,6 +31,10 @@
           = site.author
         %p
           %small
+            - if site.config.content.emphasis
+              %a{href: "https://github.com/NYTimes/Emphasis", title: "Emphasis"} &para;
+              &nbsp;-enabled.
+              %br
             Powered by #{link_to "Alula", "http://www.alula.in"} &mdash;
             Theme by #{link_to "orderedlist", "https://github.com/orderedlist/minimal"}
     = addons :body
