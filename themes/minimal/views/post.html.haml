@@ -6,7 +6,9 @@
   
     %h1{itemprop:"headline"}= item.title
     .articleBody{itemprop:"articleBody"}= content
-  
+    
+    = addons :post_bottom
+    
     - if item.navigation
       %p.navigation
         - if item.previous
