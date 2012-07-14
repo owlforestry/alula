@@ -298,9 +298,7 @@ module Alula
         end
         
         # Vendored
-        # io.puts " *= require lazyload" if self.config.attachments.image.lazyload
-        io.puts " *= require emphasis" if self.config.content.emphasis
-        
+
         # Blog customization
         @storage.custom(/stylesheets\/.*.css.*$/).each do |name, item|
           name = File.basename(name).gsub(/(\.\S+)$/, '')
