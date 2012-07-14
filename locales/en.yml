@@ -4,3 +4,6 @@ en:
     title: Page %{page}
     older_posts: Older
     newer_posts: Newer
+  post:
+    previous: Previous Post
+    next: Next Post

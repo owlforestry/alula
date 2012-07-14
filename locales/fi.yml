@@ -4,3 +4,7 @@ fi:
     title: Sivu %{page}
     older_posts: Vanhemmat
     newer_posts: Uudemmat
+  post:
+    previous: Edellinen kirjoitus
+    next: Seuraava kirjoitus
+    
