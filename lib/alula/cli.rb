@@ -57,7 +57,10 @@ module Alula
     
     desc "generate", "Generates blog"
     generate_options
-    def generate
+    def generate(*args)
+      unless args.empty?
+        args.each {|a| puts "Unknown option #{a} given."}; exit
+      end
       site.generate
     end
     
@@ -65,7 +68,10 @@ module Alula
     generate_options
     option "skip-generate", :type => :boolean, :default => false, :aliases => "-s",
       :desc => "Skip site generation before web server launch."
-    def preview
+    def preview(*args)
+      unless args.empty?
+        args.each {|a| puts "Unknown option #{a} given."}; exit
+      end
       site.generate unless options['skip-generate']
             
       # Start webserver
