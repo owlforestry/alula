@@ -1,28 +1,31 @@
 module Alula
   module Helpers
-    def stylesheet_link(name = "style")
+    def stylesheet_link(name = "style", opts = {})
       name += ".css" if File.extname(name).empty?
+      options = opts.collect{|name,value| !!value == value ? (value ? "#{name}" : "") : "#{name}=\"#{value}\"" }.join(" ")
+      
       if asset_url(name)
         # Inline?
         if self.environment[name].pathname.size > 10
-          "<link rel=\"stylesheet\" href=\"#{asset_url(name)}\" type=\"text/css\" />"
+          "<link rel=\"stylesheet\" href=\"#{asset_url(name)}\" type=\"text/css\" #{options}/>"
         else
           content = self.environment[name].pathname.read
-          "<style type=\"text/css\">#{content}</style>"
+          "<style type=\"text/css\" #{options}>#{content}</style>"
         end
       end
     end
     
-    def javascript_link(name = "script")
+    def javascript_link(name = "script", opts = {})
       name += ".js" if File.extname(name).empty?
+      options = opts.collect{|name,value| !!value == value ? (value ? "#{name}" : "") : "#{name}=\"#{value}\"" }.join(" ")
+      
       if asset_url(name)
         # Inline?
         if self.environment[name].pathname.size > 10
-          # "<link rel=\"stylesheet\" href=\"#{asset_url(name)}\" type=\"text/css\" />"
-          "<script src=\"#{asset_url(name)}\"></script>"
+          "<script #{options} src=\"#{asset_url(name)}\"></script>"
         else
           content = self.environment[name].pathname.read
-          "<script>#{content}</script>"
+          "<script #{options}>#{content}</script>"
         end
       end      
     end
