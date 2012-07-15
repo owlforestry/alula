@@ -24,6 +24,7 @@ module Alula
         title: titles,
         name: "feed.xml",
         slug: "feed",
+        sidebar: false,
         template: self.options.template || "/:locale/:name",
         site: self.site,
         layout: "feed",

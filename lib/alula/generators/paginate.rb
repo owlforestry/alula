@@ -34,6 +34,7 @@ module Alula
           title: titles,
           name: "page-#{(page + 1)}",
           slug: "page-#{(page + 1)}",
+          sidebar: false,
           template: self.options.template,
           site: self.site,
           view: self.options.view || "paginate",

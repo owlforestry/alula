@@ -22,6 +22,7 @@ module Alula
         title: "Sitemap",
         name: "sitemap.xml",
         slug: "sitemap",
+        sidebar: false,
         template: self.options.template || "/:locale/:name",
         site: self.site,
         layout: "sitemap",

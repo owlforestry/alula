@@ -220,7 +220,7 @@ module Alula
             case item
             when :pages
               self.site.content.pages
-                .select{|p| p.generator.nil? and p.languages.include?(locale) }
+                .select{|p| p.languages.include?(locale) }
                 .reject{|p| p.metadata.sidebar == false}
             when :languages
               # Get index page titles
