@@ -362,9 +362,26 @@ module Alula
       progress.finish(:render)
       
       # Copy static content
-      progress.create :static, title: "Copy statics", total: self.content.statics.count
-      self.content.statics.each do |static|
-        @storage.output_public(static.name) { |io| io.write(static.read) }
+      # Create directory path
+      static_dirs = [
+        ::File.join(File.dirname(__FILE__), "..", "..", "vendor"),
+        *plugins.collect{|name, plugin| plugin.path},
+        self.theme.path,
+      ]
+      statics = static_dirs.collect{|path|
+        Dir[File.join(path, "static", "**", "*")].collect{|p|
+          {path: File.join(path, "static"), item: p}
+        }
+      }.flatten
+
+      progress.create :static, title: "Copy statics", total: self.content.statics.count + statics.count
+      (statics + self.content.statics).each do |static|
+        if static.kind_of?(Hash)
+          name = static[:item].gsub(/^#{static[:path]}\//, '')
+          @storage.output_public(name) {|io| io.write(File.read(static[:item]))}
+        else
+          @storage.output_public(static.name) { |io| io.write(static.read) }
+        end
         
         progress.step :static
       end
@@ -383,10 +400,11 @@ module Alula
         .collect{|u| File.join(asset_path, u.digest_path)}
       outputted = @storage.outputted.reject{|o|o[/^#{asset_path}/]}
       
-      keep = assets + outputted
+      keep = (assets + outputted).collect{|p| File.expand_path(p)}
+      
       Dir[File.join(@storage.path(:public), "**", "*")].each do |entry|
         next unless File.file?(entry)
-        FileUtils.rm entry if File.file?(entry) and !keep.include?(entry)
+        FileUtils.rm entry if File.file?(entry) and !keep.include?(File.expand_path(entry))
       end
       
       # Clean up empty directories
