@@ -72,7 +72,7 @@ module Alula
     def options(file)
       options = case File.extname(file)[1..-1]
         when "haml"
-          { :format => :html5 }
+          { :format => :html5, :ugly => @site.config.assets.compress }
         else
           {}
         end
