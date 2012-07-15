@@ -86,6 +86,9 @@ module Alula
         },
         feedbuilder: {
           items: 10,
+          name: "feed.xml",
+          slug: "feed",
+          template: "/:locale/:name",
         },
         sitemap: {}
       },
