@@ -74,7 +74,8 @@ module Alula
         @metadata = Metadata.new({
           # Defaults
           date: Time.new(0),
-          pin: 500, # Default sorting pin
+          pin: 500,       # Default sorting pin
+          sidebar: true,  # Display item in sidebar (if page etc)
           layout: 'default',
           view: (self.class.to_s == "Alula::Content::Page" ? "page" : "post"),
           
@@ -218,7 +219,9 @@ module Alula
           items = self.site.config.content.sidebar.collect do |item|
             case item
             when :pages
-              self.site.content.pages.select{|p| p.generator.nil? and p.languages.include?(locale) }
+              self.site.content.pages
+                .select{|p| p.generator.nil? and p.languages.include?(locale) }
+                .reject{|p| p.metadata.sidebar == false}
             when :languages
               languages
                 .reject{|lang| lang == locale}
