@@ -76,7 +76,7 @@ module Alula
       FileUtils.mkdir_p dirname unless ::File.directory?(dirname)
   
       ::File.open(fname, "w") do |io|
-        io.puts yield io
+        io.write yield io
       end
       
       fname
