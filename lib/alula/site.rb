@@ -221,7 +221,7 @@ module Alula
       # Theme, plugins, vendor and customisation
       [
         self.theme.path,
-        *plugins.collect{|name, plugin| plugin.asset_path},
+        *plugins.collect{|name, plugin| plugin.path},
         ::File.join(File.dirname(__FILE__), "..", "..", "vendor"),
       ].each do |path|
         %w{javascripts stylesheets images}.each {|p|
