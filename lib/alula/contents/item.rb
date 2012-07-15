@@ -223,9 +223,11 @@ module Alula
                 .select{|p| p.generator.nil? and p.languages.include?(locale) }
                 .reject{|p| p.metadata.sidebar == false}
             when :languages
-              languages
+              # Get index page titles
+              index_page = site.content.by_slug("index")
+              index_page.languages
                 .reject{|lang| lang == locale}
-                .collect{|lang| Hashie::Mash.new({url: url(lang), title: I18n.t('language_name', locale: lang)}) }
+                .collect{|lang| Hashie::Mash.new({url: index_page.url(lang), title: I18n.t('language_name', locale: lang)}) }
             else
               @content.by_slug(self.config.index)
             end
