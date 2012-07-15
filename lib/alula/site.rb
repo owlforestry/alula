@@ -378,9 +378,9 @@ module Alula
       (statics + self.content.statics).each do |static|
         if static.kind_of?(Hash)
           name = static[:item].gsub(/^#{static[:path]}\//, '')
-          @storage.output_public(name) {|io| io.write(File.read(static[:item]))}
+          @storage.output_public(name) {|io| File.read(static[:item]) }
         else
-          @storage.output_public(static.name) { |io| io.write(static.read) }
+          @storage.output_public(static.name) { |io| static.read }
         end
         
         progress.step :static
