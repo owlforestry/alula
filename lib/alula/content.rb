@@ -43,53 +43,21 @@ module Alula
     
     private
     def read_content(*types)
-      @@lock = Mutex.new
       # Load all posts if requested
       if (types.include?(:posts))
-        # Read posts
-        @site.progress.create :load_posts, title: "Loading posts", total: @site.storage.posts.count
-        @site.progress.display
-        @site.storage.posts.each do |item|
-          name, entry = item
-          post = Post.load(item: entry, site: @site)
-          @posts << post unless post.nil?
-          @@lock.synchronize { @site.progress.step :load_posts }
-        end
-        # Sort
+        @posts = _read_content_type(Post, @site.storage.posts, "Loading Posts")
         @posts.sort!.reverse!
-        @site.progress.finish :load_posts
       end
       
       # Load all pages if requested
       if (types.include?(:pages))
-        @site.progress.create :load_pages, title: "Loading pages", total: @site.storage.pages.count
-        @site.progress.display
-        
-        @site.storage.pages.each do |item|
-          name, entry = item
-          page = Page.load(item: entry, site: @site)
-          @pages << page unless page.nil?
-          
-          @@lock.synchronize { @site.progress.step :load_pages }
-        end
+        @pages = _read_content_type(Page, @site.storage.pages, "Loading Pages")
         @pages.sort!
-        @site.progress.finish :load_pages
       end
 
-      # Load all pages if requested
+      # Load all attachments if requested
       if (types.include?(:attachments))
-        @site.progress.create :load_attachments, title: "Loading attachments", total: @site.storage.attachments.count
-        @site.progress.display
-        
-        @site.storage.attachments.each do |item|
-          name, entry = item
-          attachment = Attachment.load(item: entry, site: @site)
-          @attachments << attachment unless attachment.nil?
-          
-          @@lock.synchronize { @site.progress.step :load_attachments }
-        end
-        
-        @site.progress.finish :load_attachments
+        @attachments = _read_content_type(Attachment, @site.storage.attachments, "Loading Attachments")
       end
       
       # Load all statics
@@ -108,6 +76,27 @@ module Alula
           generator.generate
         end
       end
+    end
+
+    def _read_content_type(type, items, title)
+      @@lock ||= Mutex.new
+      
+      @collection = []
+      
+      @site.progress.create "load_#{type.to_s}", title: title, total: items.count
+      @site.progress.display
+      
+      items.each do |item|
+        name, entry = item
+        itm = type.load(item: entry, site: @site)
+        @collection << itm unless itm.nil?
+        @@lock.synchronize { @site.progress.step :load_posts }
+      end
+
+      # Sort
+      @site.progress.finish "load_#{type.to_s}"
+      
+      @collection
     end
   end
 end
