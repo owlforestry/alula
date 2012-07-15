@@ -90,7 +90,7 @@ module Alula
         name, entry = item
         itm = type.load(item: entry, site: @site)
         @collection << itm unless itm.nil?
-        @@lock.synchronize { @site.progress.step :load_posts }
+        @@lock.synchronize { @site.progress.step "load_#{type.to_s}" }
       end
 
       # Sort
