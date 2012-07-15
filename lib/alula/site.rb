@@ -273,9 +273,8 @@ module Alula
       progress.finish(:attachments)
       progress.hide
       
-      # DEBUG
-      require 'json'
-      File.open(self.storage.path(:cache) + "/mapping.json", 'w') {|io| io.puts self.attachments.mapping.to_json}
+      # Output mapping information
+      File.open(self.storage.path(:cache) + "/mapping.yml", 'w') {|io| io.puts JSON(self.attachments.mapping.to_json).to_yaml}
     end
     
     def compile_assets
