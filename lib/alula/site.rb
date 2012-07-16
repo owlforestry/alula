@@ -17,6 +17,7 @@ require 'sprockets'
 require 'i18n'
 require 'parallel'
 require 'hashie/mash'
+require 'json'
 
 # Silence Tilt
 require 'sass'
@@ -336,7 +337,7 @@ module Alula
       
       @manifest = Manifest.new(@environment, @storage.path(:assets))
       @manifest.progress = -> { progress.step(:assets) }
-      
+
       @manifest.compile
 
       progress.finish(:assets)
