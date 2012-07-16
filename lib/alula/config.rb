@@ -94,9 +94,7 @@ module Alula
       },
       
       # Plugins
-      plugins: {
-        emphasis: {},
-      },
+      plugins: {},
       
       # Blog Content options
       content: {
