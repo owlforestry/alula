@@ -37,7 +37,7 @@ module Alula
     
     def sources
       @sources ||= begin
-        variants.collect {|variant|
+        sources = variants.collect {|variant|
           name = @source.gsub(/#{File.extname(@source)}$/, variant[:ext])
           {
             name: name,
@@ -46,7 +46,7 @@ module Alula
             hires: variant[:hires],
             mobile: variant[:mobile]
           }
-        }
+        }.reject{|source| source[:url].nil? }
       end
     end
     

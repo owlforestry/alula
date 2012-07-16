@@ -5,7 +5,7 @@ module Alula
     def generate
       # Loop all languages and count posts per language
       @languages = {}
-      self.site.content.posts.each do |post|
+      (self.site.content.posts + self.site.content.pages).each do |post|
         post.languages.each do |lang|
           @languages[lang] ||= []
           @languages[lang] << post
@@ -29,9 +29,18 @@ module Alula
         site: self.site,
         layout: "feed",
       },
-      :previous => ->(locale) { nil },
-      :next => ->(locale) { nil },
-      :navigation => ->(locale) { nil },
+      :previous => ->(hook, locale) { nil },
+      :next => ->(hook, locale) { nil },
+      :navigation => ->(hook, locale) { nil },
+      :write => ->(hook, locale) {
+        begin
+          _old_renderer = self.posts.collect{|p| p.metadata.renderer}
+          self.posts.cycle(1) { |p| p.flush; p.metadata.renderer = self.generator;}
+          hook.call
+        ensure
+          self.posts.cycle(1) {|p| p.metadata.renderer = _old_renderer.shift }
+        end
+      },
       )
       self.site.content.pages << @feed_page
       

@@ -104,6 +104,7 @@ module Alula
     end
     
     def zencoder_encode(job)
+      File.open('cache/job.yml', 'w') {|io| io.write job.to_yaml}
       response = ::Zencoder::Job.create(job)
       return false if response.code != "201"
       

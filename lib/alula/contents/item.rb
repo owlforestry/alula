@@ -55,7 +55,19 @@ module Alula
         @name = opts.delete(:name) || @item.name
         
         # Set up method overrides
-        @hooks = hooks
+        @hooks = {}
+        # @hooks = hooks
+        hooks.each do |name, blk|
+          hook_id = blk.hash.to_s(36)
+          hook_name = "#{name}_#{hook_id}"
+          prev_hook_name = "#{name}_without_#{hook_id}"
+          (class << self; self; end).send(:define_method, hook_name) do |*args|
+            previous_hook = self.method(prev_hook_name)
+            instance_exec(previous_hook, args, &blk)
+          end
+          (class << self; self; end).send(:alias_method, prev_hook_name, name)
+          (class << self; self; end).send(:alias_method, name, hook_name)
+        end
         # hooks.each do |name, impl|
         #   self.class.send(:define_method, name, &impl)
         # end
@@ -132,9 +144,9 @@ module Alula
           self.current_locale = locale
           
           # Flush if we have generator
-          if @hooks[:render]
-            instance_exec(locale, &@hooks[:render])
-          end
+          # if @hooks[:render]
+          #   instance_exec(locale, &@hooks[:render])
+          # end
           
           # Make sure our content is parsed
           parse_liquid(locale)
@@ -228,8 +240,10 @@ module Alula
               index_page.languages
                 .reject{|lang| lang == locale}
                 .collect{|lang| Hashie::Mash.new({url: index_page.url(lang), title: I18n.t('language_name', locale: lang)}) }
+            when Hash
+              item
             else
-              @content.by_slug(self.config.index)
+              self.site.content.by_slug(item)
             end
           end
           items.flatten.select {|i| !i.nil?}
@@ -272,21 +286,22 @@ module Alula
       end
       
       def previous(locale = nil)
-        if @hooks[:previous]
-          instance_exec(locale, &@hooks[:previous])
-        end
+        # if @hooks[:previous]
+        #   instance_exec(locale, &@hooks[:previous])
+        # end
       end
       
       def next(locale = nil)
-        if @hooks[:next]
-          instance_exec(locale, &@hooks[:next])
-        end
+        # if @hooks[:next]
+        #   binding.pry
+        #   instance_exec(locale, &@hooks[:next])
+        # end
       end
       
       def navigation(locale = nil)
-        if @hooks[:navigation]
-          instance_exec(locale, &@hooks[:navigation])
-        end
+        # if @hooks[:navigation]
+        #   instance_exec(locale, &@hooks[:navigation])
+        # end
       end
       
       # 
@@ -342,10 +357,10 @@ module Alula
       
       private
       def _last_modified
-        if @hooks[:last_modified]
-          return instance_exec(locale, &@hooks[:next])
-        end
-        
+        # if @hooks[:last_modified]
+        #   return instance_exec(locale, &@hooks[:next])
+        # end
+        # 
         return unless self.class.to_s[/Page|Post/]
         mtime = nil
         unless @item.nil?

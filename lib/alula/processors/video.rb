@@ -39,7 +39,7 @@ module Alula
         .select {|tn| !tn[:hires] or (tn[:hires] and self.site.config.attachments.image.hires)}
         .select{|tn|
           width, height = tn[:size].split("x").collect{|i| i.to_i};
-          !File.exists?(tn[:output]) and !((width > self.info.width and height > self.info.height) and format[:hires])
+          !File.exists?(tn[:output]) and !((width > self.info.width and height > self.info.height) and tn[:hires])
         }
       
       thumbnails = Hash[thumbnails.collect{|tn| [tn[:label], tn]}]
