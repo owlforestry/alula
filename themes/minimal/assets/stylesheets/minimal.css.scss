@@ -104,7 +104,7 @@ img, video, .img {
   &.left, &.right { margin-bottom: 1em; margin-top: 1em; }
   &.left { float: left; margin-right: 1em; }
   &.right { float: right; mergin-left: 1em; }
-  &.none { float: none; clear: both; display: block; margin: 1em auto;}
+  &.none { float: none; clear: both; display: block; }
 }
 
 div.post {
