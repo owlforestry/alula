@@ -36,6 +36,9 @@ module Alula
     
     def searchpath(type, name)
       [
+        # Blog custom
+        ::File.join(self.site.storage.path(:custom), type, "#{name}.*"),
+        
         # Theme path
         ::File.join(self.path, type, "#{name}.*"),
         
