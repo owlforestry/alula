@@ -33,7 +33,7 @@ module Alula
 
         if m[2]
           m[2].scan(/(\S+):["]?((?:.(?!["]?\s+(?:\S+):|[>"]))+.)["]?/) do |name, value|
-            @options[name] = value
+            @options[name] = value.strip
           end
         end
       end
