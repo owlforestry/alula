@@ -27,18 +27,14 @@ module Alula
       generate_content
     end
     
-    def by_name(name)
-      (self.pages + self.posts + self.attachments).each do |item|
-        return item if item.name == name
+    def method_missing(meth, *args, &blk)
+      if m = /^by_(\S+)$/.match(meth)
+        return (self.pages + self.posts + self.attachments).find do |item|
+          item.send(m[1]) == args.first
+        end
       end
-      nil
-    end
-    
-    def by_slug(slug)
-      (self.pages + self.posts + self.attachments).each do |item|
-        return item if item.slug == slug
-      end
-      nil
+      
+      super
     end
     
     private
