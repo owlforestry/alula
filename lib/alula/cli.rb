@@ -53,6 +53,11 @@ module Alula
           copy_file tpl, File.join(path, name)
         end
       end
+      
+      inside File.expand_path(path) do
+        # Run bundle command
+        run "bundle install"
+      end
     end
     
     desc "generate", "Generates blog"
