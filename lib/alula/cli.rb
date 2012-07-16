@@ -55,6 +55,12 @@ module Alula
       end
       
       inside File.expand_path(path) do
+        # Try to find git
+        git=%x{/usr/bin/which git}.strip
+        if File.executable?(git)
+          run "#{git} init"
+        end
+
         # Run bundle command
         run "bundle install"
       end
