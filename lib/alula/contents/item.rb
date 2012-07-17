@@ -63,7 +63,7 @@ module Alula
           prev_hook_name = "#{name}_without_#{hook_id}"
           (class << self; self; end).send(:define_method, hook_name) do |*args|
             previous_hook = self.method(prev_hook_name)
-            instance_exec(previous_hook, args, &blk)
+            instance_exec(previous_hook, *args, &blk)
           end
           (class << self; self; end).send(:alias_method, prev_hook_name, name)
           (class << self; self; end).send(:alias_method, name, hook_name)
@@ -286,22 +286,12 @@ module Alula
       end
       
       def previous(locale = nil)
-        # if @hooks[:previous]
-        #   instance_exec(locale, &@hooks[:previous])
-        # end
       end
       
       def next(locale = nil)
-        # if @hooks[:next]
-        #   binding.pry
-        #   instance_exec(locale, &@hooks[:next])
-        # end
       end
       
       def navigation(locale = nil)
-        # if @hooks[:navigation]
-        #   instance_exec(locale, &@hooks[:navigation])
-        # end
       end
       
       # 

@@ -29,10 +29,10 @@ module Alula
         site: self.site,
         layout: "feed",
       },
-      :previous => ->(hook, locale) { nil },
-      :next => ->(hook, locale) { nil },
-      :navigation => ->(hook, locale) { nil },
-      :write => ->(hook, locale) {
+      :previous => ->(hook, locale = nil) { nil },
+      :next => ->(hook, locale = nil) { nil },
+      :navigation => ->(hook, locale = nil) { nil },
+      :write => ->(hook, locale = nil) {
         begin
           _old_renderer = self.posts.collect{|p| p.metadata.renderer}
           self.posts.cycle(1) { |p| p.flush; p.metadata.renderer = self.generator;}

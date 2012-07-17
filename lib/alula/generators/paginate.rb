@@ -39,7 +39,7 @@ module Alula
           site: self.site,
           view: self.options.view || "paginate",
         },
-        :previous => ->(hook, locale) {
+        :previous => ->(hook, locale = nil) {
           pos = self.navigation(locale).index(self)
           if pos and pos < (self.navigation(locale).count - 1)
             self.navigation(locale)[pos + 1]
@@ -47,7 +47,7 @@ module Alula
             nil
           end
         },
-        :next => ->(hook, locale) {
+        :next => ->(hook, locale = nil) {
           pos = self.navigation(locale).index(self)
           if pos and pos > 0
             self.navigation(locale)[pos - 1]
@@ -55,7 +55,7 @@ module Alula
             nil
           end
         },
-        :navigation => ->(hook, locale) {
+        :navigation => ->(hook, locale = nil) {
           locale ||= self.current_locale || self.site.config.locale
           @navigation[locale] ||= self.site.content.pages.select { |item| item.metadata.generator == self.generator and item.languages.include?(locale) }
         }
