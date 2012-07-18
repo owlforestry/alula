@@ -107,6 +107,7 @@ module Alula
       assets: {
         production: {
           compress: true,
+          gzip: true,
         },
       },
       

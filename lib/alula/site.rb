@@ -335,11 +335,16 @@ module Alula
       progress.create :assets, title: "Compiling assets", total: @environment.each_logical_path.count
       progress.display
       
-      @manifest = Manifest.new(@environment, @storage.path(:assets))
-      @manifest.progress = -> { progress.step(:assets) }
-
-      @manifest.compile
-
+      @environment.each_logical_path do |logical_path|
+        if asset = @environment.find_asset(logical_path)
+          target = File.join(@storage.path(:assets), asset.digest_path)
+          asset.write_to(target)
+          asset.write_to("#{target}.gz") if target =~ /\.(css|js)$/ and self.config.assets.gzip
+        end
+        
+        progress.step :assets
+      end
+      
       progress.finish(:assets)
       progress.hide
     end
@@ -394,10 +399,12 @@ module Alula
       say "==> Cleaning up"
       
       asset_path = @storage.path(:assets)
-      assets = @environment.used
-        .collect{|u| @environment[u]}
-        .reject{|u| u.nil?}
-        .collect{|u| File.join(asset_path, u.digest_path)}
+      assets = @environment.used.collect do |asset_name|
+        if asset = @environment[asset_name]
+          filename = File.join(asset_path, asset.digest_path)
+          [filename, self.config.assets.gzip ? "#{filename}.gz" : ""]
+        end
+      end.flatten.reject { |u| u.nil? or !File.exists?(u) }
       outputted = @storage.outputted.reject{|o|o[/^#{asset_path}/]}
       
       keep = (assets + outputted).collect{|p| File.expand_path(p)}
