@@ -6,6 +6,7 @@ module Alula
       urls_callback = ->(context) {
         (context.site.content.posts + context.site.content.pages)
           .reject {|content| content.generator == self }
+          .reject {|content| content.metadata.sitemap == false }
           .collect { |content|
             content.languages.collect{|lang| {
               url: content.url(lang),
