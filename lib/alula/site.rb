@@ -290,7 +290,7 @@ module Alula
         
         # Plugins
         @plugins.each do |name, plugin|
-          io.puts " *= require #{name}"
+          io.puts " *= require #{name}" unless Dir[File.join(plugin.path, "assets", "stylesheets", "#{name}*")].empty?
         end
         
         # Vendored
@@ -315,7 +315,7 @@ module Alula
 
         # Plugins
         @plugins.each do |name, plugin|
-          io.puts " *= require #{name}"
+          io.puts " *= require #{name}" unless Dir[File.join(plugin.path, "assets", "javascripts", "#{name}*")].empty?
         end
 
         # Vendored
