@@ -65,7 +65,7 @@ module Alula
     end
     
     def generate_content
-      @site.config.generators.each do |type, options|
+      @site.config.content.generators.each do |type, options|
         
         generator = Alula::Generator.load(type: type, options: options, site: @site)
         if generator

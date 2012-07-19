@@ -78,26 +78,24 @@ module Alula
          production: { hosts: ["/"] },
       },
       
-      # Content generators
-      generators: {
-        paginate: {
-          items: 10,
-          template: "/:locale/page/:page/",
-        },
-        feedbuilder: {
-          items: 10,
-          name: "feed.xml",
-          slug: "feed",
-          template: "/:locale/:name",
-        },
-        sitemap: {}
-      },
-      
       # Plugins
       plugins: {},
       
       # Blog Content options
       content: {
+        generators: {
+          paginate: {
+            items: 10,
+            template: "/:locale/page/:page/",
+          },
+          feedbuilder: {
+            items: 10,
+            name: "feed.xml",
+            slug: "feed",
+            template: "/:locale/:name",
+          },
+          sitemap: {}
+        },
         filters: {
           smilies: nil,
         },
