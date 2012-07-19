@@ -8,7 +8,11 @@ module Alula
         # Check if video requires rotating
         if self.info.rotation == 90 or self.info.rotation == 270
           size.reverse!
+        # elsif self.info.height > self.info.width  # We have pre-rotated portait video, match framesize
+        #   size.reverse!
         end
+        # Write rotated values back
+        format[:size] = size.join("x")
         width, height = size
         
         # Generate attachment name hash
@@ -40,7 +44,7 @@ module Alula
         .select{|tn|
           width, height = tn[:size].split("x").collect{|i| i.to_i};
           !File.exists?(tn[:output]) and !((width > self.info.width and height > self.info.height) and tn[:hires])
-        }
+      }
       
       thumbnails = Hash[thumbnails.collect{|tn| [tn[:label], tn]}]
       
