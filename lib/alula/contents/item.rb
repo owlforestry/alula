@@ -109,6 +109,10 @@ module Alula
         read_payload if has_payload?
       end
       
+      def inspect
+        "#<#{self.class.to_s} name=#{self.name}>"
+      end
+      
       # Functionality, existence
       def exists?
         @item.exists?
