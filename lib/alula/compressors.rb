@@ -37,7 +37,15 @@ module Alula
     class HTMLCompressor
       def initialize
         @compressor = HtmlCompressor::Compressor.new({
-          remove_surrounding_spaces: HtmlCompressor::Compressor::BLOCK_TAGS_MAX + ",source",
+          remove_surrounding_spaces: HtmlCompressor::Compressor::BLOCK_TAGS_MAX + ",source,title,meta,header,footer,div,section,article,time,img,video,script",
+          remove_intertag_spaces: true,
+          remove_quotes: true,
+          remove_script_attributes: true,
+          remove_style_attributes: true,
+          remove_link_attributes: true,
+          simple_boolean_attributes: true,
+          remove_http_protocol: false,
+          remove_https_protocol: false,
         })
       end
       
