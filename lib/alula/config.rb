@@ -85,13 +85,13 @@ module Alula
       content: {
         generators: {
           paginate: {
-            items: 10,
+               items: 10,
             template: "/:locale/page/:page/",
           },
           feedbuilder: {
-            items: 10,
-            name: "feed.xml",
-            slug: "feed",
+                items: 10,
+                name: "feed.xml",
+                slug: "feed",
             template: "/:locale/:name",
           },
           sitemap: {}
@@ -99,13 +99,13 @@ module Alula
         filters: {
           smilies: nil,
         },
-        sidebar: [ :pages, :languages ]
+        sidebar: [ :pages, :languages ],
       },
       
       assets: {
         production: {
           compress: true,
-          gzip: true,
+          gzip: [ "js", "css", "xml", "html", "ttf", "svg", "eot" ],
         },
       },
       

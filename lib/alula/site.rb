@@ -152,6 +152,9 @@ module Alula
       render
       
       cleanup
+      
+      compress
+      
       # Store cached version of configuration
       cached_config = File.join(storage.path(:cache), "config.yml")
       @config.write_cache(cached_config)
@@ -351,7 +354,7 @@ module Alula
         if asset = @environment.find_asset(logical_path)
           target = File.join(@storage.path(:assets), asset.digest_path)
           asset.write_to(target)
-          asset.write_to("#{target}.gz") if target =~ /\.(css|js)$/ and self.config.assets.gzip
+          # asset.write_to("#{target}.gz") if target =~ /\.(css|js)$/ and self.config.assets.gzip
         end
         
         progress.step :assets
@@ -414,7 +417,7 @@ module Alula
       assets = @environment.used.collect do |asset_name|
         if asset = @environment[asset_name]
           filename = File.join(asset_path, asset.digest_path)
-          [filename, self.config.assets.gzip ? "#{filename}.gz" : ""]
+          # [filename, self.config.assets.gzip ? "#{filename}.gz" : ""]
         end
       end.flatten.reject { |u| u.nil? or !File.exists?(u) }
       outputted = @storage.outputted.reject{|o|o[/^#{asset_path}/]}
@@ -432,6 +435,22 @@ module Alula
         FileUtils.rmdir entry if Dir[File.join(entry, "**", "*")].count == 0
       end
     end
+
+    def compress
+      return unless config.assets.gzip
+      
+      say "==> Compressing content"
+      Dir[File.join(@storage.path(:public), "**", "*")].each do |entry|
+        next unless config.assets.gzip.include?(File.extname(entry)[1..-1])
+        
+        gz = Zlib::GzipWriter.open("#{entry}.gz", Zlib::BEST_COMPRESSION) do |gz|
+          gz.write File.read(entry)
+        end
+        
+        @storage.outputted << "#{entry}.gz"
+      end
+    end
+    
     
     # Output helpers
     def say(msg)
