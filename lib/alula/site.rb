@@ -134,6 +134,8 @@ module Alula
     
     # Compiles a site to static website
     def generate
+      banner
+      
       # Load our plugins and filters
       load_plugins
       load_filters
@@ -167,12 +169,22 @@ module Alula
     end
     
     private
+    def banner
+      puts ""
+      puts "Alula #{Alula::VERSION}"
+    end
+    
     def load_plugins
       config.plugins.each do |name, options|
         if plugin = Alula::Plugin.load(name, options)
           @plugins[name] = plugin
         end
       end
+      
+      if @plugins
+        puts "Plugins: " + @plugins.collect {|name, plugin| "#{name} #{plugin.version}"}.join(" ")
+      end
+      puts ""
     end
     
     def load_filters
