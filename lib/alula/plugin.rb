@@ -15,6 +15,7 @@ module Alula
     
     def self.addons; @@addons ||= Hash.new {|hash, key| hash[key] = []}; end
     def self.addon(type, content_or_block); addons[type] << content_or_block; end
+    def self.prepend_addon(type, content_or_block); addons[type].unshift content_or_block; end
     
     def self.script_load_mode=(mode)
       @@script_load_mode = case mode

@@ -304,7 +304,7 @@ module Alula
         io.puts "*/"
       end
       # Add stlesheet to template
-      Alula::Plugin.addon(:head, ->(context){ context.stylesheet_link("style") })
+      Alula::Plugin.prepend_addon(:head, ->(context){ context.stylesheet_link("style") })
       
       # Generate javascript
       @storage.output(:cache, "assets/script.js") do |io|
