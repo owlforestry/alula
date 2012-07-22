@@ -94,7 +94,14 @@ module Alula
                 slug: "feed",
             template: "/:locale/:name",
           },
-          sitemap: {}
+          sitemap: {},
+          archive: {
+            template: "/:locale/:name/",
+            templates: [
+              "/:year/",
+              "/:year/:month/",
+            ],
+          },
         },
         filters: {
           smilies: nil,
@@ -105,9 +112,10 @@ module Alula
       assets: {
         production: {
           compress: true,
-          gzip: [ "js", "css", "xml", "html", "ttf", "svg", "eot" ],
+          gzip: true,
         },
       },
+      gzip_types: [ "js", "css", "xml", "html", "ttf", "svg", "eot" ],
       
       # Attachement Processors
       attachments: {
