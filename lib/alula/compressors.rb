@@ -49,7 +49,7 @@ module Alula
     class HTMLCompressor
       def initialize
         HtmlCompressor::Compressor.send(:include, HTMLCompressorExt)
-        @compressor = HtmlCompressor::Compressor.new#({
+        @compressor = HtmlCompressor::Compressor.new
         #   remove_surrounding_spaces: HtmlCompressor::Compressor::BLOCK_TAGS_MAX + ",source,title,meta,header,footer,div,section,article,time,img,video,script",
         #   remove_intertag_spaces: true,
         #   remove_quotes: true,
@@ -84,7 +84,7 @@ module Alula
         def profile
           @profile
         end
-        
+      
         def profile=(profile)
           @profile = profile
           case profile
@@ -110,8 +110,8 @@ module Alula
             @options[:remove_style_attributes] = true
             @options[:remove_link_attributes] = true
             @options[:simple_boolean_attributes] = true
-            @options[:remove_http_protocol] = true
-            @options[:remove_https_protocol] = true
+            @options[:remove_http_protocol] = "href,src,cite,action,data-original,data-hires"
+            @options[:remove_https_protocol] = "href,src,cite,action,data-original,data-hires"
           end
         end
       end
