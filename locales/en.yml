@@ -7,3 +7,5 @@ en:
   post:
     previous: Previous Post
     next: Next Post
+  archive:
+    title: Archive

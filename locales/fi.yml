@@ -7,4 +7,5 @@ fi:
   post:
     previous: Edellinen kirjoitus
     next: Seuraava kirjoitus
-    
+  archive:
+    title: Arkisto
