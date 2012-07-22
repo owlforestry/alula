@@ -241,9 +241,11 @@ module Alula
             when :languages
               # Get index page titles
               index_page = site.content.by_slug("index")
-              index_page.languages
-                .reject{|lang| lang == locale}
-                .collect{|lang| Hashie::Mash.new({url: index_page.url(lang), title: I18n.t('language_name', locale: lang)}) }
+              if index_page
+                index_page.languages
+                  .reject{|lang| lang == locale}
+                  .collect{|lang| Hashie::Mash.new({url: index_page.url(lang), title: I18n.t('language_name', locale: lang)}) }
+              end
             when Hash
               item
             else
@@ -261,9 +263,10 @@ module Alula
             @metadata.permalink(locale)
           else
             template = @metadata.template || (self.class.to_s == "Alula::Content::Page" ? @site.config.pagelinks : @site.config.permalinks)
-            self.substitutes(locale).inject(template) { |result, token|
-              result.gsub(/:#{Regexp.escape token.first}/, token.last)
-            }.gsub(/\/\//, '/')
+            substitude(template, locale)
+            # self.substitutes(locale).inject(template) { |result, token|
+            #   result.gsub(/:#{Regexp.escape token.first}/, token.last)
+            # }.gsub(/\/\//, '/')
           end
           # Add .html only if we don't have extension already
           if ::File.extname(url).empty?
@@ -329,9 +332,14 @@ module Alula
       end
       
       # Substitues for URL
+      def substitude(template, locale = nil)
+        self.substitutes(locale).inject(template) { |result, token|
+          result.gsub(/:#{Regexp.escape token.first}/, token.last)
+        }.gsub(/\/\//, '/')
+      end
+      
       def substitutes(locale = nil)
         locale ||=  self.current_locale || self.site.config.locale
-        
         @substitutes[locale] ||= begin
           subs = {
             "year"   => @metadata.date.strftime('%Y'),
