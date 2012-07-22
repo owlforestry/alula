@@ -185,7 +185,11 @@ module Alula
             
             # Write content to file
             @site.storage.output_public(self.path(locale)) do
-              self.site.compressors.html.compress(output)
+              if self.site.compressors.html.compresses?(self)
+                self.site.compressors.html.compress(self, output)
+              else
+                output
+              end
             end
           ensure
             self.current_locale = _old_locale

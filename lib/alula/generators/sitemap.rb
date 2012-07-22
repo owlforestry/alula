@@ -2,6 +2,10 @@ require 'builder' # For Tilt
 
 module Alula
   class Sitemap < Generator
+    def allow_compressing?
+      return :normal
+    end
+    
     def generate
       urls_callback = ->(context) {
         (context.site.content.posts + context.site.content.pages)

@@ -2,6 +2,10 @@ require 'builder'
 
 module Alula
   class FeedBuilder < Generator
+    def allow_compressing?
+      :normal
+    end
+    
     def generate
       # Loop all languages and count posts per language
       @languages = {}

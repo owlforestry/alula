@@ -34,6 +34,10 @@ module Alula
     def substitutes(locale, item)
       {}
     end
+    
+    def allow_compressing?
+      :high
+    end
   end
 end
 
