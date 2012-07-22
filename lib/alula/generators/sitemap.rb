@@ -1,7 +1,7 @@
 require 'builder' # For Tilt
 
 module Alula
-  class Generator::Sitemap < Generator
+  class Sitemap < Generator
     def generate
       urls_callback = ->(context) {
         (context.site.content.posts + context.site.content.pages)
@@ -31,3 +31,5 @@ module Alula
     end
   end
 end
+
+Alula::Generator.register :sitemap, Alula::Sitemap

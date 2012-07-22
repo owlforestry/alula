@@ -1,7 +1,7 @@
-require 'builder' # As suggested by tilt
+require 'builder'
 
 module Alula
-  class Generator::FeedBuilder < Generator
+  class FeedBuilder < Generator
     def generate
       # Loop all languages and count posts per language
       @languages = {}
@@ -52,3 +52,5 @@ module Alula
     end
   end
 end
+
+Alula::Generator.register :feedbuilder, Alula::FeedBuilder
