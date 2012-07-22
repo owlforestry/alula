@@ -441,7 +441,7 @@ module Alula
       
       say "==> Compressing content"
       Dir[File.join(@storage.path(:public), "**", "*")].each do |entry|
-        next unless config.assets.gzip.include?(File.extname(entry)[1..-1])
+        next unless config.gzip_types.include?(File.extname(entry)[1..-1])
         
         gz = Zlib::GzipWriter.open("#{entry}.gz", Zlib::BEST_COMPRESSION) do |gz|
           gz.write File.read(entry)
