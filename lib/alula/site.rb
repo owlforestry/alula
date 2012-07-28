@@ -80,6 +80,7 @@ module Alula
         
         title: @config.title,
         author: @config.author,
+        description: @config.description,
         tagline: @config.tagline,
         url: @config.url,
         

@@ -42,7 +42,9 @@ module Alula
       # Tagline of the blog
       tagline: "This has no tagline.",
       # The author, default
-      author: "John Doe",
+      author: "",
+      # The blog description
+      description: "",
       # The host where blog is available
       url: "http://localhost:3000",
       
