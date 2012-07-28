@@ -21,7 +21,7 @@ module Alula
         }.flatten
       }
       
-      self.site.content.pages << Alula::Content::Page.new({
+      @sitemap_page = Alula::Content::Page.new({
         generator: self,
         urls: urls_callback,
         title: "Sitemap",
@@ -31,6 +31,12 @@ module Alula
         template: self.options.template || "/:locale/:name",
         site: self.site,
         layout: "sitemap",
+      })
+      self.site.content.pages << @sitemap_page
+      
+      # Add link to head
+      Alula::Plugin.addon(:head, ->(context) {
+        "<link rel=\"sitemap\" type=\"application/xml\" title=\"Sitemap\" href=\"#{context.url_for(@sitemap_page.url(context.locale))}\">"
       })
     end
   end
