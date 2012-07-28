@@ -3,9 +3,9 @@
   %head
     %meta{charset: "UTF-8"}
     - if site.description != ""
-      %meta{description: site.description}
+      %meta{name: "description", content: site.description}
     - if site.author != ""
-      %meta{author: site.author}
+      %meta{name: "author", content: site.author}
     %title= (item.title ? "#{item.title} - " : "") + site.title
     
     %meta{name: "viewport", content: "width=device-width, initial-scale=1"}
