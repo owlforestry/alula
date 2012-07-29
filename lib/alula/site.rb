@@ -176,6 +176,7 @@ module Alula
     def banner
       puts ""
       puts "Alula #{Alula::VERSION}"
+      puts ""
     end
     
     def load_plugins
@@ -188,7 +189,6 @@ module Alula
       if @plugins
         puts "Plugins: " + @plugins.collect {|name, plugin| "#{name} #{plugin.version}"}.join(" ")
       end
-      puts ""
     end
     
     def load_filters
@@ -210,7 +210,8 @@ module Alula
       @context.send(:extend, Helpers)
       
       @theme = Alula::Theme.load(site: self)
-      puts "Theme: #{@theme.theme} #{@theme.version}"
+      puts "  Theme: #{@theme.theme} #{@theme.version}"
+      puts ""
       
       # Create our asset environment
       @environment = Environment.new
