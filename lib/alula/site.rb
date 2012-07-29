@@ -200,7 +200,7 @@ module Alula
     end
     
     def prepare(preserve = false)
-      say "==> Preparing environment" + (preserve ? " (preserving existing files)" : "")
+      # say "==> Preparing environment" + (preserve ? " (preserving existing files)" : "")
       
       # Delegate preparations to storage module
       self.storage.prepare(preserve)
@@ -210,6 +210,7 @@ module Alula
       @context.send(:extend, Helpers)
       
       @theme = Alula::Theme.load(site: self)
+      puts "Theme: #{@theme.theme} #{@theme.version}"
       
       # Create our asset environment
       @environment = Environment.new

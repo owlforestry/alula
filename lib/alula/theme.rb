@@ -2,15 +2,19 @@ require 'alula/theme/layout'
 
 module Alula
   class Theme
+    attr_reader :version
     attr_reader :site
     attr_reader :theme
     attr_reader :path
     attr_reader :layouts
     attr_reader :context
     
-    def self.register(theme, path)
+    def self.register(theme, path, version)
       @@themes ||= {}
       @@themes[theme.to_s] = ::File.join(path, theme.to_s)
+      
+      @@theme_versions ||= {}
+      @@theme_versions[theme.to_s] = version
     end
     
     def self.load(opts)
@@ -32,6 +36,8 @@ module Alula
       
       @layouts = {}
       @views = {}
+      
+      @version = @@theme_versions[theme]
     end
     
     def searchpath(type, name)
