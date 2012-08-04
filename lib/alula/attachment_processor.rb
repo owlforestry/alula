@@ -22,11 +22,13 @@ module Alula
       @@lock.synchronize do      
         md5 = Digest::MD5.hexdigest(name)
         asset_hash = md5[0..3]
-        until !mapping.key(asset_hash) or mapping.key(asset_hash) == name
-          asset_hash = md5[0..(asset_hash.length + 1)]
+        asset_name = File.join(path + [asset_hash]) + File.extname(name)
+        until !mapping.key(asset_name) or mapping.key(asset_name) == name
+          asset_hash = md5[0..(asset_hash.length)]
+          asset_name = File.join(path + [asset_hash]) + File.extname(name)
         end
       
-        mapping[name] = File.join(path + [asset_hash]) + File.extname(name)
+        mapping[name] = asset_name
       end
       
       mapping[name]
