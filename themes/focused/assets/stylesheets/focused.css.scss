@@ -1,0 +1,66 @@
+/*
+ *=require reset
+ *=require 1140
+ *=require lato
+ *=require_self
+ *=require smilies
+ */
+
+body {
+  padding:50px;
+  font:14px/1.5 LatoRegular, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color:#777;
+  font-weight:300;
+}
+
+.title {
+	font-size: 28px;
+	line-height: 1.1;
+	color: #222;
+	margin: 0 0 20px;
+	clear: both;
+	
+	small {
+		font-size: 20px;
+	}
+}
+
+a {
+  color:#333;
+  font-weight:400;
+  text-decoration:none;
+}
+
+p.navigation {
+	clear: both;
+	a.left { float: left; }
+	a.right { float: right; }
+	font-size: 14px;
+}
+
+.paginate {
+	.item {
+		padding: 5px;
+		background: #fff;
+
+		.content {
+			.img {
+				margin: auto;
+			}
+		}
+		
+		.meta {
+			position: absolute;
+			top: 10px;
+			left: 10px;
+			z-index: 1;
+			padding: 5px;
+			background: rgba(255, 255, 255, 0.85);
+			text-decoration: center;
+			a {
+				text-decoration: none;
+				color: #333;
+			}
+		}
+	}
+}
