@@ -53,7 +53,7 @@ module Alula
       hides_base_locale: true, # Hide default locale
       
       # Default theme
-      theme: 'minimal',
+      theme: {'minimal' => {}},
       
       # Template for generating post permalinks
       permalinks: '/:locale/:year/:month/:title/',

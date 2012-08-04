@@ -2,6 +2,19 @@ require 'alula/theme/layout'
 
 module Alula
   class Theme
+    def self.register(name, klass); themes[name.to_s] = klass; end
+    def self.themes; @@themes ||= {}; end
+    def themes; self.class.themes; end
+    
+    def self.load(name, options)
+      if themes[name] and !(!!options == options and !options)
+        theme = themes[name]
+        return theme.new(options) if theme.install(options)
+      end
+    end
+    
+    def self.install(options); true; end
+    
     attr_reader :version
     attr_reader :site
     attr_reader :theme
@@ -9,35 +22,39 @@ module Alula
     attr_reader :layouts
     attr_reader :context
     
-    def self.register(theme, path, version)
-      @@themes ||= {}
-      @@themes[theme.to_s] = ::File.join(path, theme.to_s)
-      
-      @@theme_versions ||= {}
-      @@theme_versions[theme.to_s] = version
-    end
+    # def self.register(theme, path, version)
+    #   @@themes ||= {}
+    #   @@themes[theme.to_s] = ::File.join(path, theme.to_s)
+    #   
+    #   @@theme_versions ||= {}
+    #   @@theme_versions[theme.to_s] = version
+    # end
     
-    def self.load(opts)
-      return nil unless self.class_variable_defined?(:@@themes)
-      site = opts[:site]
-      
-      theme_name = site.config.theme
-      return self.new(theme_name, opts) if @@themes.has_key?(theme_name)
-
-      return nil
-    end
-    
-    def initialize(theme, opts)
-      @site = opts.delete(:site)
-      @theme = theme
-      @path = @@themes[theme]
+    # def self.load(opts)
+    #   return nil unless self.class_variable_defined?(:@@themes)
+    #   site = opts[:site]
+    #   
+    #   theme_name = site.config.theme
+    #   return self.new(theme_name, opts) if @@themes.has_key?(theme_name)
+    # 
+    #   return nil
+    # end
+    # 
+    def initialize(opts)
+      @site = Site.instance
+      # @theme = theme
+      # @path = @@themes[theme]
       
       @context = @site.context
       
       @layouts = {}
       @views = {}
       
-      @version = @@theme_versions[theme]
+      # @version = @@theme_versions[theme]
+    end
+    
+    def name
+      themes.key(self.class)
     end
     
     def searchpath(type, name)

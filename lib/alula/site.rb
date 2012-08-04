@@ -209,8 +209,10 @@ module Alula
       @context = Alula::Context.new(site: self, storage: self.storage)
       @context.send(:extend, Helpers)
       
-      @theme = Alula::Theme.load(site: self)
-      puts "  Theme: #{@theme.theme} #{@theme.version}"
+      # @theme = Alula::Theme.load(config.theme, site: self)
+      @theme = Alula::Theme.load(config.theme.to_a.last[0], config.theme.to_a.last[1])
+      
+      puts "  Theme: #{@theme.name} #{@theme.version}"
       puts ""
       
       # Create our asset environment
@@ -280,7 +282,8 @@ module Alula
       
       @@lock = Mutex.new
       
-      Parallel.map(self.content.attachments, :in_threads => Parallel.processor_count) do |attachment|
+      # Parallel.map(self.content.attachments, :in_threads => Parallel.processor_count) do |attachment|
+      self.content.attachments.each do |attachment|
         if processor = attachments.get(attachment)
           processor.process
         end
@@ -304,7 +307,7 @@ module Alula
         io.puts "/*"
         
         # Theme style
-        io.puts " *= require #{self.config.theme}"
+        io.puts " *= require #{@theme.name}"
         
         # Plugins
         @plugins.each do |name, plugin|
@@ -329,7 +332,7 @@ module Alula
         io.puts "/*"
 
         # Theme scripts
-        io.puts " *= require #{self.config.theme}"
+        io.puts " *= require #{@theme.name}"
 
         # Plugins
         @plugins.each do |name, plugin|
