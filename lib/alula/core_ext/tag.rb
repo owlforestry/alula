@@ -26,8 +26,8 @@ module Alula
       @options = {}
       
       # Parse tag options
-      if m = /^([\"'][\S\. ]+[\"']|[\S\.]+)(.*)$/.match(@markup)
-        @source = m[1].gsub(/^['"]?([^'"]+)['"]?$/, '\1')
+      if m = /^([\"][\S\. ]+[\"]|[\S\.]+)(.*)$/.match(@markup)
+        @source = m[1].gsub(/^["]?([^"]+)["]?$/, '\1')
         @source = "" if @source == '""'
         @options["source"] = @source unless @source.empty?
 
