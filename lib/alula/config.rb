@@ -122,11 +122,12 @@ module Alula
       # Attachement Processors
       attachments: {
         "image" => {
-          "size"      => "800x600",
-          "thumbnail" => "300x300",
-          "keep_tags" => ["CopyrightNotice", "Title", "DateTimeOriginal"],
-          "hires"     => true,
-          "lazyload"  => true,
+          "size"           => "800x600",
+          "thumbnail"      => "300x300",
+          "thumbnail_mode" => :square,
+          "keep_tags"      => ["CopyrightNotice", "Title", "DateTimeOriginal"],
+          "hires"          => true,
+          "lazyload"       => true,
         },
         "video" => {
           "size-hd"        => "1280x720",

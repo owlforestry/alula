@@ -9,11 +9,16 @@ module Alula
     mimetype "image/jpeg", "image/png", "image/gif"
     
     def resize_image(opts)
-      output = opts.delete(:output)
-      width, height = opts.delete(:size)
+      output = opts[:output]
+      width, height = opts[:size]
       
       # Generate resized image
-      resized = self.image.resize_to_fit(width, height)
+      resized = case self.site.config.attachments.image.thumbnail_mode
+      when :square
+        self.image.resize_to_fill(width, height)
+      else
+        self.image.resize_to_fit(width, height)
+      end
       # Make it progressive
       resized.interlace = ::Magick::PlaneInterlace
       
