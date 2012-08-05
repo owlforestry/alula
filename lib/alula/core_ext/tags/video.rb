@@ -1,3 +1,5 @@
+require 'alula/core_ext/tag'
+
 module Alula
   class VideoTag < Tag
     def prepare
