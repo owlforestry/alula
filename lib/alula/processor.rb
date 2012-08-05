@@ -69,7 +69,7 @@ module Alula
     
     def info
       @info ||= begin
-        info = Dimensions.dimensions(self.item.filepath)
+        # info = Dimensions.dimensions(self.item.filepath)
         info ||= begin
           _info = MiniExiftool.new self.item.filepath
           [_info.imagewidth, _info.imageheight, _info.rotation]
