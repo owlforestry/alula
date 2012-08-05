@@ -1,6 +1,7 @@
 require 'sass'
 require 'uglifier'
 require 'htmlcompressor'
+require 'alula/core_ext/htmlcompressor'
 
 module Alula
   class Compressors
@@ -48,7 +49,7 @@ module Alula
     
     class HTMLCompressor
       def initialize
-        HtmlCompressor::Compressor.send(:include, HTMLCompressorExt)
+        # HtmlCompressor::Compressor.send(:include, HTMLCompressorExt)
         @compressor = HtmlCompressor::Compressor.new
         #   remove_surrounding_spaces: HtmlCompressor::Compressor::BLOCK_TAGS_MAX + ",source,title,meta,header,footer,div,section,article,time,img,video,script",
         #   remove_intertag_spaces: true,
@@ -78,42 +79,6 @@ module Alula
         @compressor.compress(content)
       ensure
         @compressor.profile = _old_profile
-      end
-      
-      module HTMLCompressorExt
-        def profile
-          @profile
-        end
-      
-        def profile=(profile)
-          @profile = profile
-          case profile
-          when :none
-            @options[:enabled] = false
-          when :normal
-            @options[:enabled] = true
-            @options[:remove_surrounding_spaces] = HtmlCompressor::Compressor::BLOCK_TAGS_MAX + ",source,title,meta,header,footer,div,section,article,time,img,video,script"
-            @options[:remove_intertag_spaces] = true
-            @options[:remove_quotes] = false
-            @options[:remove_script_attributes] = true
-            @options[:remove_style_attributes] = true
-            @options[:remove_link_attributes] = true
-            @options[:simple_boolean_attributes] = true
-            @options[:remove_http_protocol] = false
-            @options[:remove_https_protocol] = false
-          when :high
-            @options[:enabled] = true
-            @options[:remove_surrounding_spaces] = HtmlCompressor::Compressor::BLOCK_TAGS_MAX + ",source,title,meta,header,footer,div,section,article,time,img,video,script"
-            @options[:remove_intertag_spaces] = true
-            @options[:remove_quotes] = true
-            @options[:remove_script_attributes] = true
-            @options[:remove_style_attributes] = true
-            @options[:remove_link_attributes] = true
-            @options[:simple_boolean_attributes] = true
-            @options[:remove_http_protocol] = "href,src,cite,action,data-original,data-hires"
-            @options[:remove_https_protocol] = "href,src,cite,action,data-original,data-hires"
-          end
-        end
       end
     end
   end
