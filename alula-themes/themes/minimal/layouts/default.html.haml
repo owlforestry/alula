@@ -1,0 +1,39 @@
+!!!
+%html{lang: locale}
+  %head
+    %meta{charset: "UTF-8"}
+    - if site.description != ""
+      %meta{name: "description", content: site.description}
+    - if site.author != ""
+      %meta{name: "author", content: site.author}
+    %title= (item.title ? "#{item.title} - " : "") + site.title
+    
+    %meta{name: "viewport", content: "width=device-width, initial-scale=1"}
+    /[if lt IE 9]
+      = javascript_link "html5shiv"
+    = addons :head
+    
+  %body{class: [item.id, "lang-#{locale}"]}
+    %div.wrapper
+      %header
+        .title= link_to site.title, site.url
+        %p= site.tagline
+        
+        .below_fold
+          .sidebar
+            - item.sidebar.each do |item|
+              %p= link_to item.title, url_for(item.url)
+        
+      %section
+        = yield
+      
+      %footer
+        %p
+          Blog by
+          = site.author
+        %p
+          %small
+            = addons :footer
+            Powered by #{link_to "Alula", "http://www.alula.in"} &mdash;
+            Theme by #{link_to "orderedlist", "https://github.com/orderedlist/minimal"}
+    = addons :body
