@@ -16,7 +16,7 @@ require 'alula/progress'
 require 'thor'
 require 'sprockets'
 require 'i18n'
-require 'parallel'
+# require 'parallel'
 require 'hashie/mash'
 require 'json'
 

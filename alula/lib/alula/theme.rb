@@ -22,24 +22,6 @@ module Alula
     attr_reader :layouts
     attr_reader :context
     
-    # def self.register(theme, path, version)
-    #   @@themes ||= {}
-    #   @@themes[theme.to_s] = ::File.join(path, theme.to_s)
-    #   
-    #   @@theme_versions ||= {}
-    #   @@theme_versions[theme.to_s] = version
-    # end
-    
-    # def self.load(opts)
-    #   return nil unless self.class_variable_defined?(:@@themes)
-    #   site = opts[:site]
-    #   
-    #   theme_name = site.config.theme
-    #   return self.new(theme_name, opts) if @@themes.has_key?(theme_name)
-    # 
-    #   return nil
-    # end
-    # 
     def initialize(opts)
       @site = Site.instance
       # @theme = theme
