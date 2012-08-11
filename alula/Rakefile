@@ -2,10 +2,6 @@
 require "bundler/setup"
 require "bundler/gem_tasks"
 
-# Versioning
-require 'rake/version_task'
-Rake::VersionTask.new
-
 # Tests
 require "rake/testtask"
 
