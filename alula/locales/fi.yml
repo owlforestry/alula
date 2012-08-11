@@ -8,4 +8,6 @@ fi:
     previous: Edellinen kirjoitus
     next: Seuraava kirjoitus
   archive:
-    title: Arkisto
+    title:
+      year: Arkisto %{year}
+      year-month: Arkisto %{year} %{monthname}
