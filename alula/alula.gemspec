@@ -1,48 +1,48 @@
-# -*- encoding: utf-8 -*-
-require File.expand_path('../lib/alula/version', __FILE__)
+version = File.read(File.expand_path("../../VERSION", __FILE__)).strip
 
-Gem::Specification.new do |gem|
-  gem.authors       = ["Mikko Kokkonen"]
-  gem.email         = ["mikko@owlforestry.com"]
-  gem.description   = %q{Alula is a simple tool for creating fast, static blogs easily.}
-  gem.summary       = %q{Alula is a collection of useful tools that makes generating Jekyll blog as
-     easy as typing couple commands. Alula takes care of optimizing, handling all assets for you.}
-  gem.homepage      = "http://owlforestry.github.com/alula"
-
-  gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
-  gem.files         = `git ls-files`.split("\n")
-  gem.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
-  gem.name          = "alula"
-  gem.require_paths = ["lib"]
-  gem.version       = Alula::VERSION
+Gem::Specification.new do |s|
+  s.platform    = Gem::Platform::RUBY
+  s.name        = 'alula'
+  s.version     = version
+  s.summary     = 'Alula is simple, static blog generator.'
+  s.description = 'Alula creates higly optimised static blogs while taking all the complexity and repeated tasks away from you.'
+  s.required_ruby_version = '>= 1.9.3'
+  s.license     = 'MIT'
   
-  gem.add_dependency 'parallel'
-  gem.add_dependency 'hashie', '~> 1.2'
-  gem.add_dependency 'thin'
-  gem.add_dependency 'tilt'
-  gem.add_dependency 'liquid'
-  gem.add_dependency 'builder'
-  gem.add_dependency 'kramdown'
-  gem.add_dependency 'sprockets', '~> 2.4'
-  gem.add_dependency 'thor', '~> 0.14'
-  gem.add_dependency 'i18n'
-  gem.add_dependency 'rmagick', '~> 2.13'
-  gem.add_dependency 'sass', '~> 3.1'
-  gem.add_dependency 'coffee-script', '~> 2.2'
-  gem.add_dependency 'uglifier', '~> 1.2'
-  gem.add_dependency 'htmlcompressor'
-  gem.add_dependency 'stringex', '~> 1.3'
-  gem.add_dependency 'powerbar'
-  gem.add_dependency 'mimemagic'
-  gem.add_dependency 'aws-sdk'
-  gem.add_dependency 'zencoder'
-  gem.add_dependency 'mini_exiftool', '~> 1.3'
-  gem.add_dependency 'dimensions'
-  gem.add_dependency 'htmlentities'
+  s.author    = "Mikko Kokkonen"
+  s.email     = "mikko@owlforestry.com"
+  s.homepage  = "http://www.alula.in"
 
-  gem.add_development_dependency 'version', '~> 1.0'
-  gem.add_development_dependency 'minitest'
-  gem.add_development_dependency 'turn'
-  gem.add_development_dependency 'simplecov'
+  s.executables   = Dir["bin/*"].map{ |f| File.basename(f) }
+  s.files         = Dir['CHANGELOG.md', 'README.ms', 'MIT-LICENSE', 'lib/**/*']
+  s.require_path  = "lib"
+  s.requirements << 'none'
   
+  # s.add_dependency 'parallel'
+  s.add_dependency 'hashie', '~> 1.2'
+  s.add_dependency 'thin', '~> 1.4'
+  s.add_dependency 'tilt', '~> 1.3'
+  s.add_dependency 'liquid', '~> 2.4'
+  s.add_dependency 'builder', '~> 3.0'
+  s.add_dependency 'kramdown', '~> 0.13'
+  s.add_dependency 'sprockets', '~> 2.4'
+  s.add_dependency 'thor', '~> 0.14'
+  s.add_dependency 'i18n', '~> 0.6'
+  s.add_dependency 'rmagick', '~> 2.13'
+  s.add_dependency 'sass', '~> 3.1'
+  s.add_dependency 'coffee-script', '~> 2.2'
+  s.add_dependency 'uglifier', '~> 1.2'
+  s.add_dependency 'htmlcompressor', '~> 0.0.3'
+  s.add_dependency 'stringex', '~> 1.3'
+  s.add_dependency 'powerbar', '~> 1.0'
+  s.add_dependency 'mimemagic', '~> 0.1'
+  s.add_dependency 'aws-sdk', '~> 1.6'
+  s.add_dependency 'zencoder', '~> 2.4'
+  s.add_dependency 'mini_exiftool', '~> 1.3'
+  # s.add_dependency 'dimensions', '~> '
+  s.add_dependency 'htmlentities', '~> 4.3'
+
+  s.add_development_dependency 'minitest', '~> 3.3'
+  s.add_development_dependency 'turn', '~> 0.9'
+  s.add_development_dependency 'simplecov', '~> 0.6'
 end

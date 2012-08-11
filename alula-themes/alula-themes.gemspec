@@ -1,22 +1,26 @@
-# -*- encoding: utf-8 -*-
-require File.expand_path('../lib/alula/themes/version', __FILE__)
 
-Gem::Specification.new do |gem|
-  gem.authors       = ["Mikko Kokkonen"]
-  gem.email         = ["mikko@owlforestry.com"]
-  gem.description   = %q{Beatiful themes for Alula}
-  gem.summary       = %q{Ready to use themes for Alula blogs.}
-  gem.homepage      = "http://owlforestry.github.com/alula-themes"
+version = File.read(File.expand_path("../../VERSION", __FILE__)).strip
 
-  gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
-  gem.files         = `git ls-files`.split("\n")
-  gem.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
-  gem.name          = "alula-themes"
-  gem.require_paths = ["lib"]
-  gem.version       = Alula::Themes::VERSION
+Gem::Specification.new do |s|
+  s.platform    = Gem::Platform::RUBY
+  s.name        = 'alula-themes'
+  s.version     = version
+  s.summary     = 'Basic themes for Alula blogs (part of Alula).'
+  s.description = 'Offers default theme as well some basic themes for Alula blogs.'
+  s.required_ruby_version = '>= 1.9.3'
+  s.license     = 'MIT'
   
-  gem.add_dependency 'alula', '~> 0.4.8'
-  gem.add_dependency 'haml'
+  s.author    = "Mikko Kokkonen"
+  s.email     = "mikko@owlforestry.com"
+  s.homepage  = "http://www.alula.in"
+
+  # s.executables   = Dir["bin/*"].map{ |f| File.basename(f) }
+  s.files         = Dir['CHANGELOG.md', 'README.ms', 'MIT-LICENSE', 'lib/**/*']
+  s.require_path  = "lib"
+  s.requirements << 'none'
   
-  gem.add_development_dependency 'version', '~> 1.0'
+  s.add_dependency 'alula', version
+  
+  s.add_dependency 'alula', version
+  s.add_dependency 'haml', '~> 3.1'
 end

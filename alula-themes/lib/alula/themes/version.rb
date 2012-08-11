@@ -1,5 +1,12 @@
 module Alula
-  class Themes
-    VERSION = File.read(File.join(File.dirname(__FILE__), %w{.. .. .. VERSION})).strip
+  module Themes
+    module VERSION
+      MAJOR = 0
+      MINOR = 0
+      PATCH = 1
+      PRE   = nil
+
+      STRING = [MAJOR, MINOR, PATCH, PRE].compact.join('.')
+    end
   end
 end
