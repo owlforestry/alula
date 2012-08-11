@@ -1,3 +1,4 @@
+require 'alula/version'
 require 'alula/core_ext'
 
 require 'alula/config'
@@ -128,7 +129,7 @@ module Alula
       I18n.default_locale = @config.locale
       
       # Set up default head addons
-      Alula::Plugin.addon(:head, "<meta name=\"generator\" content=\"Alula #{Alula::VERSION}\">")
+      Alula::Plugin.addon(:head, "<meta name=\"generator\" content=\"Alula #{Alula::VERSION::STRING}\">")
       Alula::Plugin.addon(:head, ->(context){"<link rel=\"icon\" type=\"image/png\" href=\"#{context.asset_url('favicon.png')}\">"})
       
     end
@@ -181,7 +182,7 @@ module Alula
     private
     def banner
       puts ""
-      puts "Alula #{Alula::VERSION}"
+      puts "Alula #{Alula::VERSION::STRING}"
       puts ""
     end
     

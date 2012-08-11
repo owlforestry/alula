@@ -7,7 +7,7 @@ module Alula
     end
     
     def self.version
-      Alula::Plugins::VERSION
+      Alula::Plugins::VERSION::STRING
     end
     
     def self.install(options)

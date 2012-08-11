@@ -5,7 +5,7 @@ module Alula
     end
     
     def version
-      Alula::Themes::VERSION
+      Alula::Themes::VERSION::STRING
     end
   end
 end
