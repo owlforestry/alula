@@ -1,3 +1,0 @@
-# Preparing for 0.4.12 release
-
-# UNCOMMENT THE LINE ABOVE TO APPROVE THIS COMMIT
