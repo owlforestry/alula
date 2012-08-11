@@ -73,7 +73,7 @@ namespace :all do
   end
 
   task :tag do
-    sh "git tag #{tag}"
+    sh "git tag -f #{tag}"
     sh "git push --tags"
   end
 
