@@ -41,7 +41,7 @@ PROJECTS.each do |project|
     end
     
     task :push => :build do
-      puts "Release."
+      system "gem push #{gem}"
     end
   end
 end
