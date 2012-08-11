@@ -29,7 +29,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'thor', '~> 0.14'
   s.add_dependency 'i18n', '~> 0.6'
   s.add_dependency 'rmagick', '~> 2.13'
-  s.add_dependency 'sass', '~> 3.1'
+  s.add_dependency 'sass', '~> 3.2'
   s.add_dependency 'coffee-script', '~> 2.2'
   s.add_dependency 'uglifier', '~> 1.2'
   s.add_dependency 'htmlcompressor', '~> 0.0.3'
@@ -39,7 +39,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'aws-sdk', '~> 1.6'
   s.add_dependency 'zencoder', '~> 2.4'
   s.add_dependency 'mini_exiftool', '~> 1.3'
-  # s.add_dependency 'dimensions', '~> '
+  s.add_dependency 'dimensions', '~> 1.2'
   s.add_dependency 'htmlentities', '~> 4.3'
 
   s.add_development_dependency 'minitest', '~> 3.3'
