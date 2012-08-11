@@ -3,5 +3,7 @@ require "tasks/release"
 
 # Versioning
 require 'rake/version_task'
-Rake::VersionTask.new
+Rake::VersionTask.new do |task|
+  task.with_git_tag = false
+end
 
