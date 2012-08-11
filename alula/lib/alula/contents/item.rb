@@ -346,13 +346,17 @@ module Alula
         locale ||=  self.current_locale || self.site.config.locale
         @substitutes[locale] ||= begin
           subs = {
-            "year"   => @metadata.date.strftime('%Y'),
-            "month"  => @metadata.date.strftime('%m'),
-            "day"    => @metadata.date.strftime('%d'),
-            "locale" => (@site.config.locale == locale && @site.config.hides_base_locale ? "" : locale),
-            "name"   => CGI.escape(name).gsub('%2F', '/'),
-            "slug"   => CGI.escape(@metadata.slug(locale)).gsub('%2F', '/'),
-            "title"  => @metadata.title(locale).to_url,
+            "year"        => @metadata.date.strftime('%Y'),
+            "month"       => @metadata.date.strftime('%m'),
+            "monthname"   => @metadata.date.strftime('%B'),
+            "monthabbr"   => @metadata.date.strftime('%b'),
+            "day"         => @metadata.date.strftime('%d'),
+            "weekday"     => @metadata.date.strftime('%A'),
+            "weekdayabbr" => @metadata.date.strftime('%a'),
+            "locale"      => (@site.config.locale == locale && @site.config.hides_base_locale ? "" : locale),
+            "name"        => CGI.escape(name).gsub('%2F', '/'),
+            "slug"        => CGI.escape(@metadata.slug(locale)).gsub('%2F', '/'),
+            "title"       => @metadata.title(locale).to_url,
           }
           if self.metadata.generator
             subs.merge!(self.metadata.generator.substitutes(locale, self))

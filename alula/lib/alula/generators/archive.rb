@@ -17,8 +17,11 @@ module Alula
         options.templates.collect do |template|
           posts.collect do |post|
             archives[post.substitude(template, lang)] ||= {}
-            archives[post.substitude(template, lang)][lang] ||= []
-            archives[post.substitude(template, lang)][lang] << post
+            key = "archive.title." + template.scan(/:(\w+)*/).flatten.join('-')
+            archives[post.substitude(template, lang)][:title] ||= I18n.t(key, Hash[post.substitutes(lang).map{|k,v|[k.to_sym,v]}].merge(locale: lang))
+            archives[post.substitude(template, lang)][:content] ||= {}
+            archives[post.substitude(template, lang)][:content][lang] ||= []
+            archives[post.substitude(template, lang)][:content][lang] << post
           end
         end
       end
@@ -26,8 +29,8 @@ module Alula
       archives.each do |name, archive|
         self.site.content.pages << Alula::Content::Page.new({
           generator: self,
-          posts: archive,
-          title: titles.select {|lang, title| archive.keys.include?(lang)},
+          posts: archive[:content],
+          title: archive[:title],#titles.select {|lang, title| archive.keys.include?(lang)},
           name: name,
           slug: name,
           sidebar: false,
