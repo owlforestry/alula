@@ -62,14 +62,16 @@ namespace :all do
   end
   
   task :commit do
-    File.open('pkgs/commit_message.txt', 'w') do |f|
-      f.puts "# Preparing for #{version} release\n"
-      f.puts
-      f.puts "# UNCOMMENT THE LINE ABOVE TO APPROVE THIS COMMIT"
-    end
+    unless `git status -s | grep -v VERSION`.strip.empty?
+      File.open('pkgs/commit_message.txt', 'w') do |f|
+        f.puts "# Preparing for #{version} release\n"
+        f.puts
+        f.puts "# UNCOMMENT THE LINE ABOVE TO APPROVE THIS COMMIT"
+      end
 
-    sh "git add . && git commit --verbose --template=pkgs/commit_message.txt"
-    rm_f "pkgs/commit_message.txt"
+      sh "git add . && git commit --verbose --template=pkgs/commit_message.txt"
+      rm_f "pkgs/commit_message.txt"
+    end
   end
 
   task :tag do
