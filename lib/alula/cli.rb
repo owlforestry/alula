@@ -28,7 +28,7 @@ module Alula
     
     desc "version", "Displays current version information about loaded components"
     def version
-      Alula::Version.print
+      puts "Alula #{Alula::VERSION}"
     end
     
     desc "new [PATH]", "Creates a new empty blog"
