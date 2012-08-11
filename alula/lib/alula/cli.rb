@@ -75,6 +75,15 @@ module Alula
       site.generate
     end
     
+    desc "deploy", "Deploys a blog"
+    generate_options
+    def deploy(*args)
+      unless args.empty?
+        args.each {|a| puts "Unknown option #{a} given."}; exit
+      end
+      site.deploy
+    end
+    
     desc "preview", "Preview blog"
     generate_options
     option "skip-generate", :type => :boolean, :default => false, :aliases => "-s",

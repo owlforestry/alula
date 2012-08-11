@@ -161,6 +161,12 @@ module Alula
       @config.write_cache(cached_config)
     end
     
+    def deploy
+      banner
+      
+      
+    end
+    
     # Proxy to metadata
     def method_missing(meth, *args, &blk)
       # Proxy to metadata

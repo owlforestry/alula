@@ -83,6 +83,9 @@ module Alula
       # Plugins
       plugins: {},
       
+      # Deployment options
+      deployment: { "package" => {}},
+      
       # Blog Content options
       content: {
         generators: {
