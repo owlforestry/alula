@@ -48,7 +48,7 @@ end
 
 namespace :all do
   task :build => PROJECTS.map { |p| "#{p}:build" }
-  task :instal => PROJECTS.map { |p| "#{p}:install" }
+  task :install => PROJECTS.map { |p| "#{p}:install" }
   task :push => PROJECTS.map { |p| "#{p}:push" }
   
   task :ensure_clean_state do
