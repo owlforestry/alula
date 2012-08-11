@@ -2,3 +2,9 @@
 
 - item.posts(locale).each do |post|
   %h2{itemprop:"headline"}= link_to post.title, post.url
+
+%p.navigation
+  - if item.previous
+    %a{class: "left", title: I18n.t('paginate.older_posts', locale: locale), href: item.previous.url} &laquo; #{I18n.t('paginate.older_posts', locale: locale)}
+  - if item.next
+    %a{class: "right", title: I18n.t('paginate.newer_posts', locale: locale), href: item.next.url} #{I18n.t('paginate.newer_posts', locale: locale)} &raquo;

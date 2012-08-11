@@ -147,11 +147,6 @@ module Alula
           _old_locale = self.current_locale
           self.current_locale = locale
           
-          # Flush if we have generator
-          # if @hooks[:render]
-          #   instance_exec(locale, &@hooks[:render])
-          # end
-          
           # Make sure our content is parsed
           parse_liquid(locale)
           parse_markdown(locale)
@@ -268,9 +263,6 @@ module Alula
           else
             template = @metadata.template || (self.class.to_s == "Alula::Content::Page" ? @site.config.pagelinks : @site.config.permalinks)
             substitude(template, locale)
-            # self.substitutes(locale).inject(template) { |result, token|
-            #   result.gsub(/:#{Regexp.escape token.first}/, token.last)
-            # }.gsub(/\/\//, '/')
           end
           # Add .html only if we don't have extension already
           if ::File.extname(url).empty?
@@ -335,11 +327,12 @@ module Alula
         end
       end
       
-      # Substitues for URL
+      # Substitudes for URL
       def substitude(template, locale = nil)
-        self.substitutes(locale).inject(template) { |result, token|
+        s = self.substitutes(locale).inject(template) { |result, token|
           result.gsub(/:#{Regexp.escape token.first}/, token.last)
-        }.gsub(/\/\//, '/')
+        }
+        s.gsub(/\/{2,}/, '/')
       end
       
       def substitutes(locale = nil)
@@ -367,19 +360,11 @@ module Alula
       
       private
       def _last_modified
-        # if @hooks[:last_modified]
-        #   return instance_exec(locale, &@hooks[:next])
-        # end
-        # 
         return unless self.class.to_s[/Page|Post/]
+
         mtime = nil
         unless @item.nil?
           mtime = @item.mtime
-          # if self.site.git
-          #   rev = %x{git rev-list -n 1 HEAD #{Shellwords.escape(@item.filepath)}}.strip
-          #   time = %x{git show --pretty=format:%ai --abbrev-commit #{rev}|head -1}.strip
-          #   mtime = Time.parse(time) rescue nil
-          # end
         end
         mtime
       end
