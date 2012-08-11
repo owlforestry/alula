@@ -10,10 +10,11 @@ PROJECTS.each do |project|
     
     task :update_version_rb do
       file = "#{project}/lib/#{project.gsub('-', '/')}/version.rb"
+      puts "==> #{file}"
       ruby = File.read(file)
       
       major, minor, patch = version.split('.')
-      pre = pre ? pre.inspect : nil
+      pre = pre ? pre.inspect : "nil"
       
       ruby.gsub!(/^(\s*)MAJOR = .*?$/, "\\1MAJOR = #{major}")
       raise "Could not insert MAJOR in #{file}" unless $1
@@ -26,6 +27,8 @@ PROJECTS.each do |project|
 
       ruby.gsub!(/^(\s*)PRE   = .*?$/, "\\1PRE   = #{pre}")
       raise "Could not insert PRE in #{file}" unless $1
+      
+      File.open(file, 'w') { |f| f.write ruby }
     end
     
     task gem => :update_version_rb do
@@ -50,6 +53,7 @@ namespace :all do
   task :build => PROJECTS.map { |p| "#{p}:build" }
   task :install => PROJECTS.map { |p| "#{p}:install" }
   task :push => PROJECTS.map { |p| "#{p}:push" }
+  task :update_version => PROJECTS.map { |p| "#{p}:update_version_rb" }
   
   task :ensure_clean_state do
     unless `git status -s | grep -v VERSION`.strip.empty?
