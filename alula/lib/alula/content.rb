@@ -4,6 +4,9 @@ require 'alula/contents/attachment'
 
 module Alula
   class Content
+    attr_reader :site
+    attr_reader :config
+    
     attr_reader :pages
     attr_reader :posts
     attr_reader :attachments
@@ -11,6 +14,7 @@ module Alula
     
     def initialize(opts = {})
       @site = opts.delete(:site)
+      @config = @site.config
       
       @pages = []
       @posts = []
@@ -25,6 +29,10 @@ module Alula
       
       # Generate our dynamic content (pages, categories, archives, etc. etc.)
       generate_content
+      
+      # Write slugs to config
+      self.config.slugs = (@posts + @pages).collect{|c| c.metadata.slug}
+      self.config.slugs.count
     end
     
     def method_missing(meth, *args, &blk)
