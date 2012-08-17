@@ -3,5 +3,5 @@
 
 jQuery ->
 	# jQuery('.paginate .item').wookmark()
-	jQuery('.paginate').masonry
+	jQuery('.posts').masonry
 		itemSelector: '.item'
