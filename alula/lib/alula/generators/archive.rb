@@ -2,13 +2,14 @@ module Alula
   class Archive < Generator
     def generate
       # Loop all languages and count posts per language
-      @languages = {}
-      self.site.content.posts.each do |post|
-        post.languages.each do |lang|
-          @languages[lang] ||= []
-          @languages[lang] << post
-        end
-      end
+      @languages = fetch_languages
+      # @languages = {}
+      # self.site.content.posts.each do |post|
+      #   post.languages.each do |lang|
+      #     @languages[lang] ||= []
+      #     @languages[lang] << post
+      #   end
+      # end
       
       titles = Hash[@languages.collect {|lang, x| [lang, I18n.t("archive.title", locale: lang)]}]
       
@@ -40,22 +41,22 @@ module Alula
           view: "archive",
           key: archive[:key],
         },
-        :previous => ->(hook, locale = nil) {
-          pos = self.navigation(locale).index(self)
-          if pos and pos < (self.navigation(locale).count - 1)
-            self.navigation(locale)[pos + 1]
-          else
-            nil
-          end
-        },
-        :next => ->(hook, locale = nil) {
-          pos = self.navigation(locale).index(self)
-          if pos and pos > 0
-            self.navigation(locale)[pos - 1]
-          else
-            nil
-          end
-        },
+        # :previous => ->(hook, locale = nil) {
+        #   pos = self.navigation(locale).index(self)
+        #   if pos and pos < (self.navigation(locale).count - 1)
+        #     self.navigation(locale)[pos + 1]
+        #   else
+        #     nil
+        #   end
+        # },
+        # :next => ->(hook, locale = nil) {
+        #   pos = self.navigation(locale).index(self)
+        #   if pos and pos > 0
+        #     self.navigation(locale)[pos - 1]
+        #   else
+        #     nil
+        #   end
+        # },
         :navigation => ->(hook, locale = nil) {
           locale ||= self.current_locale || self.site.config.locale
           @navigation[locale] ||= self.site.content.pages.select { |item|

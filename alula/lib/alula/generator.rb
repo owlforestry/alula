@@ -38,6 +38,19 @@ module Alula
     def allow_compressing?
       :high
     end
+    
+    protected
+    def fetch_languages
+      languages = {}
+      self.site.content.posts.each do |post|
+        post.languages.each do |lang|
+          languages[lang] ||= []
+          languages[lang] << post
+        end
+      end
+      languages
+    end
+    
   end
 end
 

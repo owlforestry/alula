@@ -289,9 +289,25 @@ module Alula
       end
       
       def previous(locale = nil)
+        if self.navigation
+          pos = self.navigation(locale).index(self)
+          if pos and pos < (self.navigation(locale).count - 1)
+            self.navigation(locale)[pos + 1]
+          else
+            nil
+          end
+        end
       end
       
       def next(locale = nil)
+        if self.navigation
+          pos = self.navigation(locale).index(self)
+          if pos and pos > 0
+            self.navigation(locale)[pos - 1]
+          else
+            nil
+          end
+        end
       end
       
       def navigation(locale = nil)
