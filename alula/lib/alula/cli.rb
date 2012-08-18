@@ -57,7 +57,7 @@ module Alula
       inside File.expand_path(path) do
         # Try to find git
         git=%x{/usr/bin/which git}.strip
-        if File.executable?(git)
+        if File.executable?(git) and !File.directory?(".git")
           run "#{git} init"
         end
 

@@ -2,12 +2,12 @@ source 'https://rubygems.org'
 
 <% if options["path"] %>
 gem 'alula', path: '<%= options["path"] %>/alula'
-gem 'alula-themes', path: '<%= options["path"] %>/alula-themes'
-gem 'alula-plugins', path: '<%= options["path"] %>/alula-plugins'
+gem 'alula-themes', path: '<%= options["path"] %>/alula'
+gem 'alula-plugins', path: '<%= options["path"] %>/alula'
 <% elsif options["edge"] %>
 gem 'alula', git: 'git://github.com/owlforestry/alula.git'
-gem 'alula-themes', git: 'git://github.com/owlforestry/alula-themes.git'
-gem 'alula-plugins', git: 'git://github.com/owlforestry/alula-plugins.git'
+gem 'alula-themes', git: 'git://github.com/owlforestry/alula.git'
+gem 'alula-plugins', git: 'git://github.com/owlforestry/alula.git'
 <% else %>
 gem 'alula'
 gem 'alula-themes'
