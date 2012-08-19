@@ -277,6 +277,7 @@ module Alula
           index_page.metadata.slug = "index"
           index_page.metadata.template = "/:locale/:slug"
           index_page.metadata.title = Hash[index_page.metadata.languages.collect{|lang| [lang, metadata.title(lang)]}]
+          index_page.metadata.description = Hash[index_page.metadata.languages.collect{|lang| [lang, metadata.description(lang)]}]
         end
       end
     end

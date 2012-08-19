@@ -23,9 +23,8 @@ module Alula
             [ lang, posts.slice(page * self.options.items, self.options.items) ]
           end
         ]
-        titles = Hash[
-          languages.collect {|lang, x| [lang, I18n.t("paginate.title", locale: lang, page: (page + 1))]}
-        ]
+        titles = Hash[languages.collect {|lang, x| [lang, I18n.t("paginate.title", locale: lang, page: (page + 1))]}]
+        descriptions = Hash[languages.collect {|lang, x| [lang, I18n.t("paginate.description", locale: lang, page: (page + 1))]}]
 
         self.site.content.pages << Alula::Content::Page.new({
           generator: self,
@@ -33,6 +32,7 @@ module Alula
           pagenum: (page + 1),
           pages: (pages + 1),
           title: titles,
+          description: descriptions,
           name: "page-#{(page + 1)}",
           slug: "page-#{(page + 1)}",
           sidebar: false,
@@ -40,22 +40,6 @@ module Alula
           site: self.site,
           view: self.options.view || "paginate",
         },
-        # :previous => ->(hook, locale = nil) {
-        #   pos = self.navigation(locale).index(self)
-        #   if pos and pos < (self.navigation(locale).count - 1)
-        #     self.navigation(locale)[pos + 1]
-        #   else
-        #     nil
-        #   end
-        # },
-        # :next => ->(hook, locale = nil) {
-        #   pos = self.navigation(locale).index(self)
-        #   if pos and pos > 0
-        #     self.navigation(locale)[pos - 1]
-        #   else
-        #     nil
-        #   end
-        # },
         :navigation => ->(hook, locale = nil) {
           locale ||= self.current_locale || self.site.config.locale
           @navigation[locale] ||= self.site.content.pages.select { |item| item.metadata.generator == self.generator and item.languages.include?(locale) }

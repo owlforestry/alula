@@ -18,9 +18,11 @@ module Alula
         options.templates.collect do |template|
           posts.collect do |post|
             archives[post.substitude(template, lang)] ||= {}
-            key = "archive.title." + template.scan(/:(\w+)*/).flatten.join('-')
-            archives[post.substitude(template, lang)][:title] ||= I18n.t(key, Hash[post.substitutes(lang).map{|k,v|[k.to_sym,v]}].merge(locale: lang))
-            archives[post.substitude(template, lang)][:key] ||= key
+            title_key = "archive.title." + template.scan(/:(\w+)*/).flatten.join('-')
+            description_key = "archive.description." + template.scan(/:(\w+)*/).flatten.join('-')
+            archives[post.substitude(template, lang)][:title] ||= I18n.t(title_key, Hash[post.substitutes(lang).map{|k,v|[k.to_sym,v]}].merge(locale: lang))
+            archives[post.substitude(template, lang)][:description] ||= I18n.t(description_key, Hash[post.substitutes(lang).map{|k,v|[k.to_sym,v]}].merge(locale: lang))
+            archives[post.substitude(template, lang)][:key] ||= title_key
             archives[post.substitude(template, lang)][:content] ||= {}
             archives[post.substitude(template, lang)][:content][lang] ||= []
             archives[post.substitude(template, lang)][:content][lang] << post
@@ -32,7 +34,8 @@ module Alula
         self.site.content.pages << Alula::Content::Page.new({
           generator: self,
           posts: archive[:content],
-          title: archive[:title],#titles.select {|lang, title| archive.keys.include?(lang)},
+          title: archive[:title],
+          description: archive[:description],
           name: name,
           slug: name,
           sidebar: false,
@@ -41,22 +44,7 @@ module Alula
           view: "archive",
           key: archive[:key],
         },
-        # :previous => ->(hook, locale = nil) {
-        #   pos = self.navigation(locale).index(self)
-        #   if pos and pos < (self.navigation(locale).count - 1)
-        #     self.navigation(locale)[pos + 1]
-        #   else
-        #     nil
-        #   end
-        # },
-        # :next => ->(hook, locale = nil) {
-        #   pos = self.navigation(locale).index(self)
-        #   if pos and pos > 0
-        #     self.navigation(locale)[pos - 1]
-        #   else
-        #     nil
-        #   end
-        # },
+
         :navigation => ->(hook, locale = nil) {
           locale ||= self.current_locale || self.site.config.locale
           @navigation[locale] ||= self.site.content.pages.select { |item|

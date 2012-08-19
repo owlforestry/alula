@@ -2,6 +2,7 @@ en:
   recent_posts: Recent Posts
   paginate:
     title: Page %{page}
+    description: Paged posts for %{page}
     older_posts: Older
     newer_posts: Newer
   post:
@@ -11,4 +12,8 @@ en:
     title:
       year: Archive for %{year}
       year-month: Archive for %{year} %{monthname}
-      
+      year-month-day: Archive for %{year} %{monthname} %{day}
+    description:
+      year: Archive for %{year}
+      year-month: Archive for %{year} %{monthname}
+      year-month-day: Archive for %{year} %{monthname} %{day}

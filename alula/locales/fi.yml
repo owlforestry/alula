@@ -2,6 +2,7 @@ fi:
   recent_posts: Viimeisimmät kirjoitukset
   paginate:
     title: Sivu %{page}
+    description: Sivutetut kirjoitukset, sivu %{page}
     older_posts: Vanhemmat
     newer_posts: Uudemmat
   post:
@@ -11,3 +12,8 @@ fi:
     title:
       year: Arkisto %{year}
       year-month: Arkisto %{year} %{monthname}
+      year-month-day: Arkisto %{year} %{monthname} %{day}
+    description:
+      year: Arkisto %{year}
+      year-month: Arkisto %{year} %{monthname}
+      year-month-day: Arkisto %{year} %{monthname} %{day}
