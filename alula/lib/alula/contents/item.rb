@@ -5,6 +5,7 @@ require 'kramdown'
 require 'stringex'
 require 'shellwords'
 require 'htmlentities'
+require 'nokogiri'
 
 module Alula
   class Content
@@ -202,6 +203,23 @@ module Alula
       end
       
       # Accessors
+      def description(locale = nil)
+        @description[(locale || self.current_locale || self.site.config.locale)] ||= begin
+          @metadata.description(locale) || begin
+            doc = Nokogiri::HTML(self.body(locale))
+            words = doc.text.split(' ')
+            summary = words.inject("") do |summary, word|
+              if (summary + " #{word}").length < 152
+                summary += "#{word} "
+              else
+                summary += "..." unless summary[/\.\.\.$/]
+              end
+              summary
+            end
+          end
+        end
+      end
+      
       def current_locale
         @@current_locale ||= nil
       end
@@ -319,6 +337,7 @@ module Alula
         flush_render
         @markdown = {}
         @body = {}
+        @description = {}
       end
       
       def flush_render
