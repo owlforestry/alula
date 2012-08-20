@@ -5,7 +5,7 @@ xml.rss :version => "2.0" do
     xml.description site.tagline
     xml.link site.url
     xml.lastBuildDate Time.now.strftime("%a, %d %b %Y %H:%M:%S %z")
-    xml.generator "Alula #{Alula::VERSION}"
+    xml.generator "Alula #{Alula::VERSION::STRING}"
     
     for post in item.posts
       xml.item do

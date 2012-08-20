@@ -16,7 +16,7 @@ module Alula
     def content
       hires = hires_url(@source, :image)
       tag = "<a href=\"#{attachment_url(@source, :image)}\""
-      tag += " data-hires=\"#{hires}\"" if context.site.config.attachments["image"]["hires"] and hires and self.context.item.metadata.renderer.class.to_s != "Alula::Generator::FeedBuilder"
+      tag += " data-hires=\"#{hires}\"" if context.site.config.attachments["image"]["hires"] and hires and !self.context.item.metadata.renderer.class.to_s[/FeedBuilder/]
       tag += ">"
       tag += imagetag(@source, :thumbnail)
       tag += "</a>"
@@ -32,13 +32,13 @@ module Alula
       tag += " alt=\"#{@options["alternative"]}\"" if @options["alternative"]
       tag += " title=\"#{@options["title"]}\"" if @options["title"]
       tag += " class=\"#{classes.join(" ")}\""
-      if context.site.config.attachments.image.lazyload and self.context.item.metadata.renderer.class.to_s != "Alula::Generator::FeedBuilder"
+      if context.site.config.attachments.image.lazyload and !self.context.item.metadata.renderer.class.to_s[/FeedBuilder/]
         tag += " src=\"#{asset_url("grey.gif")}\""
         tag += " data-original=\"#{src}\""
       else
         tag += " src=\"#{src}\""
       end
-      tag += " data-hires=\"#{hires}\"" if context.site.config.attachments.image.hires and hires and self.context.item.metadata.renderer.class.to_s != "Alula::Generator::FeedBuilder"
+      tag += " data-hires=\"#{hires}\"" if context.site.config.attachments.image.hires and hires and !self.context.item.metadata.renderer.class.to_s[/FeedBuilder/]
       tag += " width=\"#{info(source, type).width}\" height=\"#{info(source, type).height}\""
       tag += " />"
     end
