@@ -13,7 +13,8 @@ module Alula
       width, height = opts[:size]
       
       # Generate resized image
-      resized = case self.site.config.attachments.image.thumbnail_mode
+      resize_mode = self.site.config.attachments.image["#{opts[:type]}_mode"]
+      resized = case resize_mode
       when :square
         self.image.resize_to_fill(width, height)
       else

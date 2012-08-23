@@ -28,7 +28,7 @@ module Alula
         next if (width > self.info.width and height > self.info.height) and size[:hires]
         
         # Generate resized image to output path
-        resize_image(output: output, size: size[:size])
+        resize_image(output: output, size: size[:size], type: size[:type])
       end
       
       # Cleanup ourself

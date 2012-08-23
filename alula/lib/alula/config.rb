@@ -127,7 +127,8 @@ module Alula
         "image" => {
           "size"           => "800x600",
           "thumbnail"      => "300x300",
-          "thumbnail_mode" => :square,
+          "thumbnail_mode" => :aspect,
+          "image_mode"     => :aspect,
           "keep_tags"      => ["CopyrightNotice", "Title", "DateTimeOriginal"],
           "hires"          => true,
           "lazyload"       => true,
