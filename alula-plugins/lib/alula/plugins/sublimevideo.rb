@@ -38,7 +38,7 @@ module Alula
       poster = attachment_url(poster, :thumbnail)
       
       tag =  "<a"
-      tag += " class=\"sublime zoomable\""
+      tag += " class=\"sublime zoomable video #{@options["classes"].join(" ")}\""
       tag += " href=\"#{sources.first[:url]}\""
       tag += " style=\"width: #{info.width}px; height: #{info.height}px;\""
       tag += ">"
