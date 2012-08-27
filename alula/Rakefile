@@ -11,3 +11,23 @@ Rake::TestTask.new(:test) do |t|
 end
 
 task :default => :test
+
+desc "Updates all vendored scripts"
+task :update_vendor do
+  scripts = {
+    "jquery.js"          => "http://code.jquery.com/jquery-1.8.0.js",
+    "jquery.lazyload.js" => "https://raw.github.com/tuupola/jquery_lazyload/master/jquery.lazyload.js",
+    "cookieconsent.js"   => "http://assets.cookieconsent.silktide.com/1.0.8/plugin.min.js",
+  }
+  stylesheets = {
+    "cookieconsent.css" => "http://assets.cookieconsent.silktide.com/1.0.8/style.min.css",
+  }
+  
+  scripts.each do |script, source|
+    system "curl --compressed -qo vendor/assets/javascripts/#{script} '#{source}'"
+  end
+  
+  stylesheets.each do |css, source|
+    system "curl --compressed -qo vendor/assets/stylesheets/#{css} '#{source}'"
+  end
+end
