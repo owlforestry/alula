@@ -23,15 +23,15 @@ module Alula
         md5 = Digest::MD5.hexdigest(name)
         asset_hash = md5[0..3]
         asset_name = File.join(path + [asset_hash]) + File.extname(name)
-        until !mapping.key(asset_name) or mapping.key(asset_name) == name
+        until !mapping.key(asset_name) or mapping.key(asset_name) == name.downcase
           asset_hash = md5[0..(asset_hash.length)]
           asset_name = File.join(path + [asset_hash]) + File.extname(name)
         end
       
-        mapping[name] = asset_name
+        mapping[name.downcase] = asset_name
       end
       
-      mapping[name]
+      mapping[name.downcase]
     end
     
     def get(item)
