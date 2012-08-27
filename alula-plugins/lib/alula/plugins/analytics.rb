@@ -2,7 +2,7 @@ require 'alula/plugin'
 
 module Alula
   class Analytics
-    needs_cookieconsent
+    Alula::Plugin.needs_cookieconsent
     
     def self.path
       File.join(File.dirname(__FILE__), %w{.. .. .. plugins analytics})
@@ -18,7 +18,7 @@ module Alula
       options.each do |provider, opts|
         tracker = case provider
         when "chartbeat"
-          Alula::Plugin.script :head, ->(context) { "var _sf_startpt=(new Date()).getTime()"}
+          Alula::Plugin.script :head, "var _sf_startpt=(new Date()).getTime()"
           <<-EOT
           var _sf_async_config={uid:#{opts['uid']},domain:"#{opts['domain']}"};(function(){function e(){window._sf_endpt=(new Date).getTime();var e=document.createElement("script");e.setAttribute("language","javascript"),e.setAttribute("type","text/javascript"),e.setAttribute("src",("https:"==document.location.protocol?"https://a248.e.akamai.net/chartbeat.download.akamai.com/102508/":"http://static.chartbeat.com/")+"js/chartbeat.js"),document.body.appendChild(e)}var t=window.onload;window.onload=typeof window.onload!="function"?e:function(){t(),e()}})();
           EOT
@@ -35,7 +35,7 @@ module Alula
           var _gauges=_gauges||[];(function(){var e=document.createElement("script");e.type="text/javascript",e.async=!0,e.id="gauges-tracker",e.setAttribute("data-site-id","#{opts}"),e.src="//secure.gaug.es/track.js";var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t)})();
           EOT
         end
-        Alula::Plugin.script(:body, ->(context) { tracker }) if tracker
+        Alula::Plugin.script(:body, tracker) if tracker
       end
     end
   end

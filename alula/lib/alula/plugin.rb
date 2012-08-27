@@ -27,13 +27,13 @@ module Alula
       script = <<-EOS
       <script type="#{self.cookieconsent? ? "text/plain" : "text/javascript"}" #{self.cookieconsent? ? "style=\"cc-onconsent-analytics\"" : ""}>
       EOS
-      if block_given?
-        script = ->(context) { script + content_or_block.call(context) + "</script>"
-        else
-          script = script + content_or_block + "</script>"
+      if content_or_block.kind_of?(Proc)
+        scpt = ->(context) { script + content_or_block.call(context) + "</script>" }
+      else
+        scpt = script + content_or_block + "</script>"
       end
       
-      addons[type] << script
+      addons[type] << scpt
     end
     
     def self.needs_cookieconsent

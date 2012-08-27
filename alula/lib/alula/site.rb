@@ -323,6 +323,7 @@ module Alula
         end
         
         # Vendored
+        io.puts " *= require cookieconsent" if Alula::Plugin.cookieconsent?
 
         # Blog customization
         @storage.custom(/stylesheets\/.*.css.*$/).each do |name, item|
@@ -349,6 +350,7 @@ module Alula
 
         # Vendored
         io.puts " *= require lazyload" if self.config.attachments.image.lazyload
+        io.puts " *= require cookieconsent" if Alula::Plugin.cookieconsent?
 
         # Customisation
         @storage.custom(/javascripts\/.*.js.*$/).each do |name, item|
