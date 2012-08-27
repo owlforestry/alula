@@ -132,6 +132,9 @@ module Alula
       Alula::Plugin.addon(:head, "<meta name=\"generator\" content=\"Alula #{Alula::VERSION::STRING}\">")
       Alula::Plugin.addon(:head, ->(context){"<link rel=\"icon\" type=\"image/png\" href=\"#{context.asset_url('favicon.png')}\">"})
       
+      # Set up footer addons (disclaimer, copyright)
+      Alula::Plugin.addon(:footer, ->(context){ "<p class=\"disclaimer\">#{context.site.config.disclaimer(context.locale)}</p>" }) if self.config.disclaimer
+      Alula::Plugin.addon(:footer, ->(context){ "<p class=\"copyright\">#{context.site.config.copyright(context.locale)}</p>" }) if self.config.copyright
     end
     
     # Compiles a site to static website
