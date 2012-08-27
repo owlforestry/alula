@@ -2,6 +2,8 @@ require 'alula/plugin'
 
 module Alula
   class Analytics
+    needs_cookieconsent
+    
     def self.path
       File.join(File.dirname(__FILE__), %w{.. .. .. plugins analytics})
     end
@@ -16,24 +18,24 @@ module Alula
       options.each do |provider, opts|
         tracker = case provider
         when "chartbeat"
-          Alula::Plugin.addon :head, ->(context) { "<script type=\"text/javascript\">var _sf_startpt=(new Date()).getTime()</script>"}
+          Alula::Plugin.script :head, ->(context) { "var _sf_startpt=(new Date()).getTime()"}
           <<-EOT
-          <script type="text/javascript">var _sf_async_config={uid:#{opts['uid']},domain:"#{opts['domain']}"};(function(){function e(){window._sf_endpt=(new Date).getTime();var e=document.createElement("script");e.setAttribute("language","javascript"),e.setAttribute("type","text/javascript"),e.setAttribute("src",("https:"==document.location.protocol?"https://a248.e.akamai.net/chartbeat.download.akamai.com/102508/":"http://static.chartbeat.com/")+"js/chartbeat.js"),document.body.appendChild(e)}var t=window.onload;window.onload=typeof window.onload!="function"?e:function(){t(),e()}})();</script>
+          var _sf_async_config={uid:#{opts['uid']},domain:"#{opts['domain']}"};(function(){function e(){window._sf_endpt=(new Date).getTime();var e=document.createElement("script");e.setAttribute("language","javascript"),e.setAttribute("type","text/javascript"),e.setAttribute("src",("https:"==document.location.protocol?"https://a248.e.akamai.net/chartbeat.download.akamai.com/102508/":"http://static.chartbeat.com/")+"js/chartbeat.js"),document.body.appendChild(e)}var t=window.onload;window.onload=typeof window.onload!="function"?e:function(){t(),e()}})();
           EOT
         when "gosquared"
           <<-EOT
-          <script type="text/javascript">var GoSquared={};GoSquared.acct="#{opts}",function(e){function t(){e._gstc_lt=+(new Date);var t=document,n=t.createElement("script");n.type="text/javascript",n.async=!0,n.src="//d1l6p2sc9645hc.cloudfront.net/tracker.js";var r=t.getElementsByTagName("script")[0];r.parentNode.insertBefore(n,r)}e.addEventListener?e.addEventListener("load",t,!1):e.attachEvent("onload",t)}(window);</script>
+          var GoSquared={};GoSquared.acct="#{opts}",function(e){function t(){e._gstc_lt=+(new Date);var t=document,n=t.createElement("script");n.type="text/javascript",n.async=!0,n.src="//d1l6p2sc9645hc.cloudfront.net/tracker.js";var r=t.getElementsByTagName("script")[0];r.parentNode.insertBefore(n,r)}e.addEventListener?e.addEventListener("load",t,!1):e.attachEvent("onload",t)}(window);
           EOT
         when "woopra"
           <<-EOT
-          <script type="text/javascript">function woopraReady(e){return e.setDomain("#{opts}"),e.setIdleTimeout(3e5),e.track(),!1}(function(){var e=document.createElement("script");e.src=document.location.protocol+"//static.woopra.com/js/woopra.js",e.type="text/javascript",e.async=!0;var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t)})();</script>
+          function woopraReady(e){return e.setDomain("#{opts}"),e.setIdleTimeout(3e5),e.track(),!1}(function(){var e=document.createElement("script");e.src=document.location.protocol+"//static.woopra.com/js/woopra.js",e.type="text/javascript",e.async=!0;var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t)})();
           EOT
         when "gauges"
           <<-EOT
-          <script type="text/javascript">var _gauges=_gauges||[];(function(){var e=document.createElement("script");e.type="text/javascript",e.async=!0,e.id="gauges-tracker",e.setAttribute("data-site-id","#{opts}"),e.src="//secure.gaug.es/track.js";var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t)})();</script>
+          var _gauges=_gauges||[];(function(){var e=document.createElement("script");e.type="text/javascript",e.async=!0,e.id="gauges-tracker",e.setAttribute("data-site-id","#{opts}"),e.src="//secure.gaug.es/track.js";var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t)})();
           EOT
         end
-        Alula::Plugin.addon(:body, ->(context) { tracker }) if tracker
+        Alula::Plugin.script(:body, ->(context) { tracker }) if tracker
       end
     end
   end

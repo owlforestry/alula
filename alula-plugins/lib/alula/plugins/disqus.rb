@@ -2,6 +2,8 @@ require 'alula/plugin'
 
 module Alula
   class Disqus
+    needs_cookieconsent
+    
     def self.path
       File.join(File.dirname(__FILE__), %w{.. .. .. plugins disqus})
     end
@@ -12,13 +14,9 @@ module Alula
     
     def self.install(options)
       return false unless options.shortname
-      # Force defer mode on script loading
-      # Alula::Plugin.script_load_mode = :defer
       
-      # Add Emphasis -powered link to footer
-      Alula::Plugin.addon(:post_bottom, ->(context) {
+      Alula::Plugin.script(:post_bottom, ->(context) {
         <<-EOS
-        <script type="text/javascript">
         var disqus_shortname = '#{options['shortname']}';
         var disqus_identifier = '#{context.item.metadata.disqus_identifier || context.item.slug}';
         (function() {
@@ -26,8 +24,6 @@ module Alula
           dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
           (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
           })();
-        </script>
-        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
         EOS
       }
       )
