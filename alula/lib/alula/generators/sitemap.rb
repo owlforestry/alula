@@ -33,11 +33,6 @@ module Alula
         layout: "sitemap",
       })
       self.site.content.pages << @sitemap_page
-      
-      # Add link to head
-      Alula::Plugin.addon(:head, ->(context) {
-        "<link rel=\"sitemap\" type=\"application/xml\" title=\"Sitemap\" href=\"#{context.url_for(@sitemap_page.url(context.locale))}\">"
-      })
     end
   end
 end
