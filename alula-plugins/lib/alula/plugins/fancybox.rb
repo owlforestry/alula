@@ -37,7 +37,7 @@ module Alula
     
     def content
       # FeedBuilder support, skip sublime extensions for feeds
-      return super if self.context.item.metadata.renderer.class.to_s == "Alula::FeedBuilder"
+      return super if self.context.item.metadata.renderer.class.to_s[/FeedBuilder/]
       
       image = attachment_url(@source, :image)
       thumbnail = attachment_url(@source, :thumbnail)
@@ -46,6 +46,11 @@ module Alula
       tn_info = info(@source, :thumbnail)
 
       return super unless image and thumbnail
+      
+      unless @options['alternative'] or @options['title']
+        @options['title'] = info(@source, :image).title
+        @options['alternative'] = info(@source, :image).title
+      end
       
       tag = "<a"
       tag += " class=\"img fancybox fb_zoomable #{@options["classes"].join(" ")}\""

@@ -28,6 +28,11 @@ module Alula
       
       classes = opts.delete(:classes) || @options["classes"]
       
+      unless @options['alternative'] or @options['title']
+        @options['title'] = info(source, type).title
+        @options['alternative'] = info(source, type).title
+      end
+      
       tag = "<img"
       tag += " alt=\"#{@options["alternative"]}\"" if @options["alternative"]
       tag += " title=\"#{@options["title"]}\"" if @options["title"]

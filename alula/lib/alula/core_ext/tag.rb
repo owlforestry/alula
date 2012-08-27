@@ -56,22 +56,27 @@ module Alula
         file = self.context.asset_path(attachment_path(source, type))
         return Hashie::Mash.new if file.nil?
         
-        # info = MiniExiftool.new File.join self.context.storage.path(:public), file
-        info = Dimensions.dimensions(File.join(self.context.storage.path(:public), file))
-        info ||= begin
-          _info = MiniExiftool.new File.join(self.context.storage.path(:public), file)
-          [_info.imagewidth, _info.imageheight]
-        end
+        info = MiniExiftool.new File.join self.context.storage.path(:public), file
+        # # info = Dimensions.dimensions(File.join(self.context.storage.path(:public), file))
+        # info ||= begin
+        #   _info = MiniExiftool.new File.join(self.context.storage.path(:public), file)
+        #   [_info.imagewidth, _info.imageheight, _info.copyrightnotice]
+        # end
         Hashie::Mash.new({
-          width: info[0],
-          height: info[1],
+          width: info.imagewidth,
+          height: info.imageheight,
+          rotation: info.rotation,
+          copyright: info.copyrightnotice,
+          filetype: info.filetype,
+          title: info.title,
+          caption: info.caption,
         })
       end
     end
     
     def attachment_path(source, type = nil)
       name = (type.nil?) ? source : File.join(type.to_s, source)
-      self.context.attachments.mapping[name]
+      self.context.attachments.mapping[name.downcase]
     end
     
     def attachment_url(source, type = nil)
