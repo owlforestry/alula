@@ -17,7 +17,7 @@ task :update_vendor do
   scripts = {
     "jquery.js"          => "http://code.jquery.com/jquery-1.8.0.js",
     "jquery.lazyload.js" => "https://raw.github.com/tuupola/jquery_lazyload/master/jquery.lazyload.js",
-    "cookieconsent.js"   => "http://assets.cookieconsent.silktide.com/1.0.8/plugin.min.js",
+    "silktide.cookieconsent.js"   => "http://assets.cookieconsent.silktide.com/1.0.8/plugin.min.js",
   }
   stylesheets = {
     "cookieconsent.css" => "http://assets.cookieconsent.silktide.com/1.0.8/style.min.css",
