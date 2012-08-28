@@ -52,7 +52,6 @@ module Alula
       Alula::Plugin.addon(:head, ->(context) {
         "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"RSS\" href=\"#{context.url_for(@feed_page.url(context.locale))}\">"
       })
-      # -# %link{rel: "alternate", type: "application/rss+xml", title: "RSS", href: "/feed.xml"}
     end
   end
 end

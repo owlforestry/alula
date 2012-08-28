@@ -35,6 +35,7 @@ module Alula
           generator: self,
           posts: archive[:content],
           title: archive[:title],
+          priority: 0.2,
           description: archive[:description],
           name: name,
           slug: name,

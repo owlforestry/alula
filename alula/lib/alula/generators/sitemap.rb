@@ -15,7 +15,7 @@ module Alula
             content.languages.collect{|lang| {
               url: content.url(lang),
               lastmod: content.last_modified,
-              priority: content.generator.nil? ? 0.5 : 0.3,
+              priority: content.generator.nil? ? 1.0 : !content.metadata.priority.nil? ? content.metadata.priority : 0.3,
             }
           }
         }.flatten
