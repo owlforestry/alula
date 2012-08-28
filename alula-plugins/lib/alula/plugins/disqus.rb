@@ -2,7 +2,7 @@ require 'alula/plugin'
 
 module Alula
   class Disqus
-    Alula::Plugin.needs_cookieconsent
+    Alula::Plugin.needs_cookieconsent :social
     
     def self.path
       File.join(File.dirname(__FILE__), %w{.. .. .. plugins disqus})

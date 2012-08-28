@@ -2,7 +2,7 @@ require 'alula/plugin'
 
 module Alula
   class Analytics
-    Alula::Plugin.needs_cookieconsent
+    Alula::Plugin.needs_cookieconsent :analytics
     
     def self.path
       File.join(File.dirname(__FILE__), %w{.. .. .. plugins analytics})

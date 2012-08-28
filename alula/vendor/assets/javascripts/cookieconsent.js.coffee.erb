@@ -1,0 +1,15 @@
+#= require silktide.cookieconsent
+
+cc.initialise
+  cookies: { <%= Alula::Plugin.cookieconsent_types.collect{|t| "#{t}: {}"}.join(",") %>},
+  settings:
+    consenttype: "<%= context.site.config.cookieconsent.consenttype %>",
+    style: "<%= context.site.config.cookieconsent.style %>",
+    bannerPosition: "<%= context.site.config.cookieconsent.bannerPosition %>",
+    onlyshowbanneronce: <%= context.site.config.cookieconsent.onlyshowbanneronce %>,
+    hideprivacysettingstab: <%= !context.site.config.cookieconsent.privacysettingstab %>,
+    <% if context.site.config.ipinfodbkey %>
+    onlyshowwithineu: true,
+    ipinfodbkey: "<%= context.site.config.ipinfodbkey %>",
+    <% end %>
+    

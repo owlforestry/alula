@@ -83,6 +83,16 @@ module Alula
       # Plugins
       plugins: {},
       
+      # Cookie consent
+      cookieconsent: {
+        consenttype: "implicit",
+        style: "light",
+        bannerPosition: "push",
+        onlyshowbanneronce: true,
+        privacysettingstab: false,
+        ipinfodbkey: "",
+      },
+      
       # Deployment options
       deployment: { "package" => {}},
       

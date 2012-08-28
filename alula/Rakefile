@@ -30,4 +30,7 @@ task :update_vendor do
   stylesheets.each do |css, source|
     system "curl --compressed -qo vendor/assets/stylesheets/#{css} '#{source}'"
   end
+  
+  # Post-process cookieconsent CSS
+  
 end
