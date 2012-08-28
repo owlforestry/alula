@@ -1,5 +1,5 @@
 require 'liquid'
-require 'dimensions'
+require 'mini_exiftool'
 
 module Alula
   module LiquidExt
@@ -57,11 +57,6 @@ module Alula
         return Hashie::Mash.new if file.nil?
         
         info = MiniExiftool.new File.join self.context.storage.path(:public), file
-        # # info = Dimensions.dimensions(File.join(self.context.storage.path(:public), file))
-        # info ||= begin
-        #   _info = MiniExiftool.new File.join(self.context.storage.path(:public), file)
-        #   [_info.imagewidth, _info.imageheight, _info.copyrightnotice]
-        # end
         Hashie::Mash.new({
           width: info.imagewidth,
           height: info.imageheight,
