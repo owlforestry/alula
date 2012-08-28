@@ -33,7 +33,13 @@
           = site.author
         %p
           %small
-            = addons :footer
+            - if site.config.disclaimer
+              %span.disclaimer= site.config.disclaimer
+              %br
+            - if site.config.copyright
+              %span.copyright= site.config.copyright
+              %br
             Powered by #{link_to "Alula", "http://www.alula.in"} &mdash;
             Theme by #{link_to "orderedlist", "https://github.com/orderedlist/minimal"}
+        = addons :footer
     = addons :body
