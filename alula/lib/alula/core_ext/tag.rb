@@ -26,13 +26,13 @@ module Alula
       @options = {}
       
       # Parse tag options
-      if m = /^([\"][\S\. ]+[\"]|[\S\.]+)(.*)$/.match(@markup)
+      if m = /^([\"][\S\. ]+?[\"]|[\S\.]+)(.*)$/.match(@markup)
         @source = m[1].gsub(/^["]?([^"]+)["]?$/, '\1')
         @source = "" if @source == '""'
         @options["source"] = @source unless @source.empty?
 
         if m[2]
-          m[2].scan(/(\S+):["]?((?:.(?!["]?\s+(?:\S+):|[>"]))+.)["]?/) do |name, value|
+          m[2].scan(/(\S+?):["]?((?:.(?!["]?\s+(?:\S+):|[>"]))+.)["]?/) do |name, value|
             @options[name] = value.strip
           end
         end
