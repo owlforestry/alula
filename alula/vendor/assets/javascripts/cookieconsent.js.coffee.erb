@@ -8,8 +8,8 @@ cc.initialise
     bannerPosition: "<%= context.site.config.cookieconsent.bannerPosition %>",
     onlyshowbanneronce: <%= context.site.config.cookieconsent.onlyshowbanneronce %>,
     hideprivacysettingstab: <%= !context.site.config.cookieconsent.privacysettingstab %>,
-    <% if context.site.config.ipinfodbkey %>
+    <% if context.site.config.cookieconsent.ipinfodbkey %>
     onlyshowwithineu: true,
-    ipinfodbkey: "<%= context.site.config.ipinfodbkey %>",
+    ipinfodbkey: "<%= context.site.config.cookieconsent.ipinfodbkey %>",
     <% end %>
     
