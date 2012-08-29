@@ -17,20 +17,60 @@ task :update_vendor do
   scripts = {
     "jquery.js"          => "http://code.jquery.com/jquery-1.8.0.js",
     "jquery.lazyload.js" => "https://raw.github.com/tuupola/jquery_lazyload/master/jquery.lazyload.js",
-    "silktide.cookieconsent.js"   => "http://assets.cookieconsent.silktide.com/1.0.8/plugin.min.js",
+    "silktide.cookieconsent.js"   => "http://assets.cookieconsent.silktide.com/current/plugin.js",
   }
   stylesheets = {
-    "cookieconsent.css" => "http://assets.cookieconsent.silktide.com/1.0.8/style.min.css",
+    "cookieconsent.css.erb" => "http://assets.cookieconsent.silktide.com/current/style.css",
   }
   
   scripts.each do |script, source|
-    system "curl --compressed -qo vendor/assets/javascripts/#{script} '#{source}'"
+    puts "Fetching #{script}..."
+    system "curl --compressed -so vendor/assets/javascripts/#{script} '#{source}'"
   end
   
   stylesheets.each do |css, source|
-    system "curl --compressed -qo vendor/assets/stylesheets/#{css} '#{source}'"
+    puts "Fetching #{css}..."
+    system "curl --compressed -so vendor/assets/stylesheets/#{css} '#{source}'"
   end
   
-  # Post-process cookieconsent CSS
+  # Post-process cookieconsent CSS and JS
+  cc_js = File.readlines("vendor/assets/javascripts/silktide.cookieconsent.js")
+  delete = false
+  cc_js.each do |line|
+    # Remove google webfonts
+    if line[/WebFontConfig/]
+      delete = true
+    end
+    
+    if line[/\/\*\*/] and delete
+      puts "<-- end delete"
+      delete = false
+    end
+    
+    line.gsub! /.*/, '' if delete
+  end
+  File.open("vendor/assets/javascripts/silktide.cookieconsent.js", 'w') do |io|
+    io.write cc_js.join("")
+  end
   
+  cc_css = File.readlines("vendor/assets/stylesheets/cookieconsent.css.erb")
+  cc_css.each do |row|
+    # Remove AWS
+    if row[/amazonaws.com/]
+      if m = /url\(["]?(?<url>.*\/(?<asset>.*?))["]?\)/.match(row)
+        puts "Fetching #{m[:asset]}..."
+        system "curl --compressed -so vendor/assets/images/cookieconsent.#{m[:asset]} '#{m[:url]}'"
+        
+        row.gsub! /url\(["]?(.*\/(.*?))["]?\)/, 'url(\'<% asset_url("cookieconsent.\2") %>\')'
+      end
+    end
+    
+    # Remove Open Sans
+    if row[/Open Sans/]
+      row.gsub! /(\s*)font-family: 'Open Sans', (.*);/, '\1font-family: \2;'
+    end
+  end
+  File.open("vendor/assets/stylesheets/cookieconsent.css.erb", 'w') do |io|
+    io.write cc_css.join("")
+  end
 end
