@@ -39,7 +39,7 @@ module Alula
       end
       
       script = <<-EOS
-      <script type="#{self.cookieconsent?(name) ? "text/plain" : "text/javascript"}" #{self.cookieconsent?(name) ? "style=\"cc-onconsent-#{@@cookieconsent[name].to_s}\"" : ""}>
+      <script type="#{self.cookieconsent?(name) ? "text/plain" : "text/javascript"}" #{self.cookieconsent?(name) ? "class=\"cc-onconsent-#{@@cookieconsent[name].to_s}\"" : ""}>
       EOS
       if content_or_block.kind_of?(Proc)
         scpt = ->(context) { script + content_or_block.call(context) + "</script>" }
