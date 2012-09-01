@@ -34,6 +34,10 @@ module Alula
           <<-EOT
           var _gauges=_gauges||[];(function(){var e=document.createElement("script");e.type="text/javascript",e.async=!0,e.id="gauges-tracker",e.setAttribute("data-site-id","#{opts}"),e.src="//secure.gaug.es/track.js";var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t)})();
           EOT
+        when "cedexis"
+          <<-EOT
+          (function(e,t){var n=function(){var n=t.createElement("script");n.type="text/javascript",n.async="async",n.src="//"+(e.location.protocol==="https:"?"s3.amazonaws.com/cdx-radar/":"radar.cedexis.com/")+"01-#{opts}-radar10.min.js",t.body.appendChild(n)};e.addEventListener?e.addEventListener("load",n,!1):e.attachEvent&&e.attachEvent("onload",n)})(window,document);
+          EOT
         end
         Alula::Plugin.script(:body, tracker) if tracker
       end
