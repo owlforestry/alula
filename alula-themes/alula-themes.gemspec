@@ -21,7 +21,6 @@ Gem::Specification.new do |s|
   
   s.add_dependency 'alula', version
   
-  s.add_dependency 'alula', version
   s.add_dependency 'sass', '~> 3.2'
-  s.add_dependency 'haml', '~> 3.2.0.beta.2'
+  s.add_dependency 'haml', '~> 3.2.0.beta.3'
 end
