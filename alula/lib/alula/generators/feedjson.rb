@@ -32,7 +32,7 @@ module Alula
         sidebar: false,
         template: self.options.template,
         site: self.site,
-        layout: "feed.json",
+        layout: "json",
       },
       :previous => ->(hook, locale = nil) { nil },
       :next => ->(hook, locale = nil) { nil },
