@@ -34,6 +34,7 @@ PROJECTS.each do |project|
     task gem => :update_version_rb do
       Dir.chdir(project) do
         system "gem build #{gemspec}"
+        FileUtils.mkdir "#{root}/pkgs" unless File.directory?("#{root}/pkgs")
         FileUtils.mv "#{project}-#{version}.gem", "#{root}/pkgs"
       end
     end
