@@ -103,12 +103,12 @@ module Alula
                items: 10,
             template: "/:locale/page/:page/",
           },
-          feedjson: {
-               items: 10,
-                name: "feed.json",
-                slug: "feedjson",
-            template: "/:locale/:name",
-          },
+          # feedjson: {
+          #      items: 10,
+          #       name: "feed.json",
+          #       slug: "feedjson",
+          #   template: "/:locale/:name",
+          # },
           feedbuilder: {
                   items: 10,
                    name: "feed.xml",
