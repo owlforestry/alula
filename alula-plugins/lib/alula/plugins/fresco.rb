@@ -62,6 +62,7 @@ module Alula
       tag += " data-hires=\"#{hires}\"" if context.site.config.attachments.image.hires and hires
       tag += " data-fresco-group=\"#{context.item.id}\""
       tag += " data-fresco-group-options=\"ui: 'inside', thumbnails:#{@@options['thumbnails'] ? "true" : "false"}\""
+      tag += " data-fresco-caption=\"#{@options['title']}\"" if @options["title"]
       tag += " title=\"#{@options["title"]}\"" if @options["title"]
       tag += " style=\"width: #{tn_info.width}px; height: #{tn_info.height}px;\""
       tag += ">"
