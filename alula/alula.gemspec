@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.homepage  = "http://www.alula.in"
 
   s.executables   = Dir["bin/*"].map{ |f| File.basename(f) }
-  s.files         = Dir['CHANGELOG.md', 'README.ms', 'MIT-LICENSE', 'lib/**/*']
+  s.files         = Dir['CHANGELOG.md', 'README.md', 'MIT-LICENSE', 'lib/**/*', 'locales/**/*', 'template/**/*', 'vendor/**/*']
   s.require_path  = "lib"
   s.requirements << 'none'
   
@@ -24,6 +24,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'tilt', '~> 1.3'
   s.add_dependency 'liquid', '~> 2.4'
   s.add_dependency 'builder', '~> 3.0'
+  s.add_dependency 'tilt-jbuilder'#, '~> 0.9'
   s.add_dependency 'kramdown', '~> 0.13'
   s.add_dependency 'sprockets', '~> 2.4'
   s.add_dependency 'thor', '~> 0.14'

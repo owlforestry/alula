@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.homepage  = "http://www.alula.in"
 
   # s.executables   = Dir["bin/*"].map{ |f| File.basename(f) }
-  s.files         = Dir['CHANGELOG.md', 'README.ms', 'MIT-LICENSE', 'lib/**/*']
+  s.files         = Dir['CHANGELOG.md', 'README.md', 'MIT-LICENSE', 'lib/**/*', 'plugins/**/*']
   s.require_path  = "lib"
   s.requirements << 'none'
   
