@@ -2,7 +2,7 @@ module Alula
   module VERSION
     MAJOR = 0
     MINOR = 4
-    PATCH = 24
+    PATCH = 25
     PRE   = nil
 
     STRING = [MAJOR, MINOR, PATCH, PRE].compact.join('.')
