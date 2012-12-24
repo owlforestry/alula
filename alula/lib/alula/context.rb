@@ -29,7 +29,7 @@ module Alula
       @data = new_data
     end
     
-    def respond_to?(name)
+    def respond_to?(name, include_private=false)
       if name.to_s =~ /=$/ and @data.key?(name.to_s[0..-2])
         true
       elsif @data.key?(name)
