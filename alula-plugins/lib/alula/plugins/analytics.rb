@@ -38,10 +38,6 @@ module Alula
           <<-EOT
           (function(e,t){var n=function(){var n=t.createElement("script");n.type="text/javascript",n.async="async",n.src="//"+(e.location.protocol==="https:"?"s3.amazonaws.com/cdx-radar/":"radar.cedexis.com/")+"01-#{opts}-radar10.min.js",t.body.appendChild(n)};e.addEventListener?e.addEventListener("load",n,!1):e.attachEvent&&e.attachEvent("onload",n)})(window,document);
           EOT
-        when "pingdom"
-          <<-EOT
-          var _prum = [["id", "#{opts}"],["mark", "firstbyte", (new Date()).getTime()]]; (function() { var s = document.getElementsByTagName("script")[0] , p = document.createElement("script"); p.async = "async"; p.src = "//rum-static.pingdom.net/prum.min.js"; s.parentNode.insertBefore(p, s); })();
-          EOT
         end
         Alula::Plugin.script(:body, tracker) if tracker
       end
