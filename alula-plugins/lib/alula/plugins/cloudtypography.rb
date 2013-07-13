@@ -11,12 +11,13 @@ module Alula
     end
     
     def self.install(options)
-      # Require valid cloud.typography token present in configuration
-      return false unless options.token
+      # Require valid cloud.typography userid and project present in configuration
+      return false unless options.userid
+      return false unless options.project
       
       # Register addons
       Alula::Plugin.addon :head, ->(context) {
-        "<link rel='stylesheet' type='text/css' href='//cloud.typography.com/#{options.token}/css/fonts.css' />"
+        "<link rel='stylesheet' type='text/css' href='//cloud.typography.com/#{options.userid}/#{options.project}/css/fonts.css' />"
       }
     end
   end
